@@ -29,15 +29,15 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
   init(callback: Function) {
     this.alreadySubmit = false;
 
-    celerSDK && celerSDK.onStart(this.onCelerStart.bind(this));
+    CELER_X && celerSDK.onStart(this.onCelerStart.bind(this));
 
-    celerSDK && celerSDK.provideScore(() => {
+    CELER_X && celerSDK.provideScore(() => {
       return 0;
     });
 
     this.celerStartCallback = callback;
 
-    if (celerSDK) {
+    if (CELER_X) {
       LogHandler.inst.initLog(celerSDK.log);
     }
 
@@ -46,7 +46,7 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
   celerXReady() {
     console.log(" invoke celerx.ready() ");
 
-    if (!celerSDK) {
+    if (!CELER_X) {
       this.onCelerStart();
     } else {
       celerSDK.ready();
@@ -58,12 +58,12 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
   }
 
   isOnCelerPlatform() {
-    return celerSDK;
+    return CELER_X;
   }
 
   onCelerStart() {
     console.log(" celerx onStart call");
-    this.match = celerSDK ? celerSDK.getMatch() : {
+    this.match = CELER_X ? celerSDK.getMatch() : {
       matchId: "error : can not get id",
       shouldLaunchTutorial: false,
       sharedRandomSeed: 1,
@@ -93,6 +93,6 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
     if (this.alreadySubmit) return;
     this.alreadySubmit = true;
     console.log(" submit score:", score, ", match id:", this.match.matchId);
-    celerSDK && celerSDK.submitScore(score);
+    CELER_X && celerSDK.submitScore(score);
   }
 }
