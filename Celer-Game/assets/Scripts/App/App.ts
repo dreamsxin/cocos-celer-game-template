@@ -9,6 +9,7 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import { InitialFacade } from "../Initialization/Facade/InitialFacade";
+import { PlayModelProxy } from "../Model/PlayModelProxy";
 
 const { ccclass, property } = cc._decorator;
 
@@ -24,5 +25,9 @@ export default class App extends cc.Component {
         InitialFacade.inst.start();
     }
 
+
+    update(dt: number) {
+        PlayModelProxy.inst.addGameTime(-dt);
+    }
 
 }

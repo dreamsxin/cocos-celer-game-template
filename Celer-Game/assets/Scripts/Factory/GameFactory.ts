@@ -165,7 +165,7 @@ class GameFactory {
 
   getObj(name: string, ...args): cc.Node {
     if (this.objPool.has(name)) {
-      return this.objPool.get(name).get(args);
+      return this.objPool.get(name).get(...args);
     } else {
       console.error(" objPool dosen't exists this obj:", name);
       return null;

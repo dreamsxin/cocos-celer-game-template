@@ -40,7 +40,7 @@ export default class FrameAniBase extends cc.Component {
     protected currentIndex: number = 0;
     private time: number = 0;
 
-    public static intervalID: number = -1;
+    public static intervalID: any = -1;
     private isPlay: boolean = false;
 
     get Sprite() {
@@ -53,8 +53,8 @@ export default class FrameAniBase extends cc.Component {
 
     onFocusInEditor() {
 
-        this.time = this.Interval;
-        FrameAniBase.intervalID = setInterval(this.update.bind(this), 0.016, 0.016);
+        // this.time = this.Interval;
+        // FrameAniBase.intervalID = setInterval(this.update.bind(this), 0.016, 0.016);
     }
 
     onLostFocusInEditor() {
@@ -96,6 +96,7 @@ export default class FrameAniBase extends cc.Component {
     stop() {
         this.isPlay = false;
         this.currentIndex = 0;
+        this.Sprite.spriteFrame = this.Frames.getSpriteFrames()[this.currentIndex];
         this.Loop = false;
     }
 
@@ -216,5 +217,6 @@ export default class FrameAniBase extends cc.Component {
         this.time += dt;
     }
 }
+
 
 

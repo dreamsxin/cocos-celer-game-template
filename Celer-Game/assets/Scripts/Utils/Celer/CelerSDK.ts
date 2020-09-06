@@ -1,5 +1,8 @@
 import { SingleTon } from "../ToSingleton";
 import { LogHandler } from "../LogHandler";
+import { Random } from "../Random";
+import { ShowPauseLayerSignal } from "../../Command/CommonSignal";
+import { PlayModelProxy } from "../../Model/PlayModelProxy";
 
 
 
@@ -26,19 +29,27 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
     return this.match.sharedRandomSeed;
   }
 
+  /** 难度等级 */
+  get DifficultyLevel() {
+    return this.match.difficultyLevel;
+  }
+
   init(callback: Function) {
     this.alreadySubmit = false;
 
     CELER_X && celerSDK.onStart(this.onCelerStart.bind(this));
 
     CELER_X && celerSDK.provideScore(() => {
-      return 0;
+      return PlayModelProxy.inst.getTotalScore();
     });
 
     this.celerStartCallback = callback;
 
+    LogHandler.inst.ready();
     if (CELER_X) {
       LogHandler.inst.initLog(celerSDK.log);
+    } else {
+      console.log("v 1.4");
     }
 
   }
@@ -65,8 +76,8 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
     console.log(" celerx onStart call");
     this.match = CELER_X ? celerSDK.getMatch() : {
       matchId: "error : can not get id",
-      shouldLaunchTutorial: false,
-      sharedRandomSeed: 1,
+      shouldLaunchTutorial: Math.random() > 0.3,
+      sharedRandomSeed: Math.random(),//*/0.24907066062871674,//Math.random(),
       difficultyLevel: 0
     };
 
@@ -77,11 +88,49 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
       this.match.sharedRandomSeed
     );
 
-    if ((this.match && this.match.shouldLaunchTutorial) || CC_DEBUG) {
+    Random.setRandomSeed(this.match.sharedRandomSeed);
+    PlayModelProxy.inst.Level = this.match.difficultyLevel;
+
+    if ((this.match && this.match.shouldLaunchTutorial)) {
       this.isNewPlayer = true;
     } else {
       this.isNewPlayer = false;
     }
+
+
+    if (CELER_X) {
+
+      celerSDK.onPause(() => {
+        console.log(" on pause ");
+        ShowPauseLayerSignal.inst.dispatch();
+      });
+
+      celerSDK.onResume(() => {
+
+        console.log(" on resume ");
+        // HidePauseLayerSignal.inst.dispatch();
+
+      })
+
+
+    } else {
+
+      cc.game.on(cc.game.EVENT_HIDE, () => {
+
+        console.log(" on pause ");
+        ShowPauseLayerSignal.inst.dispatch();
+
+      });
+
+      cc.game.on(cc.game.EVENT_SHOW, () => {
+
+        console.log(" on resume ");
+        // HidePauseLayerSignal.inst.dispatch();
+
+      });
+
+    }
+
 
     if (this.celerStartCallback) {
       this.celerStartCallback();
@@ -93,6 +142,10 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
     if (this.alreadySubmit) return;
     this.alreadySubmit = true;
     console.log(" submit score:", score, ", match id:", this.match.matchId);
-    CELER_X && celerSDK.submitScore(score);
+    if (CELER_X) {
+      celerSDK.submitScore(score)
+    } else {
+      window.location.reload();
+    }
   }
 }

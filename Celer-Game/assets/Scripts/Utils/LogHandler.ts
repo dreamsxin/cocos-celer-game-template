@@ -18,7 +18,7 @@ export class LogHandler extends SingleTon<LogHandler>() {
 
   private logFunc: Function = console.log;
   private logMsg: any = null;
-  private static readonly VERSION = "DominoCash version 1 : ";
+  private static readonly VERSION = "DominoCash version 9 : ";
   private frameTimes = 0;
   private now = 0;
   private Frame = 20;
@@ -42,7 +42,14 @@ export class LogHandler extends SingleTon<LogHandler>() {
     this.sendLog();
   }
 
+
+  ready() {
+    console.log(LogHandler.VERSION);
+  }
+
   initLog(callback: Function) {
+
+
     cc.director.once(
       cc.Director.EVENT_AFTER_SCENE_LAUNCH,
       () => {
@@ -75,6 +82,12 @@ export class LogHandler extends SingleTon<LogHandler>() {
     );
 
     this.logFunc = callback;
+
+    window["consoleError"] = console.error;
+    window["consoleWarn"] = console.warn;
+    window["consoleLog"] = console.log;
+    window["consoleAssert"] = console.assert;
+
     console.error = function (...args) {
       LogHandler.inst.log("[ERROR]", ...args);
     };
@@ -86,6 +99,12 @@ export class LogHandler extends SingleTon<LogHandler>() {
     console.log = function (...args) {
       LogHandler.inst.log("[INFO]", ...args);
     };
+
+    console.assert = function (isOk: boolean, ...args) {
+      if (!isOk) {
+        LogHandler.inst.log("[ASSERT ERROR]", ...args);
+      }
+    }
   }
 
   formatLogArguments(..._) {

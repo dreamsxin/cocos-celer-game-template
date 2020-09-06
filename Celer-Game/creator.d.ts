@@ -24825,6 +24825,15 @@ declare namespace dragonBones {
 }
 
 declare namespace jsb {
+
+	export class reflection {
+		/**
+		 * @string packageName: java静态类包名
+		 * @string method： 静态方法名
+		 * @string argsAuth： 参数签名: int - I, float - F, boolean - Z, string - Ljava/lang/String
+		 */
+		static callStaticMethod: (packageName: string, method: string, argsAuth: string, arg0?, arg1?, arg2?, ..._) => void;
+	}
 	export class AssetsManager {
 
 		public readonly static State = {
@@ -24909,6 +24918,21 @@ declare namespace jsb {
 		public static getWritablePath(): string
 		public static getSearchPaths(): string
 		public static setSearchPaths(path: string): void;
+		public static writeDataToFile(data: cc.Data, str: string): boolean;
+		public static writeStringToFile(data: string, fullPath: string): boolean;
+		public static fullPathForFilename(filename: string): string;
+		public static getStringFromFile(filename: string): string;
+		public static removeFile(filepath: string): boolean;
+		public static getDataFromFile(filename: string): cc.Data;
+		public static isAbsolutePath(path: string): boolean;
+		public static renameFile(path: string, oldname: string, name: string): boolean;
+		public static normalizePath(path: string): string;
+		public static getDefaultResourceRootPath(): string;
+		public static loadFilenameLookupDictionaryFromFile(filename: string);
+		public static isPopupNotify(): boolean;
+		public static isFileExist(fileName: string): boolean;
+		public static isDirectoryExist(dirPath: string): boolean;
+		public static createDirectory(dirPath: string): boolean;
 	}
 }
 /** Running in the editor. */
@@ -24929,4 +24953,3 @@ declare let CC_TEST: boolean;
 declare let CC_WECHATGAME: boolean;
 /** Running in the bricks. */
 declare let CC_QQPLAY: boolean;
-

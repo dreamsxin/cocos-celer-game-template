@@ -79,11 +79,13 @@ export class InitialFacade {
         "ms"
       );
       if (total === now) {
-        if (CelerSDK.inst.isOnCelerPlatform()) {
-          CelerSDK.inst.celerXReady();
-        } else {
-          this.facade.sendNotification(InitialFacade.START_UP, this);
-        }
+        // if (CelerSDK.inst.isOnCelerPlatform()) {
+
+        // } else {
+        //   this.facade.sendNotification(InitialFacade.START_UP, this);
+        // }
+
+        CelerSDK.inst.celerXReady();
       }
     }
   }

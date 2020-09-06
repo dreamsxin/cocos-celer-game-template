@@ -1,4 +1,7 @@
 import { HashMap } from "../Utils/HashMap";
+import { ScoreCountingSignal, ShowSubmitSignal, OpenResultLayerSignal, PlayerScoreChanged, GamePauseSignal, ButtonClickSignal, CountDownSignal, UpdateTimeNumber } from "../Command/CommonSignal";
+import { RoundEndType } from "../Controller/GameStateController";
+
 
 interface AudioItem {
     loop: boolean;
@@ -20,7 +23,7 @@ const PATH = "sounds/";
 class AudioController {
     private static ins: AudioController;
     private static PlayedList: AudioItem[] = [];
-    public static canPlay: boolean = false;
+    public static canPlay: boolean = CC_DEBUG || cc.sys.WIN32 == cc.sys.platform;
     private static hasBindTouch: boolean = false;
 
     private audioID = {};
@@ -50,14 +53,8 @@ class AudioController {
                 }
                 self.clips.add(clip.name, clip);
                 callback && callback();
-            }
-        });
 
-        cc.loader.loadRes(PATH + "mouse_bgm", function (err, clip) {
-            if (err) {
-                console.error(err);
-            } else {
-                self.clips.add(clip.name, clip);
+                self.playMusic("bgm", true);
             }
         });
 
@@ -80,8 +77,118 @@ class AudioController {
                 }
             }
         });
+
+
+        this.bindSignal();
     }
 
+
+    private effectVolumeScale = 1.5;
+    private musicVolumeScale = 1.5;
+
+    setEffectVolume(volume: number) {
+        cc.audioEngine.setEffectsVolume(volume * this.effectVolumeScale);
+    }
+
+    setMusicVolume(volume: number) {
+        cc.audioEngine.setMusicVolume(volume * this.musicVolumeScale);
+    }
+
+    get EffectVolume() {
+        return cc.audioEngine.getEffectsVolume() / this.effectVolumeScale;
+    }
+
+    get MusicVolume() {
+        return cc.audioEngine.getMusicVolume() / this.musicVolumeScale;
+    }
+
+    bindSignal() {
+
+
+
+        this.setEffectVolume(1);
+        this.setMusicVolume(1);
+
+
+        // bgm
+        UpdateTimeNumber.inst.addListenerOne((time: number) => {
+
+            if (time >= 30) {
+                if (cc.audioEngine.getState(this.audioID["bgm"]) == cc.audioEngine.AudioState.PLAYING) {
+                    return;
+                }
+
+                this.playMusic("bgm", true);
+            } else {
+                if (cc.audioEngine.getState(this.audioID["bgm_30"]) == cc.audioEngine.AudioState.PLAYING) {
+                    return;
+                }
+
+                this.playMusic("bgm_30", true);
+            }
+
+        }, this);
+
+
+
+        /** 结算分数跳动 */
+        ScoreCountingSignal.inst.addListener(() => {
+            if (this.audioID["scoreCount"]) return;
+
+            this.playEffect("scoreCount", false, () => {
+                this.audioID["scoreCount"] = null;
+            })
+        }, this);
+
+        /** 显示结算按钮 */
+        ShowSubmitSignal.inst.addListener(() => {
+            if (this.audioID["scoreCount"])
+                cc.audioEngine.stopEffect(this.audioID["scoreCount"]);
+            this.playEffect("showSubmit")
+        }, this);
+
+        /** 打开结算界面 */
+        OpenResultLayerSignal.inst.addListenerOne((type: RoundEndType) => {
+
+            if (type == RoundEndType.TimeUp) {
+                this.playEffect("timeup")
+            } else {
+                this.playEffect("complete")
+            }
+
+
+        }, this);
+
+
+        /** 玩家加分 */
+        PlayerScoreChanged.inst.addListenerThree((playerScore: number, addScore: number, times: number) => {
+
+
+        }, this);
+
+        /** 游戏暂停 */
+        GamePauseSignal.inst.addListener(() => {
+
+            this.playEffect("pause");
+
+        }, this);
+
+        /** 按钮点击 */
+        ButtonClickSignal.inst.addListener(() => {
+
+            this.playEffect("click");
+
+        }, this);
+
+        /** 倒计时 */
+        CountDownSignal.inst.addListener(() => {
+
+            this.playEffect("countDown");
+
+        }, this);
+
+
+    }
 
 
     playEffect(name: string, loop: boolean = false, finishCallback?: Function) {
@@ -133,6 +240,7 @@ class AudioController {
     }
 
     playMusic(name: string, loop: boolean = true) {
+
         if (!AudioController.canPlay) {
             this.bindTouch();
             AudioController.PlayedList.push({
@@ -148,7 +256,9 @@ class AudioController {
 
         let music = this.clips.get(name);
         if (music) {
-            cc.audioEngine.playMusic(music, loop);
+
+            this.audioID[name] = cc.audioEngine.playMusic(music, loop);
+
         } else {
             cc.loader.loadRes(PATH + name, cc.AudioClip, (err, res) => {
                 if (err) {
@@ -163,7 +273,7 @@ class AudioController {
                         res["_audio"] = cc.loader["_cache"][res["_audio"]]["buffer"];
                     }
                     this.clips.add(res.name, res);
-                    cc.audioEngine.playMusic(res, loop);
+                    this.audioID[name] = cc.audioEngine.playMusic(res, loop);
                 }
             });
         }

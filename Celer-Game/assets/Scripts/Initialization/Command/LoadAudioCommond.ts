@@ -1,4 +1,5 @@
 import { InitialFacade } from "../Facade/InitialFacade";
+import { gAudio } from "../../Manager/AudioManager";
 
 export class LoadAudioCommond extends puremvc.SimpleCommand {
   public static STEP: string = "LoadAudio";
@@ -6,7 +7,9 @@ export class LoadAudioCommond extends puremvc.SimpleCommand {
     if (notification) {
       let body = notification.getBody<InitialFacade>();
       if (body && body.step) {
-        body.step(LoadAudioCommond.STEP);
+        gAudio.init(() => {
+          body.step(LoadAudioCommond.STEP);
+        })
       }
     }
   }

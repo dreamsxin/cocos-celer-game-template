@@ -16,17 +16,25 @@ const { ccclass, property } = cc._decorator;
 export default class BaseMediator<T extends cc.Component> extends cc.Component {
 
 
-    private view: any;
 
+    public bind(view: T) {
+
+        this.view = view;
+    }
+
+    private view: T;
     get View(): T {
-        if (this.view == null) {
-            this.view = this.getComponent(BaseView);
-        }
+        console.assert(this.view != null, " view is null");
         return this.view;
     }
 
-    onRegister() {
 
+    onRegister() {
+        console.error(" should override onRegister ");
+    }
+
+    onUnregister() {
+        console.error(" should override onUnregister ");
     }
 
 

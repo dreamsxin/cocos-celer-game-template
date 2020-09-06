@@ -1,6 +1,6 @@
 export class Random {
-    private static randomSeed: number = 0;
-    private static sharedSeed: number = 0;
+    private static randomSeed: number = Math.random();
+    private static sharedSeed: number = Math.random();
 
     private static seededRandom(seed: number, min: number, max: number): number {
         let seed1 = (1711 * seed + 88888) % 302654;
@@ -23,6 +23,7 @@ export class Random {
     }
 
     public static setRandomSeed(seed: number) {
+        console.log(" set random seed:", seed);
         this.randomSeed = seed;
         this.sharedSeed = seed;
     }
@@ -30,6 +31,10 @@ export class Random {
 
     public static randomRoundToInt(min: number = 0, max: number = 1) {
         return Math.round(this.getRandom(min, max))
+    }
+
+    public static clamp(val: number, min: number, max: number) {
+        return Math.max(min, Math.min(val, max));
     }
 
 
