@@ -8,22 +8,15 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import EaseBaseView from "./EaseBaseView";
-
 const { ccclass, property } = cc._decorator;
 
 @ccclass
-export default class RotationView extends EaseBaseView {
+export default class FontView extends cc.Component {
 
 
     // LIFE-CYCLE CALLBACKS:
 
-    private startRotation: number = 0;
     onLoad() {
-
-        if (CC_DEBUG && this.node.name == "TestNode") {
-            window["testRotation"] = this.onRotationChanged.bind(this);
-        }
 
     }
 
@@ -31,22 +24,18 @@ export default class RotationView extends EaseBaseView {
 
     }
 
-    onRotationChanged(targetRotation: number, lastTime: number, callback: Function, delay: number = 0) {
+    update(dt: number) {
 
-        this.startRotation = this.node.rotation;
-        this.startUpdate(new cc.Vec3(targetRotation, targetRotation, targetRotation), lastTime, callback, delay);
+        if (this.node.parent.scaleX >= 0) {
+            this.node.scaleX = 1;
+        } else {
+            this.node.scaleX = 0;
+        }
 
-    }
-
-    onStep() {
-
-        this.node.rotation = this.ease(this.startRotation, this.Target.x);
-
-    }
-
-    onComplete() {
-
-        this.node.setRotation(this.Target.x);
-
+        if (this.node.parent.scaleY < 0) {
+            this.node.scaleY = 1;
+        } else {
+            this.node.scaleY = 0;
+        }
     }
 }

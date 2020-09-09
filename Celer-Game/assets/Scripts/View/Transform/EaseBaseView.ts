@@ -37,6 +37,8 @@ export default class EaseBaseView extends BaseView {
         return this.targetVal;
     }
 
+
+
     onLoad() {
 
     }
@@ -64,10 +66,10 @@ export default class EaseBaseView extends BaseView {
 
     }
 
-
     private complete() {
 
         this.startTime = this.lastTime = 0;
+
         if (this.completeCallback) {
             this.completeCallback();
             this.completeCallback = null;
@@ -82,9 +84,10 @@ export default class EaseBaseView extends BaseView {
 
         if (this.isComplete()) {
 
+            this.onComplete();
 
             this.complete();
-            this.onComplete();
+
 
         } else {
 

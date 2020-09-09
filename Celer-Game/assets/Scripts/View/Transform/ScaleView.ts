@@ -20,6 +20,7 @@ export default class ScaleView extends EaseBaseView {
 
     // LIFE-CYCLE CALLBACKS:
 
+    private startScale: cc.Vec2 = cc.Vec2.ZERO;
     onLoad() {
 
         if (CC_DEBUG && this.node.name == "TestNode") {
@@ -35,14 +36,15 @@ export default class ScaleView extends EaseBaseView {
 
     onScaleChanged(targetScale: cc.Vec2, lastTime: number, callback: Function, delay: number = 0) {
 
+        this.startScale = cc.v2(this.node.scaleX, this.node.scaleY);
         this.startUpdate(new cc.Vec3(targetScale.x, targetScale.y, 0), lastTime, callback, delay);
 
     }
 
     onStep() {
 
-        this.node.scaleX = this.ease(this.node.scaleX, this.Target.x);
-        this.node.scaleY = this.ease(this.node.scaleY, this.Target.y);
+        this.node.scaleX = this.ease(this.startScale.x, this.Target.x);
+        this.node.scaleY = this.ease(this.startScale.y, this.Target.y);
 
     }
 

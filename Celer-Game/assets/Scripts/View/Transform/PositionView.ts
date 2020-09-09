@@ -22,6 +22,7 @@ export default class PositionView extends EaseBaseView {
 
 
 
+    private startPos: cc.Vec2 = cc.Vec2.ZERO;
 
     onLoad() {
 
@@ -37,14 +38,15 @@ export default class PositionView extends EaseBaseView {
 
     onPositionChanged(targetPos: cc.Vec2, lastTime: number, callback: Function, delay: number = 0) {
 
+        this.startPos = this.node.position.clone();
         this.startUpdate(new cc.Vec3(targetPos.x, targetPos.y, 0), lastTime, callback, delay);
 
     }
 
     onStep() {
 
-        this.node.x = this.ease(this.node.x, this.Target.x);
-        this.node.y = this.ease(this.node.y, this.Target.y);
+        this.node.x = this.ease(this.startPos.x, this.Target.x);
+        this.node.y = this.ease(this.startPos.y, this.Target.y);
 
     }
 

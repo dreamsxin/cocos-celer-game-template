@@ -18,6 +18,7 @@ export default class SkewView extends EaseBaseView {
 
     // LIFE-CYCLE CALLBACKS:
 
+    private startSkew: cc.Vec2 = cc.Vec2.ZERO;
     onLoad() {
 
         if (CC_DEBUG && this.node.name == "TestNode") {
@@ -33,14 +34,15 @@ export default class SkewView extends EaseBaseView {
 
     onSkewChanged(targetSkew: cc.Vec2, lastTime: number, callback: Function, delay: number = 0) {
 
+        this.startSkew = cc.v2(this.node.skewX, this.node.skewY);
         this.startUpdate(new cc.Vec3(targetSkew.x, targetSkew.y, 0), lastTime, callback, delay);
 
     }
 
     onStep() {
 
-        this.node.skewX = this.ease(this.node.skewX, this.Target.x);
-        this.node.skewY = this.ease(this.node.skewY, this.Target.y);
+        this.node.skewX = this.ease(this.startSkew.x, this.Target.x);
+        this.node.skewY = this.ease(this.startSkew.y, this.Target.y);
 
     }
 
