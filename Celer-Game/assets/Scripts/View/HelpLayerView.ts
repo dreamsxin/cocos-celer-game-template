@@ -28,26 +28,20 @@ export default class HelpLayerView extends BaseView {
     private state: State = State.Hide;
     // LIFE-CYCLE CALLBACKS:
 
-    get Next() {
-        return this.node.getChildByName("Next");
-    }
+    @property(cc.Node)
+    Next: cc.Node = null;
 
-    get Close() {
-        return this.node.getChildByName("Close");
-    }
+    @property(cc.Node)
+    Close: cc.Node = null;
 
-    get GuidePage() {
-        return this.node.getChildByName("GuidePage").getComponent(cc.PageView);
-    }
+    @property(cc.PageView)
+    GuidePage: cc.PageView = null;
 
-    get TotalPage() {
-        return this.node.getChildByName("TotalPage").getComponent(cc.Label);
-    }
+    @property(cc.Label)
+    TotalPage: cc.Label = null
 
-    get Page() {
-        return this.node.getChildByName("Page").getComponent(cc.Label);
-    }
-
+    @property(cc.Label)
+    Page: cc.Label = null
 
     onLoad() {
         this.BindMedaitor(HelpLayerMediator);

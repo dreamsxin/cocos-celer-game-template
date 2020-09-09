@@ -20,14 +20,13 @@ export default class SliderView extends cc.Component {
 
 
 
+    @property(cc.Node)
+    Progress: cc.Node = null;
 
-    get Progress() {
-        return this.node.getChildByName("Mask");
-    }
 
-    get Slider() {
-        return this.getComponent(cc.Slider);
-    }
+
+    @property(cc.Slider)
+    Slider: cc.Slider = null;
 
     get Percent() {
         return this.Slider.progress;

@@ -1,8 +1,9 @@
-import { InitialCommond } from "../Command/InititalCommond";
-import { StartGameCommond } from "../Command/StartGameCommond";
-import { LoadAudioCommond } from "../Command/LoadAudioCommond";
-import { LoadPrefabCommond } from "../Command/LoadPrefabCommond";
+import { InitialCommand } from "../Command/InititalCommand";
+import { StartGameCommand } from "../Command/StartGameCommand";
+import { LoadAudioCommand } from "../Command/LoadAudioCommand";
+import { LoadPrefabCommand } from "../Command/LoadPrefabCommand";
 import { CelerSDK } from "../../Utils/Celer/CelerSDK";
+import { StepManager } from "../../Manager/StepManager";
 
 export class InitialFacade {
   public static MULTITON_KEY: string = "INITIAL_FCADE";
@@ -13,6 +14,8 @@ export class InitialFacade {
   private static instance: InitialFacade;
 
   private facade: puremvc.Facade;
+
+  private stepMgr: StepManager = new StepManager();
 
   public static get inst() {
     return this.instance
@@ -30,12 +33,18 @@ export class InitialFacade {
   }
 
   private register() {
-    this.facade.registerCommand(InitialFacade.INITIALIZATION, InitialCommond);
-    this.facade.registerCommand(InitialFacade.START_UP, StartGameCommond);
+    this.facade.registerCommand(InitialFacade.INITIALIZATION, InitialCommand);
+    this.facade.registerCommand(InitialFacade.START_UP, StartGameCommand);
 
     CelerSDK.inst.init(() => {
       this.facade.sendNotification(InitialFacade.START_UP, this);
     });
+
+
+    this.stepMgr.register(() => {
+      CelerSDK.inst.celerXReady();
+    }, InitialFacade.TOTAL_STEPS);
+
   }
 
   private unregister() {
@@ -45,48 +54,22 @@ export class InitialFacade {
 
   start() {
     this.register();
-    for (let key of InitialFacade.TOTAL_STEPS) {
-      this.loadTime[key] = Date.now();
-    }
+
     this.facade.sendNotification(InitialFacade.INITIALIZATION, this);
   }
 
 
-  private loadTime = {};
-  private steps: string[] = [];
+
   private static TOTAL_STEPS: string[] = [
-    LoadAudioCommond.STEP,
-    LoadPrefabCommond.STEP,
+    LoadAudioCommand.STEP,
+    LoadPrefabCommand.STEP,
   ];
+
+
   step(commandName: string) {
     console.log(" initialization step:", commandName);
-    if (this.steps.indexOf(commandName) < 0) {
-      this.steps.push(commandName);
-      this.steps.sort();
-      InitialFacade.TOTAL_STEPS.sort();
 
-      let now = this.steps.join("-");
-      let total = InitialFacade.TOTAL_STEPS.join("-");
-      console.log(
-        " cur-steps：",
-        now,
-        ", total:",
-        total,
-        ", ",
-        commandName,
-        " cost:",
-        (Date.now() - this.loadTime[commandName]).toFixed(2),
-        "ms"
-      );
-      if (total === now) {
-        // if (CelerSDK.inst.isOnCelerPlatform()) {
+    this.stepMgr.nextStep(commandName);
 
-        // } else {
-        //   this.facade.sendNotification(InitialFacade.START_UP, this);
-        // }
-
-        CelerSDK.inst.celerXReady();
-      }
-    }
   }
 }

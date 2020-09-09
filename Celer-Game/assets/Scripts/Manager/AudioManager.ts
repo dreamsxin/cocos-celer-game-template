@@ -1,6 +1,7 @@
 import { HashMap } from "../Utils/HashMap";
 import { ScoreCountingSignal, ShowSubmitSignal, OpenResultLayerSignal, PlayerScoreChanged, GamePauseSignal, ButtonClickSignal, CountDownSignal, UpdateTimeNumber } from "../Command/CommonSignal";
 import { RoundEndType } from "../Controller/GameStateController";
+import { SingleTon } from "../Utils/ToSingleton";
 
 
 interface AudioItem {
@@ -20,21 +21,17 @@ if (window.oncanplay) {
 
 const PATH = "sounds/";
 
-class AudioController {
-    private static ins: AudioController;
+class AudioController extends SingleTon<AudioController>() {
+
     private static PlayedList: AudioItem[] = [];
     public static canPlay: boolean = CC_DEBUG || cc.sys.WIN32 == cc.sys.platform;
     private static hasBindTouch: boolean = false;
 
     private audioID = {};
-    private constructor() { }
-    public static get inst() {
-        return this.ins ? this.ins : (this.ins = new AudioController());
-    }
 
     private clips: HashMap<string, cc.AudioClip> = new HashMap();
     init(callback: Function) {
-        console.warn(" start load AudioClip ");
+        console.log(" start load AudioClip ");
 
         let self = this;
         cc.loader.loadRes(PATH + "bgm", cc.AudioClip, function (err, clip) {
@@ -300,6 +297,6 @@ class AudioController {
     }
 }
 /**
- * 只管理游戏内音频，UI的全部交给FairyUI
+ * 只管理游戏内音频
  */
 export const gAudio = AudioController.inst;
