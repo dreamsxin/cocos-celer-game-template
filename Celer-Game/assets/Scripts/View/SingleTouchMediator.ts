@@ -47,6 +47,7 @@ export default class SingleTouchMediator<T extends cc.Component> extends cc.Comp
 
         if (this.touchid !== null && this.touchid !== event.getID()) {
             console.log(this.node.name, " touch start  touchid is different: ", this.touchid, event.getID());
+            event.stopPropagation();
             return;
         }
         this.touchid = event.getID();
@@ -57,6 +58,7 @@ export default class SingleTouchMediator<T extends cc.Component> extends cc.Comp
     private touchMove(event: cc.Event.EventTouch) {
         if (this.touchid !== null && this.touchid !== event.getID()) {
             //console.log(this.node.name, " touch move  touchid is different! ");
+            event.stopPropagation();
             return;
         }
         this.touchid = event.getID();
@@ -66,10 +68,12 @@ export default class SingleTouchMediator<T extends cc.Component> extends cc.Comp
     private touchEnd(event: cc.Event.EventTouch) {
         if (this.touchid !== null && this.touchid !== event.getID()) {
             console.log(this.node.name, " touch end  touchid is different: ", this.touchid, event.getID());
+            event.stopPropagation();
             return;
         }
 
         if (this.touchid == null) {
+            event.stopPropagation();
             return;
         }
 
@@ -81,10 +85,12 @@ export default class SingleTouchMediator<T extends cc.Component> extends cc.Comp
     private touchCancel(event: cc.Event.EventTouch) {
         if (this.touchid !== null && this.touchid !== event.getID()) {
             console.log(this.node.name, " touch cancel  touchid is different: ", this.touchid, event.getID());
+            event.stopPropagation();
             return;
         }
 
         if (this.touchid == null) {
+            event.stopPropagation();
             return;
         }
 
