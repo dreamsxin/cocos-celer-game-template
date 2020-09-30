@@ -38,15 +38,13 @@ class AudioController extends SingleTon<AudioController>() {
             if (err) {
                 console.error(err);
             } else {
-                if (CC_DEBUG) {
-                    if (
-                        typeof clip["_audio"] == "string" &&
-                        cc.loader["_cache"] &&
-                        cc.loader["_cache"][clip["_audio"]] &&
-                        cc.loader["_cache"][clip["_audio"]]["buffer"]
-                    ) {
-                        clip["_audio"] = cc.loader["_cache"][clip["_audio"]]["buffer"];
-                    }
+                if (
+                    typeof clip["_audio"] == "string" &&
+                    cc.loader["_cache"] &&
+                    cc.loader["_cache"][clip["_audio"]] &&
+                    cc.loader["_cache"][clip["_audio"]]["buffer"]
+                ) {
+                    clip["_audio"] = cc.loader["_cache"][clip["_audio"]]["buffer"];
                 }
                 self.clips.add(clip.name, clip);
                 callback && callback();
@@ -68,6 +66,15 @@ class AudioController extends SingleTon<AudioController>() {
                 console.error(err);
             } else {
                 for (let clip of res) {
+                    if (
+                        typeof clip["_audio"] == "string" &&
+                        cc.loader["_cache"] &&
+                        cc.loader["_cache"][clip["_audio"]] &&
+                        cc.loader["_cache"][clip["_audio"]]["buffer"]
+                    ) {
+                        clip["_audio"] = cc.loader["_cache"][clip["_audio"]]["buffer"];
+                    }
+
                     if (!this.clips.has(clip.name)) {
                         this.clips.add(clip.name, clip);
                     }
@@ -212,15 +219,13 @@ class AudioController extends SingleTon<AudioController>() {
                 if (err) {
                     console.error(err);
                 } else {
-                    if (CC_DEBUG) {
-                        if (
-                            typeof res["_audio"] == "string" &&
-                            cc.loader["_cache"] &&
-                            cc.loader["_cache"][res["_audio"]] &&
-                            cc.loader["_cache"][res["_audio"]]["buffer"]
-                        ) {
-                            res["_audio"] = cc.loader["_cache"][res["_audio"]]["buffer"];
-                        }
+                    if (
+                        typeof res["_audio"] == "string" &&
+                        cc.loader["_cache"] &&
+                        cc.loader["_cache"][res["_audio"]] &&
+                        cc.loader["_cache"][res["_audio"]]["buffer"]
+                    ) {
+                        res["_audio"] = cc.loader["_cache"][res["_audio"]]["buffer"];
                     }
                     this.clips.add(res.name, res);
                     // if (this.audioID[name]) return;
