@@ -38,6 +38,7 @@ class AudioController extends SingleTon<AudioController>() {
             if (err) {
                 console.error(err);
             } else {
+
                 if (
                     typeof clip["_audio"] == "string" &&
                     cc.loader["_cache"] &&
@@ -53,13 +54,13 @@ class AudioController extends SingleTon<AudioController>() {
             }
         });
 
-        cc.loader.loadRes(PATH + "bgm_30", function (err, clip) {
-            if (err) {
-                console.error(err);
-            } else {
-                self.clips.add(clip.name, clip);
-            }
-        });
+        // cc.loader.loadRes(PATH + "bgm_30", function (err, clip) {
+        //     if (err) {
+        //         console.error(err);
+        //     } else {
+        //         self.clips.add(clip.name, clip);
+        //     }
+        // });
 
         cc.loader.loadResDir(PATH, (err, res, urls) => {
             if (err) {
@@ -74,7 +75,6 @@ class AudioController extends SingleTon<AudioController>() {
                     ) {
                         clip["_audio"] = cc.loader["_cache"][clip["_audio"]]["buffer"];
                     }
-
                     if (!this.clips.has(clip.name)) {
                         this.clips.add(clip.name, clip);
                     }
@@ -87,14 +87,16 @@ class AudioController extends SingleTon<AudioController>() {
     }
 
 
-    private effectVolumeScale = 1.5;
-    private musicVolumeScale = 1.5;
+    private effectVolumeScale = 1;
+    private musicVolumeScale = 1;
 
     setEffectVolume(volume: number) {
+        this.effectVolumeScale = 1.8;
         cc.audioEngine.setEffectsVolume(volume * this.effectVolumeScale);
     }
 
     setMusicVolume(volume: number) {
+        this.musicVolumeScale = 1;
         cc.audioEngine.setMusicVolume(volume * this.musicVolumeScale);
     }
 
@@ -117,22 +119,21 @@ class AudioController extends SingleTon<AudioController>() {
         // bgm
         UpdateTimeNumber.inst.addListenerOne((time: number) => {
 
-            if (time >= 30) {
-                if (cc.audioEngine.getState(this.audioID["bgm"]) == cc.audioEngine.AudioState.PLAYING) {
-                    return;
-                }
+            // if (time >= 30) {
+            //     if (cc.audioEngine.getState(this.audioID["bgm"]) == cc.audioEngine.AudioState.PLAYING) {
+            //         return;
+            //     }
 
-                this.playMusic("bgm", true);
-            } else {
-                if (cc.audioEngine.getState(this.audioID["bgm_30"]) == cc.audioEngine.AudioState.PLAYING) {
-                    return;
-                }
+            //     this.playMusic("bgm", true);
+            // } else {
+            //     if (cc.audioEngine.getState(this.audioID["bgm_30"]) == cc.audioEngine.AudioState.PLAYING) {
+            //         return;
+            //     }
 
-                this.playMusic("bgm_30", true);
-            }
+            //     this.playMusic("bgm_30", true);
+            // }
 
         }, this);
-
 
 
         /** 结算分数跳动 */
@@ -156,6 +157,8 @@ class AudioController extends SingleTon<AudioController>() {
 
             if (type == RoundEndType.TimeUp) {
                 this.playEffect("timeup")
+            } else if (type == RoundEndType.Complete) {
+                this.playEffect("complete")
             } else {
                 this.playEffect("complete")
             }
@@ -219,6 +222,7 @@ class AudioController extends SingleTon<AudioController>() {
                 if (err) {
                     console.error(err);
                 } else {
+
                     if (
                         typeof res["_audio"] == "string" &&
                         cc.loader["_cache"] &&

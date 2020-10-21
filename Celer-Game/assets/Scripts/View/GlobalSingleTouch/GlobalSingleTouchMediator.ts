@@ -1,3 +1,4 @@
+import { GameStateController } from "../../Controller/GameStateController";
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -20,12 +21,15 @@ export default class GlobalSingleTouchMediator extends SingleTouchMediator<Globa
 
     onRegister() {
         super.onRegister();
-        this.node["_touchListener"].swallowTouches = false
+        this.node["_touchListener"].swallowTouches = false;
+
     }
 
     protected onTouchStart(event: cc.Event.EventTouch) {
 
-
+        if (GameStateController.inst.canStart() && GameStateController.inst.isRoundStart() == false) {
+            GameStateController.inst.roundStart();
+        }
     }
 
     protected onTouchMove(event: cc.Event.EventTouch) {

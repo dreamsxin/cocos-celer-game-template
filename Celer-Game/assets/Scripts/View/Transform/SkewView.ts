@@ -32,6 +32,10 @@ export default class SkewView extends EaseBaseView {
 
     }
 
+    canUpdate() {
+        return true;
+    }
+
     onSkewChanged(targetSkew: cc.Vec2, lastTime: number, callback: Function, delay: number = 0) {
 
         this.startSkew = cc.v2(this.node.skewX, this.node.skewY);

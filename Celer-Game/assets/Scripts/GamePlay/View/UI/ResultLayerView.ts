@@ -6,6 +6,7 @@ import { ResourceController, Title } from "../../../Controller/ResourceControlle
 import { Time } from "../../../Utils/Time";
 import { PlayModelProxy } from "../../../Model/PlayModelProxy";
 import { CelerSDK } from "../../../Utils/Celer/CelerSDK";
+import { ScoreType } from "../../Model/GamePlayModel";
 
 const { ccclass, property } = cc._decorator;
 
@@ -42,6 +43,19 @@ export default class ResultLayerView extends BaseView {
         return this.Root.getChildByName("TimeBonus").getComponent(NumberChangedView);
     }
 
+
+    get Score() {
+        return this.Root.getChildByName("Score").getComponent(NumberChangedView);
+    }
+
+    get Combo() {
+        return this.Root.getChildByName("Combo").getComponent(NumberChangedView);
+    }
+
+    get Cardbonus() {
+        return this.Root.getChildByName("Cardbonus").getComponent(NumberChangedView);
+    }
+
     /** spine根节点 */
     get SpineRoot() {
         return this.Root.getChildByName("Spine");
@@ -55,7 +69,7 @@ export default class ResultLayerView extends BaseView {
         return this.Root.getChildByName("Submit");
     }
 
-    private CountTotal = 4;
+    private CountTotal = 5;
 
     onLoad() {
         this.node.active = false;
@@ -65,6 +79,7 @@ export default class ResultLayerView extends BaseView {
 
     onGameOver(type: RoundEndType) {
 
+        console.log("Open result:", RoundEndType[type], ", recycle Count:", PlayModelProxy.inst.RecycleCount, Date.now())
         this.Submit.scale = 0;
         this.Light.scale = 0;
 
@@ -72,8 +87,10 @@ export default class ResultLayerView extends BaseView {
 
         if (type == RoundEndType.TimeUp) {
             this.Title.spriteFrame = ResourceController.inst.getTitleSprite(Title.TimeUp)
-        } else {
+        } else if (type == RoundEndType.Complete) {
             this.Title.spriteFrame = ResourceController.inst.getTitleSprite(Title.Complete)
+        } else {
+            this.Title.spriteFrame = ResourceController.inst.getTitleSprite(Title.Over)
         }
 
 
@@ -139,7 +156,12 @@ export default class ResultLayerView extends BaseView {
     showInfo() {
 
         this.Count = 0;
-
+        this.Light.runAction(cc.sequence(
+            cc.scaleTo(0.1, 2),
+            cc.callFunc(() => {
+                this.Light.runAction(cc.repeatForever(cc.rotateBy(0.1, 1)))
+            })
+        ))
         if (this.spine) {
             this.spine.animation = "animation";
 
@@ -147,12 +169,7 @@ export default class ResultLayerView extends BaseView {
                 switch (event.stringValue) {
                     case "light":
 
-                        this.Light.runAction(cc.sequence(
-                            cc.scaleTo(0.1, 3),
-                            cc.callFunc(() => {
-                                this.Light.runAction(cc.repeatForever(cc.rotateBy(0.1, 1)))
-                            })
-                        ))
+
                         break;
 
                 }
@@ -161,6 +178,9 @@ export default class ResultLayerView extends BaseView {
 
         this.TotalScore.STEP = 150;
         this.TimeBonus.STEP = 150;
+        this.Score.STEP = 150;
+        this.Cardbonus.STEP = 150;
+        this.Combo.STEP = 20;
 
         let step = () => {
             ScoreCountingSignal.inst.dispatch();
@@ -168,6 +188,9 @@ export default class ResultLayerView extends BaseView {
 
         this.TimeBonus.onStep = step;
         this.TotalScore.onStep = step;
+        this.Score.onStep = step;
+        this.Cardbonus.onStep = step;
+        this.Combo.onStep = step;
 
 
         this.TimeBonus.onNumberChanged(PlayModelProxy.inst.TimeBonus, () => {
@@ -178,6 +201,21 @@ export default class ResultLayerView extends BaseView {
         this.TotalScore.onNumberChanged(PlayModelProxy.inst.getTotalScore(), () => {
             this.Count++;
             console.log("TotalScore Done")
+        });
+
+        this.Score.onNumberChanged(PlayModelProxy.inst.getScoreByType(ScoreType.Normal), () => {
+            this.Count++;
+            console.log("Score Done")
+        });
+
+        this.Cardbonus.onNumberChanged(PlayModelProxy.inst.getScoreByType(ScoreType.CardBonus), () => {
+            this.Count++;
+            console.log("Cardbonus Done")
+        });
+
+        this.Combo.onNumberChanged(PlayModelProxy.inst.getScoreByType(ScoreType.Combo), () => {
+            this.Count++;
+            console.log("Combo Done")
         });
 
     }

@@ -1,10 +1,11 @@
 import { SingleTon } from "../Utils/ToSingleton";
-import { GamePauseSignal } from "../Command/CommonSignal";
+import { GameOverSignal, GamePauseSignal } from "../Command/CommonSignal";
 import { PlayModelProxy } from "../Model/PlayModelProxy";
 
 
 export enum RoundEndType {
-
+    Complete,
+    Over,
     TimeUp
 }
 
@@ -15,6 +16,10 @@ export class GameStateController extends SingleTon<GameStateController>() {
 
 
     private roundstart: boolean = false;
+
+    public isReady: boolean = false;
+
+    private isOver: boolean = false;
 
     private currentRound: number = 0;
 
@@ -28,10 +33,12 @@ export class GameStateController extends SingleTon<GameStateController>() {
     }
 
     canStart() {
-        return true;
+        return this.isReady;
     }
 
     roundStart() {
+        if (this.isOver) return;
+
         console.log(" round start:", ++this.currentRound);
         this.roundstart = true;
 
@@ -41,9 +48,10 @@ export class GameStateController extends SingleTon<GameStateController>() {
     roundEnd(type: RoundEndType) {
         console.log("round end :", RoundEndType[type]);
         this.roundstart = false;
+        this.isOver = true;
 
 
-
+        GameOverSignal.inst.dispatchOne(type);
 
 
     }
@@ -107,4 +115,8 @@ export class GameStateController extends SingleTon<GameStateController>() {
 
     }
 
+
+    isGameOver() {
+        return this.isOver;
+    }
 }

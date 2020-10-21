@@ -7,12 +7,27 @@ export const Title = {
 }
 
 
+export const PauseFont = {
+    HasFree: "bg_pause_font1",
+    NoneFree: "bg_pause_font2"
+}
+
+export const Font = {
+    TotalScore: "totalScore",
+    ResultScore: "resultScore",
+    TimeWhite: "TimeWhite",
+    TimeRed: "TimeRed",
+    AddScore: "addScore",
+    SubScore: "subScore",
+    ShowScore: "showScore"
+}
+
 
 export class ResourceController extends SingleTon<ResourceController>() {
 
 
 
-
+ private fontMap: HashMap<string, cc.Font> = new HashMap();
 
     private UIAtlas: cc.SpriteAtlas = null;
 
@@ -30,6 +45,42 @@ export class ResourceController extends SingleTon<ResourceController>() {
 
     getAltas(name: string) {
         return this.UIAtlas.getSpriteFrame(name);
+    }
+
+    getAddScoreFont() {
+        console.error(" show return a font.")
+        return null;
+    }
+
+    getSubScoreFont() {
+         console.error(" show return a font.")
+        return null;
+    }
+
+     getSoundDisabled() {
+        console.error(" show return a spriteframe.")
+        return null;
+    }
+
+    getSoundEnable() {
+         console.error(" show return a spriteframe.")
+        return null;
+    }
+
+ getPauseFont(name: string) {
+        return this.UIAtlas.getSpriteFrame(name);
+    }
+
+     getTimeRedFont() {
+
+        return this.fontMap.get(Font.TimeRed);
+
+    }
+
+    getTimeWhiteFont() {
+
+        return this.fontMap.get(Font.TimeWhite);
+
     }
 
 }

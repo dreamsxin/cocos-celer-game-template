@@ -24,6 +24,14 @@ export default class PositionView extends EaseBaseView {
 
     private startPos: cc.Vec2 = cc.Vec2.ZERO;
 
+    get TargetPos() {
+        return cc.v2(this.Target.x, this.Target.y);
+    }
+
+    canUpdate() {
+        return true;
+    }
+
     onLoad() {
 
         if (CC_DEBUG && this.node.name == "TestNode") {

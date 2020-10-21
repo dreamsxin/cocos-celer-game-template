@@ -71,8 +71,9 @@ export default class EaseBaseView extends BaseView {
         this.startTime = this.lastTime = 0;
 
         if (this.completeCallback) {
-            this.completeCallback();
+            let callback = this.completeCallback;
             this.completeCallback = null;
+            callback();
         }
 
     }
@@ -118,9 +119,9 @@ export default class EaseBaseView extends BaseView {
 
     protected canUpdate() {
 
-        CELER_X && console.error("you should override this method.");
+        console.error("you should override this method.");
 
-        return CC_DEBUG;
+        return true;
 
     }
 

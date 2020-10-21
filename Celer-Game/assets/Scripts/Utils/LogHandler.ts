@@ -18,7 +18,7 @@ export class LogHandler extends SingleTon<LogHandler>() {
 
   private logFunc: Function = console.log;
   private logMsg: any = null;
-  private static readonly VERSION = window["GAME_VERSION"] || "DominoCash version 9 : ";
+  private static readonly VERSION = window["GAME_VERSION"] || " --- ";
   private frameTimes = 0;
   private now = 0;
   private Frame = 20;

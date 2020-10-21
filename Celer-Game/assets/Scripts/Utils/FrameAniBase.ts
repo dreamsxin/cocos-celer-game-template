@@ -11,8 +11,6 @@
 const { ccclass, property, executeInEditMode, requireComponent, playOnFocus } = cc._decorator;
 
 @ccclass
-@executeInEditMode
-@playOnFocus
 @requireComponent(cc.Sprite)
 export default class FrameAniBase extends cc.Component {
 

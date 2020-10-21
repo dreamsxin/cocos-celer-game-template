@@ -33,6 +33,14 @@ export class Random {
         return Math.round(this.getRandom(min, max))
     }
 
+    public static randomFloorToInt(min: number = 0, max: number = 1) {
+        return Math.floor(this.getRandom(min, max))
+    }
+
+    public static randomCeilToInt(min: number = 0, max: number = 1) {
+        return Math.ceil(this.getRandom(min, max))
+    }
+
     public static clamp(val: number, min: number, max: number) {
         return Math.max(min, Math.min(val, max));
     }

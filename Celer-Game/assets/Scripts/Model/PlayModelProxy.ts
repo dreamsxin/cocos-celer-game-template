@@ -1,6 +1,6 @@
 import { SingleTon } from "../Utils/ToSingleton";
 import { GameStateController, RoundEndType } from "../Controller/GameStateController";
-import { GamePlayModel } from "../GamePlay/Model/GamePlayModel";
+import { GamePlayModel, ScoreType } from "../GamePlay/Model/GamePlayModel";
 import { UpdateTimeNumber, TimeAnimationStateChanged } from "../Command/CommonSignal";
 import { FreePauseLimit } from "../Global/GameRule";
 
@@ -98,5 +98,13 @@ export class PlayModelProxy extends SingleTon<PlayModelProxy>() {
 
     }
 
+     getScoreByType(type: ScoreType) {
+        return this.Model.getScoreByType(type);
+    }
 
+ dump() {
+        this.Model.dump();
+    }
 }
+
+!CELER_X && (window["Game"] = PlayModelProxy.inst)

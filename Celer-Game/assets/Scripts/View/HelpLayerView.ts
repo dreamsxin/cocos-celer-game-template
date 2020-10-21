@@ -78,8 +78,14 @@ export default class HelpLayerView extends BaseView {
 
     onPageChanged() {
 
-        this.TotalPage.string = this.GuidePage.content.childrenCount.toString();
-        this.Page.string = (this.GuidePage.getCurrentPageIndex() + 1).toString();
+        if (this.TotalPage) {
+            this.TotalPage.string = this.GuidePage.content.childrenCount.toString();
+        }
+
+        if (this.Page) {
+            this.Page.string = (this.GuidePage.getCurrentPageIndex() + 1).toString();
+        }
+
 
         if (this.GuidePage.getCurrentPageIndex() >= this.GuidePage.content.childrenCount - 1) {
             this.Next.active = false;

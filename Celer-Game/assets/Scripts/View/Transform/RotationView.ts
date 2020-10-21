@@ -27,6 +27,11 @@ export default class RotationView extends EaseBaseView {
 
     }
 
+    canUpdate() {
+        return true;
+    }
+
+
     start() {
 
     }

@@ -11,7 +11,7 @@
 
 import HelpLayerView from "./HelpLayerView";
 import BaseMediator from "./BaseMediator";
-import { ShowHelpLayerSignal, HideHelpLayerSignal } from "../Command/CommonSignal";
+import { ShowHelpLayerSignal, HideHelpLayerSignal, ShowTutorialSignal } from "../Command/CommonSignal";
 import { GameStateController } from "../Controller/GameStateController";
 
 const { ccclass, property } = cc._decorator;
@@ -25,9 +25,18 @@ export default class HelpLayerMediator extends BaseMediator<HelpLayerView> {
 
     onRegister() {
 
-        ShowHelpLayerSignal.inst.addListenerOne(this.showGuide, this);
+        ShowHelpLayerSignal.inst.addListenerOne(this.showHelp, this);
+        ShowTutorialSignal.inst.addListenerOne(this.showGuide, this);
         HideHelpLayerSignal.inst.addListenerOne(this.hideGuide, this);
 
+    }
+
+    showHelp(callback: Function) {
+        if (this.View.isShowed()) return;
+
+        GameStateController.inst.pause();
+        this.closeCallback = callback;
+        this.View.Show();
     }
 
     showGuide(callback: Function) {

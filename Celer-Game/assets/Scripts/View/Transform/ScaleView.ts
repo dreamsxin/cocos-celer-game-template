@@ -30,6 +30,10 @@ export default class ScaleView extends EaseBaseView {
 
     }
 
+    canUpdate() {
+        return true;
+    }
+
     start() {
 
     }
