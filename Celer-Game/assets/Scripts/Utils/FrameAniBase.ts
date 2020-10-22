@@ -8,7 +8,7 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-const { ccclass, property, executeInEditMode, requireComponent, playOnFocus } = cc._decorator;
+const { ccclass, property, requireComponent } = cc._decorator;
 
 @ccclass
 @requireComponent(cc.Sprite)
@@ -18,6 +18,11 @@ export default class FrameAniBase extends cc.Component {
 
     @property(cc.SpriteAtlas)
     public Frames: cc.SpriteAtlas = null
+
+    @property
+    public PrefixName: string = "";
+    @property
+    public FrameCount: number = 0;
 
     @property
     public Interval: number = 0.1;
@@ -94,8 +99,17 @@ export default class FrameAniBase extends cc.Component {
     stop() {
         this.isPlay = false;
         this.currentIndex = 0;
-        this.Sprite.spriteFrame = this.Frames.getSpriteFrames()[this.currentIndex];
+        this.updateCurrentFrame();
         this.Loop = false;
+    }
+
+    updateCurrentFrame() {
+        if (this.PrefixName != "") {
+            this.Sprite.spriteFrame = this.Frames.getSpriteFrame(this.PrefixName + this.currentIndex);
+        } else {
+            this.Sprite.spriteFrame = this.Frames.getSpriteFrames()[this.currentIndex];
+        }
+         
     }
 
     onKeyFrame(key: number) {
@@ -155,6 +169,7 @@ export default class FrameAniBase extends cc.Component {
 
 
     get TotalFrameCount() {
+        if (this.PrefixName != "" && this.FrameCount > 0) return this.FrameCount;
         return this.Frames && this.Frames.getSpriteFrames ? this.Frames.getSpriteFrames().length : 0
     }
 
@@ -192,10 +207,10 @@ export default class FrameAniBase extends cc.Component {
         }
         if (this.Frames && this.Frames.getSpriteFrames && this.Frames.getSpriteFrames().length > 0) {
 
-            this.Sprite.spriteFrame = this.Frames.getSpriteFrames()[this.currentIndex];
+            this.updateCurrentFrame();
             this.callEventFrame();
 
-            this.currentIndex = (this.currentIndex + 1) % this.Frames.getSpriteFrames().length;
+            this.currentIndex = (this.currentIndex + 1) % this.TotalFrameCount;
 
             if (this.currentIndex == 0 && this.Loop == false) {
                 this.isPlay = false;
