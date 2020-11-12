@@ -26,7 +26,16 @@ export default class SingleTouchMediator<
     return this.view;
   }
 
-  private touchid: number = null;
+  private _touchid: number = null;
+
+  private get touchid() {
+    return this._touchid;
+  }
+
+  private set touchid(val: number) {
+    this._touchid = val;
+    CC_DEBUG && console.log(this.node.name, " touchid :", this._touchid);
+  }
 
   onRegister() {
     this.node.targetOff(this);

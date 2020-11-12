@@ -16,7 +16,17 @@ const { ccclass, property } = cc._decorator;
 export default class SingleTouchView extends BaseView {
   // LIFE-CYCLE CALLBACKS:
 
-  private touchid: number = null;
+  private _touchid: number = null;
+
+  private get touchid() {
+    return this._touchid;
+  }
+
+  private set touchid(val: number) {
+    this._touchid = val;
+    CC_DEBUG && console.log(this.node.name, " touchid :", this._touchid);
+  }
+
   onLoad() {
     this.node["_onSetParent"] = this._onSetParent.bind(this);
     this.node.on(cc.Node.EventType.TOUCH_CANCEL, this.touchCancel, this);
