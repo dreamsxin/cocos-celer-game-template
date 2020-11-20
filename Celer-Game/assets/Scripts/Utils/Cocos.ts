@@ -1,3 +1,5 @@
+import { Random } from "./Random";
+
 /** 获取世界坐标 */
 export function GetWorldPosition(node: cc.Node) {
   if (!node || !node.getParent || !node.getParent()) return cc.v2(0, 0);
@@ -48,4 +50,17 @@ export function AreaOf2CrossRect(rect1: cc.Rect, rect2: cc.Rect) {
   height = Math.max(0, Math.min(a_max_y, b_max_y) - Math.max(a_min_y, b_min_y));
 
   return width * height;
+}
+/**
+ * 数组乱序
+ */
+export function disOrderArray(array: any[]) {
+  for (let i = 0; i < array.length; ++i) {
+    let index = Random.randomFloorToInt(0, array.length);
+    [array[i], array[index]] = [array[index], array[i]];
+  }
+}
+
+export function Clamp(val: number, max: number, min: number) {
+  return Math.max(Math.min(val, max), min);
 }
