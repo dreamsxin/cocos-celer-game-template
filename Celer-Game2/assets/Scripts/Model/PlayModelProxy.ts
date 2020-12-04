@@ -9,7 +9,6 @@ import {
   TimeAnimationStateChanged,
 } from "../Command/CommonSignal";
 import { FreePauseLimit } from "../Global/GameRule";
-import { BallModel } from "../GamePlay/Model/Ball/BallModel";
 
 export class PlayModelProxy extends SingleTon<PlayModelProxy>() {
   private constructor() {
@@ -19,8 +18,6 @@ export class PlayModelProxy extends SingleTon<PlayModelProxy>() {
 
   private isGameOver: boolean = false;
   private playerModel: GamePlayModel = null;
-
-  public currentSelectedModel: BallModel = null;
 
   public get Model() {
     return this.playerModel
@@ -85,10 +82,6 @@ export class PlayModelProxy extends SingleTon<PlayModelProxy>() {
 
   addPauseCount() {
     this.Model.addPauseCount();
-  }
-
-  isTop(tuneIndex: number, model: BallModel) {
-    return this.Model.isTop(tuneIndex, model);
   }
 
   addGameTime(dt: number) {
