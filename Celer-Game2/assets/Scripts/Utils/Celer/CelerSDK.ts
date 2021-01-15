@@ -127,7 +127,14 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
   submitScore(score: number) {
     if (this.alreadySubmit) return;
     this.alreadySubmit = true;
-    console.log(" submit score:", score, ", match id:", this.match.matchId);
+    console.log(
+      " submit score:",
+      score,
+      ", match id:",
+      this.match.matchId,
+      ", seed:",
+      this.match.sharedRandomSeed
+    );
     if (CELER_X) {
       celerSDK.submitScore(score);
     } else {
