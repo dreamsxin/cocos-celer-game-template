@@ -95,11 +95,15 @@ export default class HelpLayerView extends BaseView {
       this.GuidePage.getCurrentPageIndex() >=
       this.GuidePage.content.childrenCount - 1
     ) {
-      this.Next.active = false;
-      this.Close.active = true;
+      setTimeout(() => {
+        this.Next.active = false;
+        this.Close.active = true;
+      }, 0);
     } else {
-      this.Next.active = true;
-      this.Close.active = false;
+      setTimeout(() => {
+        this.Next.active = true;
+        this.Close.active = false;
+      }, 0);
     }
   }
 
