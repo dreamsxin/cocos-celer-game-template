@@ -6,6 +6,7 @@ import {
 } from "../../../Command/CommonSignal";
 import { ResourceController } from "../../../Controller/ResourceController";
 import { gFactory } from "../../../Factory/GameFactory";
+import { PlayModelProxy } from "../../../Model/PlayModelProxy";
 import { ConvertToNodeSpaceAR, Distance } from "../../../Utils/Cocos";
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -32,7 +33,7 @@ export default class ScoreLabelView extends NumberChangedView {
 
   onScoreChanged(score: number, changed: number, times: number, node: cc.Node) {
     if (this.ScoreFloatRoot == null) {
-      this.onNumberChanged(score);
+      this.onNumberChanged(PlayModelProxy.inst.PlayerScore);
       return;
     }
     let scoreLableNode = gFactory.getObj("AddScore");
@@ -69,7 +70,7 @@ export default class ScoreLabelView extends NumberChangedView {
       )
     );
     setTimeout(() => {
-      this.onNumberChanged(score);
+      this.onNumberChanged(PlayModelProxy.inst.PlayerScore);
     }, 300 + floatTime * 1000);
   }
 }
