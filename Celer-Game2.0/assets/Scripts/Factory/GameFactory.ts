@@ -87,7 +87,6 @@ class ObjPool {
   get(..._) {
     var last = this._pool.length - 1;
     if (last < 0) {
-      console.warn(" last < 0 ");
       this.initPool(1, true);
     }
     last = this._pool.length - 1;
@@ -111,7 +110,7 @@ class GameFactory {
   public static get inst() {
     return this.ins ? this.ins : (this.ins = new GameFactory());
   }
-  private constructor() { }
+  private constructor() {}
 
   private doneCallback: Function;
   private count: number = 0;

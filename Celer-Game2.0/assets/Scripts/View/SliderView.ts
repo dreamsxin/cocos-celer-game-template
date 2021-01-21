@@ -14,55 +14,41 @@ const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class SliderView extends cc.Component {
+  // LIFE-CYCLE CALLBACKS:
 
+  @property(cc.Node)
+  Progress: cc.Node = null;
 
-    // LIFE-CYCLE CALLBACKS:
+  @property(cc.Slider)
+  Slider: cc.Slider = null;
 
+  get Percent() {
+    return this.Slider.progress;
+  }
 
+  set Percent(val: number) {
+    this.Slider.progress = Random.clamp(val, 0, 1);
+    this.Progress.width = this.Slider.node.width * this.Slider.progress;
+  }
 
-    @property(cc.Node)
-    Progress: cc.Node = null;
+  private totalLength = 0;
+  onLoad() {
+    this.Slider.node.on("slide", this.onSlided, this);
+    this.totalLength = this.Progress.width;
+    this.Slider.node.width = this.totalLength;
+  }
 
+  private onSlided() {
+    this.Progress.width = this.totalLength * this.Slider.progress;
 
-
-    @property(cc.Slider)
-    Slider: cc.Slider = null;
-
-    get Percent() {
-        return this.Slider.progress;
+    if (this.onProgress) {
+      this.onProgress(this.Slider.progress);
     }
+  }
 
-    set Percent(val: number) {
+  start() {}
 
-        this.Slider.progress = Random.clamp(val, 0, 1);
-        this.Progress.width = this.node.width * this.Slider.progress;
-    }
+  onProgress(percent: number) {}
 
-    private totalLength = 0;
-    onLoad() {
-        this.Slider.node.on("slide", this.onSlided, this);
-        this.totalLength = this.Progress.width;
-    }
-
-    private onSlided() {
-
-
-        this.Progress.width = this.totalLength * this.Slider.progress;
-
-        if (this.onProgress) {
-            this.onProgress(this.Slider.progress);
-        }
-
-
-    }
-
-    start() {
-
-    }
-
-    onProgress(percent: number) {
-
-    }
-
-    // update (dt) {}
+  // update (dt) {}
 }
