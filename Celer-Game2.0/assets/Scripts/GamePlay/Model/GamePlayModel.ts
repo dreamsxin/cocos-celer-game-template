@@ -176,7 +176,8 @@ export class GamePlayModel {
     score: number,
     type: ScoreType,
     times: number = 1,
-    fromNode: cc.Node = null
+    fromNode: cc.Node = null,
+    delay: number = 0
   ): number {
     if (score == 0) return;
     if (this.playerScoreMap[type] == null) this.playerScoreMap[type] = 0;
@@ -192,12 +193,14 @@ export class GamePlayModel {
 
     this.playerScore = Math.max(this.playerScore, 0);
 
-    PlayerScoreChanged.inst.dispatchFour(
-      this.playerScore,
-      score,
-      times,
-      fromNode
-    );
+    setTimeout(() => {
+      PlayerScoreChanged.inst.dispatchFour(
+        this.playerScore,
+        score,
+        times,
+        fromNode
+      );
+    }, delay);
 
     return this.playerScore - oldScore;
   }
