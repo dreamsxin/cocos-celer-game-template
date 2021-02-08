@@ -28,6 +28,8 @@ export default class TimeLabelView extends BaseView {
   onLoad() {
     UpdateTimeNumber.inst.addListenerOne(this.onTimeChanged, this);
     this.onTimeChanged(TotalTime);
+
+    console.log(this.Label);
   }
 
   onTimeChanged(time: number) {
