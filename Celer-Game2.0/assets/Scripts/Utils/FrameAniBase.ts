@@ -13,223 +13,217 @@ const { ccclass, property, requireComponent } = cc._decorator;
 @ccclass
 @requireComponent(cc.Sprite)
 export default class FrameAniBase extends cc.Component {
+  public static aniName = "FrameAniBase";
 
-    public static aniName = "FrameAniBase";
+  @property(cc.SpriteAtlas)
+  public Frames: cc.SpriteAtlas = null;
 
-    @property(cc.SpriteAtlas)
-    public Frames: cc.SpriteAtlas = null
+  @property
+  public PrefixName: string = "";
+  @property
+  public FrameCount: number = 0;
 
-    @property
-    public PrefixName: string = "";
-    @property
-    public FrameCount: number = 0;
+  @property
+  public Interval: number = 0.1;
 
-    @property
-    public Interval: number = 0.1;
+  @property
+  public Priority: number = 0;
 
-    @property
-    public Priority: number = 0;
+  @property
+  public Loop: boolean = false;
 
-    @property
-    public Loop: boolean = false;
+  @property
+  public PlayOnLoad: boolean = false;
 
-    @property
-    public PlayOnLoad: boolean = false;
+  protected currentIndex: number = 0;
+  private time: number = 0;
 
+  public static intervalID: any = -1;
+  private isPlay: boolean = false;
 
+  get Sprite() {
+    return this.node.getComponent(cc.Sprite);
+  }
 
+  set Animation(val: cc.SpriteAtlas) {
+    this.Frames = val;
+  }
 
+  onFocusInEditor() {
+    // this.time = this.Interval;
+    // FrameAniBase.intervalID = setInterval(this.update.bind(this), 0.016, 0.016);
+  }
 
-    protected currentIndex: number = 0;
-    private time: number = 0;
+  onLostFocusInEditor() {
+    clearInterval(FrameAniBase.intervalID);
+  }
 
-    public static intervalID: any = -1;
-    private isPlay: boolean = false;
+  onLoad() {
+    this.time = this.Interval;
+    this.isPlay = this.PlayOnLoad;
+  }
 
-    get Sprite() {
-        return this.node.getComponent(cc.Sprite)
+  play() {
+    this.isPlay = true;
+    this.currentIndex = 0;
+    if (this.isPlaying == false) {
+      this.callEventComplete();
     }
+  }
 
-    set Animation(val: cc.SpriteAtlas) {
-        this.Frames = val;
+  playOnLoop() {
+    this.Loop = true;
+    this.play();
+  }
+
+  playByStep() {
+    this.isPlay = true;
+    this.nextFrame();
+    this.isPlay = false;
+  }
+
+  pause() {
+    this.isPlay = false;
+  }
+
+  resume() {
+    this.isPlay = true;
+  }
+
+  stop() {
+    this.isPlay = false;
+    this.currentIndex = 0;
+    this.updateCurrentFrame();
+    this.Loop = false;
+  }
+
+  updateCurrentFrame() {
+    if (this.PrefixName != "") {
+      this.Sprite.spriteFrame = this.Frames.getSpriteFrame(
+        this.PrefixName + (this.currentIndex + 1)
+      );
+    } else {
+      this.Sprite.spriteFrame = this.Frames.getSpriteFrames()[
+        this.currentIndex
+      ];
     }
+  }
 
-    onFocusInEditor() {
+  onKeyFrame(key: number) {}
 
-        // this.time = this.Interval;
-        // FrameAniBase.intervalID = setInterval(this.update.bind(this), 0.016, 0.016);
+  private listener: {
+    callback: (key: number, name?: string) => void;
+    target: any;
+  }[] = [];
+  addKeyEventListener(f: (key: number, name?: string) => void, target: any) {
+    this.listener.push({
+      callback: f,
+      target: target,
+    });
+  }
+
+  get ListenerCount() {
+    return this.listener.length;
+  }
+
+  clearAllListener() {
+    this.listener.length = 0;
+    return this;
+  }
+
+  onComplete() {}
+
+  callEventFrame() {
+    this.onKeyFrame(this.currentIndex);
+    for (let callback of this.listener) {
+      callback.callback.apply(callback.target, [
+        this.currentIndex,
+        this["__classname__"],
+      ]);
     }
+  }
 
-    onLostFocusInEditor() {
-        clearInterval(FrameAniBase.intervalID)
+  callEventComplete() {
+    this.onComplete();
+    for (let complete of this.complateEvent) {
+      complete.f.apply(complete.target, [this["__classname__"]]);
     }
+  }
 
-    onLoad() {
-        this.time = this.Interval;
-        this.isPlay = this.PlayOnLoad;
-    }
+  private complateEvent: {
+    f: (name: string) => void;
+    target: any;
+  }[] = [];
+  addCompleteEvent(f: (name: string) => void, target: any) {
+    this.complateEvent.push({
+      f: f,
+      target: target,
+    });
+  }
 
-    play() {
-        this.isPlay = true;
-        this.currentIndex = 0;
-        if (this.isPlaying == false) {
-            this.callEventComplete();
+  get TotalFrameCount() {
+    if (this.PrefixName != "" && this.FrameCount > 0) return this.FrameCount;
+    return this.Frames && this.Frames.getSpriteFrames
+      ? this.Frames.getSpriteFrames().length
+      : 0;
+  }
+
+  get CompleteEventCount() {
+    return this.complateEvent.length;
+  }
+
+  clearCompleteEvent() {
+    this.complateEvent.length = 0;
+    return this;
+  }
+
+  start() {}
+
+  get isPlaying() {
+    if (
+      this.isPlay &&
+      this.Frames &&
+      this.Frames.getSpriteFrames &&
+      this.Frames.getSpriteFrames().length > 0
+    ) {
+      let Components = this.getComponents(FrameAniBase);
+      for (let comp of Components) {
+        if (comp.Priority > this.Priority && comp.isPlaying) {
+          return false;
         }
+      }
+      return true;
     }
+    return false;
+  }
 
-    playOnLoop() {
-        this.Loop = true;
-        this.play();
+  nextFrame() {
+    if (this.isPlaying == false) {
+      this.time = this.Interval;
+      return;
     }
+    if (
+      this.Frames &&
+      this.Frames.getSpriteFrames &&
+      this.Frames.getSpriteFrames().length > 0
+    ) {
+      this.updateCurrentFrame();
+      this.callEventFrame();
 
-    playByStep() {
-        this.isPlay = true;
-        this.nextFrame();
+      this.currentIndex = (this.currentIndex + 1) % this.TotalFrameCount;
+
+      if (this.currentIndex == 0 && this.Loop == false) {
         this.isPlay = false;
+        this.callEventComplete();
+      }
     }
+  }
 
-    pause() {
-        this.isPlay = false;
+  update(dt: number) {
+    if (this.time >= this.Interval) {
+      this.time = 0;
+      this.nextFrame();
     }
-
-    resume() {
-        this.isPlay = true;
-    }
-
-    stop() {
-        this.isPlay = false;
-        this.currentIndex = 0;
-        this.updateCurrentFrame();
-        this.Loop = false;
-    }
-
-    updateCurrentFrame() {
-        if (this.PrefixName != "") {
-            this.Sprite.spriteFrame = this.Frames.getSpriteFrame(this.PrefixName + this.currentIndex);
-        } else {
-            this.Sprite.spriteFrame = this.Frames.getSpriteFrames()[this.currentIndex];
-        }
-         
-    }
-
-    onKeyFrame(key: number) {
-
-    }
-
-
-
-    private listener: {
-        callback: (key: number, name?: string) => void,
-        target: any
-    }[] = []
-    addKeyEventListener(f: (key: number, name?: string) => void, target: any) {
-        this.listener.push({
-            callback: f,
-            target: target
-        });
-    }
-
-    get ListenerCount() {
-        return this.listener.length;
-    }
-
-    clearAllListener() {
-        this.listener.length = 0;
-        return this;
-    }
-
-    onComplete() {
-
-    }
-
-    callEventFrame() {
-        this.onKeyFrame(this.currentIndex);
-        for (let callback of this.listener) {
-            callback.callback.apply(callback.target, [this.currentIndex, this["__classname__"]]);
-        }
-    }
-
-    callEventComplete() {
-        this.onComplete();
-        for (let complete of this.complateEvent) {
-            complete.f.apply(complete.target, [this["__classname__"]]);
-        }
-    }
-
-    private complateEvent: {
-        f: (name: string) => void,
-        target: any
-    }[] = []
-    addCompleteEvent(f: (name: string) => void, target: any) {
-        this.complateEvent.push({
-            f: f,
-            target: target
-        })
-    }
-
-
-    get TotalFrameCount() {
-        if (this.PrefixName != "" && this.FrameCount > 0) return this.FrameCount;
-        return this.Frames && this.Frames.getSpriteFrames ? this.Frames.getSpriteFrames().length : 0
-    }
-
-    get CompleteEventCount() {
-        return this.complateEvent.length;
-    }
-
-    clearCompleteEvent() {
-        this.complateEvent.length = 0;
-        return this;
-    }
-
-    start() {
-
-    }
-
-    get isPlaying() {
-        if (this.isPlay && this.Frames && this.Frames.getSpriteFrames && this.Frames.getSpriteFrames().length > 0) {
-            let Components = this.getComponents(FrameAniBase);
-            for (let comp of Components) {
-                if (comp.Priority > this.Priority && comp.isPlaying) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false
-    }
-
-
-    nextFrame() {
-        if (this.isPlaying == false) {
-            this.time = this.Interval;
-            return;
-        }
-        if (this.Frames && this.Frames.getSpriteFrames && this.Frames.getSpriteFrames().length > 0) {
-
-            this.updateCurrentFrame();
-            this.callEventFrame();
-
-            this.currentIndex = (this.currentIndex + 1) % this.TotalFrameCount;
-
-            if (this.currentIndex == 0 && this.Loop == false) {
-                this.isPlay = false;
-                this.callEventComplete();
-            }
-        }
-
-
-
-    }
-
-    update(dt: number) {
-        if (this.time >= this.Interval) {
-            this.time = 0;
-            this.nextFrame();
-        }
-        this.time += dt;
-    }
+    this.time += dt;
+  }
 }
-
-
-
