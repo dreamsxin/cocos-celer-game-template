@@ -1,6 +1,7 @@
 import { GameOverSignal, GamePauseSignal } from "../../../Command/CommonSignal";
 import { GameStateController } from "../../../Controller/GameStateController";
 import { PlayModelProxy } from "../../../Model/PlayModelProxy";
+import BaseMediator from "../../../View/BaseMediator";
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -17,7 +18,7 @@ import PokerToucher from "./PokerToucher";
 const { ccclass, property } = cc._decorator;
 
 @ccclass
-export default class PokerToucherMediator extends SingleTouchMediator<PokerToucher> {
+export default class PokerToucherMediator extends BaseMediator<PokerToucher> {
   private hasMoved: boolean = false;
   private movedDetal: cc.Vec2 = cc.v2(0, 0);
 
@@ -34,6 +35,11 @@ export default class PokerToucherMediator extends SingleTouchMediator<PokerTouch
         PlayModelProxy.inst.onCancel(this.View.Model.ID);
       }
     }, this);
+
+    this.node.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
+    this.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
+    this.node.on(cc.Node.EventType.TOUCH_CANCEL, this.onTouchCancel, this);
+    this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
   }
 
   onTouchCancel(event: cc.Event.EventTouch) {
@@ -45,12 +51,14 @@ export default class PokerToucherMediator extends SingleTouchMediator<PokerTouch
 
     this.hasMoved = false;
 
-    this.movedDetal.addSelf(event.getDelta());
-    this.hasMoved = true;
+    this.movedDetal.addSelf(
+      cc.v2(Math.abs(event.getDelta().x), Math.abs(event.getDelta().y))
+    );
+
     if (this.isMoved() == false) {
       return;
     }
-
+    this.hasMoved = true;
     PlayModelProxy.inst.onMoved(this.View.Model.ID, event.getDelta());
   }
 
@@ -59,15 +67,16 @@ export default class PokerToucherMediator extends SingleTouchMediator<PokerTouch
   onTouchEnd(event: cc.Event.EventTouch) {
     if (this.hasMoved) {
       PlayModelProxy.inst.onMovedEnd(this.View.Model.ID);
+    } else {
+      this.OnClick();
     }
+    this.hasMoved = false;
+    this.movedDetal.x = 0;
+    this.movedDetal.y = 0;
   }
 
   OnClick() {
     if (GameStateController.inst.isRoundStart() == false) return;
-
-    this.hasMoved = false;
-    this.movedDetal.x = 0;
-    this.movedDetal.y = 0;
   }
 
   isMoved() {
