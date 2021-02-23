@@ -35,7 +35,10 @@ export class GameStateController extends SingleTon<GameStateController>() {
     console.log(" round start:", ++this.currentRound);
     this.roundstart = true;
   }
-
+  setRoundStart(isStart: boolean) {
+    this.roundstart = isStart;
+    this.isOver = false;
+  }
   roundEnd(type: RoundEndType) {
     console.log("round end :", RoundEndType[type]);
     this.roundstart = false;
@@ -62,6 +65,7 @@ export class GameStateController extends SingleTon<GameStateController>() {
     }
 
     this.pauseCount++;
+    console.log(" pause pause ref count:", this.pauseCount);
   }
 
   testEndComplete() {
@@ -78,6 +82,7 @@ export class GameStateController extends SingleTon<GameStateController>() {
 
   resume() {
     this.pauseCount--;
+    console.log(" resume pause ref count:", this.pauseCount);
     console.assert(this.pauseCount >= 0, " pause count smaller than 0!!!");
     this.pauseCount = Math.max(this.pauseCount, 0);
     if (this.pauseCount <= 0) {

@@ -57,14 +57,3 @@ outlineThickness=0
 chars=48-57,77
 
 # imported icon images
-icon="../Code/PunchTheMoon/PunchThMoonUI/assets/Game/fonts/score/font_bigyellow0.png",48,0,0,0
-icon="../Code/PunchTheMoon/PunchThMoonUI/assets/Game/fonts/score/font_bigyellow1.png",49,0,0,0
-icon="../Code/PunchTheMoon/PunchThMoonUI/assets/Game/fonts/score/font_bigyellow2.png",50,0,0,0
-icon="../Code/PunchTheMoon/PunchThMoonUI/assets/Game/fonts/score/font_bigyellow3.png",51,0,0,0
-icon="../Code/PunchTheMoon/PunchThMoonUI/assets/Game/fonts/score/font_bigyellow4.png",52,0,0,0
-icon="../Code/PunchTheMoon/PunchThMoonUI/assets/Game/fonts/score/font_bigyellow5.png",53,0,0,0
-icon="../Code/PunchTheMoon/PunchThMoonUI/assets/Game/fonts/score/font_bigyellow6.png",54,0,0,0
-icon="../Code/PunchTheMoon/PunchThMoonUI/assets/Game/fonts/score/font_bigyellow7.png",55,0,0,0
-icon="../Code/PunchTheMoon/PunchThMoonUI/assets/Game/fonts/score/font_bigyellow8.png",56,0,0,0
-icon="../Code/PunchTheMoon/PunchThMoonUI/assets/Game/fonts/score/font_bigyellow9.png",57,0,0,0
-icon="../Code/PunchTheMoon/PunchThMoonUI/assets/Game/fonts/score/font_bigyellowM.png",77,0,0,0

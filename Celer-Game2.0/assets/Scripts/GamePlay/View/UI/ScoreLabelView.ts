@@ -19,6 +19,7 @@ import { ConvertToNodeSpaceAR, Distance } from "../../../Utils/Cocos";
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import NumberChangedView from "../../../View/NumberChangedView";
+import { PLayerScoreInitSignal } from "../../Model/GamePlayModel";
 
 const { ccclass, property } = cc._decorator;
 
@@ -29,6 +30,9 @@ export default class ScoreLabelView extends NumberChangedView {
 
   onLoad() {
     PlayerScoreChanged.inst.addListenerFour(this.onScoreChanged, this);
+    PLayerScoreInitSignal.inst.addListenerOne((score: number) => {
+      this.setNumber(score);
+    }, this);
   }
 
   onScoreChanged(score: number, changed: number, times: number, node: cc.Node) {
@@ -57,11 +61,11 @@ export default class ScoreLabelView extends NumberChangedView {
     let targetPos = ConvertToNodeSpaceAR(this.node, this.ScoreFloatRoot);
 
     scoreLableNode.setPosition(startPos);
-    let floatTime = Distance(startPos, targetPos) / 2000;
+    let floatTime = Distance(startPos, targetPos) / 2500;
     scoreLableNode.runAction(
       cc.sequence(
         cc.scaleTo(0, 0),
-        cc.scaleTo(0.2, 1.2),
+        cc.scaleTo(0.1, 1.2),
         cc.scaleTo(0.1, 1),
         cc.moveTo(floatTime, targetPos),
         cc.callFunc(() => {
@@ -69,8 +73,9 @@ export default class ScoreLabelView extends NumberChangedView {
         })
       )
     );
+
     setTimeout(() => {
       this.onNumberChanged(PlayModelProxy.inst.PlayerScore);
-    }, 300 + floatTime * 1000);
+    }, 200 + floatTime * 1000);
   }
 }

@@ -1,4 +1,5 @@
 import { PlayModelProxy } from "../../../Model/PlayModelProxy";
+import { BaseSignal } from "../../../Utils/Signal";
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -10,10 +11,11 @@ import { PlayModelProxy } from "../../../Model/PlayModelProxy";
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import { PokerModel } from "../../Model/Poker/PokerModel";
-import { PokerParent } from "../../Model/Poker/PokerParentModel";
+import PokerRotationView, { PokerPosFlySignal } from "./PokerRotationView";
 
 const { ccclass, property } = cc._decorator;
 
+export class CheckIsHideSignal extends BaseSignal {}
 @ccclass
 export default class PokerFrontView extends cc.Component {
   get Front() {
@@ -25,7 +27,24 @@ export default class PokerFrontView extends cc.Component {
     return this.model;
   }
 
-  onLoad() {}
+  onLoad() {
+    PokerPosFlySignal.inst.addListener(() => {
+      if (this.Front.active == false) {
+        setTimeout(() => {
+          this.Front.active = true;
+        }, this.getComponent(PokerRotationView).randomFlyDelay / 2);
+      }
+    }, this);
+
+    CheckIsHideSignal.inst.addListenerTwo((ID: string, show: boolean) => {
+      if (this.model && this.model.ID == ID) {
+        this.Front.active =
+          show || PlayModelProxy.inst.checkIsShowFront(this.model);
+      } else if (this.model) {
+        this.Front.active = PlayModelProxy.inst.checkIsShowFront(this.model);
+      }
+    }, this);
+  }
 
   onParentChanged(id: string) {
     if (this.model.ID != id) return;
@@ -37,5 +56,6 @@ export default class PokerFrontView extends cc.Component {
 
   unuse() {
     this.model = null;
+    this.node.zIndex = 0;
   }
 }

@@ -180,7 +180,7 @@
       "array": [
         0,
         0,
-        850.3644001434927,
+        839.2266461787664,
         0,
         0,
         0,
@@ -9480,6 +9480,8 @@
     "Result": {
       "__uuid__": "fc8d4cd6-5c2e-41b0-93f6-78cb7ba82eeb"
     },
+    "Draw": null,
+    "Revert": null,
     "_id": "2d6+urnSlEMbIaUOKxu5tE"
   }
 ]

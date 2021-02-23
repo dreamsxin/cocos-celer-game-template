@@ -8,29 +8,37 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import { GameOverSignal } from "../../../Command/CommonSignal";
-import { RoundEndType } from "../../../Controller/GameStateController";
+import { BaseSignal } from "../../../Utils/Signal";
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
+export class ShowBlackBlockSignal extends BaseSignal {}
+
+export class HideBlackBlockSignal extends BaseSignal {}
 @ccclass
 export default class BlackView extends cc.Component {
+  private refCount: number = 0;
+  onLoad() {
+    this.node.active = false;
+    ShowBlackBlockSignal.inst.addListener(() => {
+      this.RefCount++;
+    }, this);
 
-    onLoad() {
-         
-        GameOverSignal.inst.addListenerOne((type: RoundEndType) => {
-        
-            if (type == RoundEndType.Complete) return;
+    HideBlackBlockSignal.inst.addListener(() => {
+      this.RefCount--;
+    }, this);
+  }
 
-            this.node.active = true;
-        }, this);
+  start() {}
 
-        this.node.active = false;
-     }
+  set RefCount(val: number) {
+    this.refCount = val;
+    this.node.active = this.refCount > 0;
+  }
 
-    start () {
+  get RefCount() {
+    return this.refCount;
+  }
 
-    }
-
-    // update (dt) {}
+  // update (dt) {}
 }

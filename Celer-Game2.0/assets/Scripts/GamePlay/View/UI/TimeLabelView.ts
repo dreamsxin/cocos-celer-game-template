@@ -1,9 +1,11 @@
 import {
   CountDownSignal,
+  GameStartSignal,
+  ShowTutorialSignal,
   UpdateTimeNumber,
 } from "../../../Command/CommonSignal";
 import { ResourceController } from "../../../Controller/ResourceController";
-import { TotalTime } from "../../../Global/GameRule";
+import { BaseSignal } from "../../../Utils/Signal";
 import { Time } from "../../../Utils/Time";
 import BaseView from "../../../View/BaseView";
 // Learn TypeScript:
@@ -18,6 +20,7 @@ import BaseView from "../../../View/BaseView";
 
 const { ccclass, property } = cc._decorator;
 
+export class TimeInitSignal extends BaseSignal {}
 @ccclass
 export default class TimeLabelView extends BaseView {
   get Label() {
@@ -27,9 +30,18 @@ export default class TimeLabelView extends BaseView {
   private sec = 0;
   onLoad() {
     UpdateTimeNumber.inst.addListenerOne(this.onTimeChanged, this);
-    this.onTimeChanged(TotalTime);
 
-    console.log(this.Label);
+    TimeInitSignal.inst.addListenerOne((time: number) => {
+      this.onTimeChanged(time);
+    }, this);
+
+    ShowTutorialSignal.inst.addListener(() => {
+      this.node.active = false;
+    }, this);
+
+    GameStartSignal.inst.addListener(() => {
+      this.node.active = true;
+    }, this);
   }
 
   onTimeChanged(time: number) {
@@ -62,6 +74,4 @@ export default class TimeLabelView extends BaseView {
   }
 
   start() {}
-
-  // update (dt) {}
 }

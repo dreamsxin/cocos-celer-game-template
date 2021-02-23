@@ -20,16 +20,19 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class PokerStateMediator extends BaseMediator<PokerStateView> {
   onRegister() {
-    PokerStateChangedSignal.inst.addListenerTwo(this.onPokerStateChanged, this);
+    PokerStateChangedSignal.inst.addListenerThree(
+      this.onPokerStateChanged,
+      this
+    );
   }
 
-  onPokerStateChanged(ID: string, state: PokerState) {
+  onPokerStateChanged(ID: string, state: PokerState, delay: number = 0) {
     if (!this.View.Model || this.View.Model.ID != ID) return;
 
     if (state == PokerState.Back) {
-      this.View.turnBack(0.1, () => {}, 0);
+      this.View.turnBack(0.05, () => {}, 0);
     } else {
-      this.View.turnFront(0.1, () => {}, 0);
+      this.View.turnFront(0.05, () => {}, delay / 1000);
     }
   }
 }

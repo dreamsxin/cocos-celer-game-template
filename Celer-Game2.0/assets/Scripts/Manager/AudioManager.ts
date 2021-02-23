@@ -12,6 +12,8 @@ import {
 } from "../Command/CommonSignal";
 import { RoundEndType } from "../Controller/GameStateController";
 import { SingleTon } from "../Utils/ToSingleton";
+import { BaseSignal } from "../Utils/Signal";
+import { ShakePokerSignal } from "../GamePlay/View/Poker/PokerPosMediator";
 
 interface AudioItem {
   loop: boolean;
@@ -27,6 +29,18 @@ if (window.oncanplay) {
     AudioController.canPlay = true;
   };
 }
+
+export class PlayDispatchPokerSignal extends BaseSignal {}
+
+export class PlayToDeskSignal extends BaseSignal {}
+
+export class PlayPokerPlaceSignal extends BaseSignal {}
+
+export class PlayPokerFlySignal extends BaseSignal {}
+
+export class PlayRecycleDrawSignal extends BaseSignal {}
+
+export class PlayShakeSignal extends BaseSignal {}
 
 const PATH = "sounds/";
 
@@ -117,6 +131,13 @@ class AudioController extends SingleTon<AudioController>() {
     this.setEffectVolume(1);
     this.setMusicVolume(1);
 
+    ShakePokerSignal.inst.addListener(() => {
+      this.playEffect("shake");
+    }, this);
+
+    PlayRecycleDrawSignal.inst.addListener(() => {
+      this.playEffect("recyclePoker");
+    }, this);
     // bgm
     UpdateTimeNumber.inst.addListenerOne((time: number) => {
       //   if (time >= 30) {
@@ -138,6 +159,20 @@ class AudioController extends SingleTon<AudioController>() {
       //   }
     }, this);
 
+    PlayPokerFlySignal.inst.addListener(() => {
+      this.playEffect("pokerFly");
+    }, this);
+    PlayPokerPlaceSignal.inst.addListener(() => {
+      if (this.audioID["pokerPlace"]) return;
+      this.audioID["pokerPlace"] = true;
+      this.playEffect("pokerPlace", false, () => {
+        this.audioID["pokerPlace"] = null;
+      });
+    }, this);
+    PlayToDeskSignal.inst.addListener(() => {
+      this.playEffect("lay_success");
+    }, this);
+
     /** 结算分数跳动 */
     ScoreCountingSignal.inst.addListener(() => {
       if (this.audioID["scoreCount"]) return;
@@ -145,6 +180,15 @@ class AudioController extends SingleTon<AudioController>() {
       this.playEffect("scoreCount", false, () => {
         this.audioID["scoreCount"] = null;
       });
+    }, this);
+
+    PlayDispatchPokerSignal.inst.addListener(() => {
+      if (this.audioID["devPoker"]) return;
+      this.audioID["devPoker"] = true;
+      this.playEffect("devPoker", false, () => {});
+      setTimeout(() => {
+        this.audioID["devPoker"] = null;
+      }, 10);
     }, this);
 
     /** 显示结算按钮 */
@@ -195,7 +239,7 @@ class AudioController extends SingleTon<AudioController>() {
           this.playEffect("timeup");
           break;
         case RoundEndType.Over:
-          this.playEffect("over");
+          this.playEffect("timeup");
           break;
 
         default:

@@ -34,9 +34,17 @@ export default class App extends cc.Component {
   @property(cc.Font)
   Result: cc.Font = null;
 
+  @property(cc.Node)
+  Draw: cc.Node = null;
+  @property(cc.Node)
+  Revert: cc.Node = null;
+
   public static TuneMatchMap: HashMap<number, cc.Node> = new HashMap();
   public static TuneRootMap: HashMap<number, cc.Node> = new HashMap();
+
+  public static AppInstance: App;
   onLoad() {
+    App.AppInstance = this;
     console.log(" app onload ");
     this.UI && ResourceController.inst.setAtlas(this.UI);
     this.Animation && ResourceController.inst.setAnimationAtlas(this.Animation);

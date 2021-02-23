@@ -9,6 +9,7 @@ import {
   TimeAnimationStateChanged,
 } from "../Command/CommonSignal";
 import { FreePauseLimit } from "../Global/GameRule";
+import { PokerModel } from "../GamePlay/Model/Poker/PokerModel";
 
 export class PlayModelProxy extends SingleTon<PlayModelProxy>() {
   private constructor() {
@@ -16,8 +17,9 @@ export class PlayModelProxy extends SingleTon<PlayModelProxy>() {
     this.bindSignal();
   }
 
-  private isGameOver: boolean = false;
   private playerModel: GamePlayModel = null;
+
+  public isOnTutorial: boolean = false;
 
   public get Model() {
     return this.playerModel
@@ -87,12 +89,11 @@ export class PlayModelProxy extends SingleTon<PlayModelProxy>() {
   addGameTime(dt: number) {
     if (
       GameStateController.inst.isPause() ||
-      GameStateController.inst.isRoundStart() == false
+      GameStateController.inst.isRoundStart() == false ||
+      this.isOnTutorial
     ) {
       return;
     }
-
-    if (this.isGameOver) return;
 
     this.Model.Time += dt;
 
@@ -109,19 +110,43 @@ export class PlayModelProxy extends SingleTon<PlayModelProxy>() {
     return this.Model.getScoreByType(type);
   }
 
+  checkIsShowFront(pokerModel: PokerModel): boolean {
+    return this.Model.checkIsShowFront(pokerModel);
+  }
+
+  addPlayerScore(
+    score: number,
+    type: ScoreType,
+    times: number,
+    fromNode: cc.Node
+  ) {
+    this.Model.addPlayerScore(score, type, times, fromNode);
+  }
+
   dump() {
     this.Model.dump();
   }
 
   init() {
+    GameStateController.inst.setRoundStart(false);
     this.Model.initGameData();
   }
 
-  onCancel(ID: string) {}
+  initTutorial() {
+    this.Model.initGameTutorial();
+  }
 
-  onMoved(ID: string, detal: cc.Vec2) {}
+  onCancel(ID: string) {
+    this.Model.Logic.onCancel(ID);
+  }
 
-  onMovedEnd(ID: string) {}
+  onMoved(ID: string, detal: cc.Vec2) {
+    this.Model.Logic.onMoved(ID, detal);
+  }
+
+  onMovedEnd(ID: string) {
+    this.Model.Logic.onMovedEnd(ID);
+  }
 }
 
 !CELER_X && (window["Game"] = PlayModelProxy.inst);
