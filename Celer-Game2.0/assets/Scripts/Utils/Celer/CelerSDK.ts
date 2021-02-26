@@ -134,4 +134,16 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
       window.location.reload();
     }
   }
+
+  public get isAndroidWeb() {
+    return (
+      cc.sys.isMobile && cc.sys.isBrowser && cc.sys.os == cc.sys.OS_ANDROID
+    );
+  }
+
+  public get isIOSWeb() {
+    return cc.sys.isMobile && cc.sys.isBrowser && cc.sys.os == cc.sys.OS_IOS;
+  }
 }
+
+CC_DEBUG && (window["SDK"] = CelerSDK.inst);
