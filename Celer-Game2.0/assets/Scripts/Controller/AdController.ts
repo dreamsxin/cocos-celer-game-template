@@ -50,8 +50,10 @@ export class AdController extends SingleTon<AdController>() {
         videoPlayer.remoteURL = "https://vicat.wang/GameRes/catcatcat.mp4";
 
         videoPlayer.isFullscreen = true;
-
+        rootNode.width = 1464;
+        rootNode.height = 2400;
         rootNode.addChild(adNode);
+
         adNode.setPosition(0, 0);
 
         console.log(
@@ -100,8 +102,10 @@ export class AdController extends SingleTon<AdController>() {
             adNode["pauseCount"]++;
             if (adNode["pauseCount"] >= 3) {
               videoPlayer.isFullscreen = false;
-              adNode.removeFromParent(true);
-              this.onAddFaild(uniqueKey);
+              setTimeout(() => {
+                adNode.removeFromParent(true);
+                this.onAddFaild(uniqueKey);
+              }, 0);
             }
           },
           this
@@ -119,8 +123,10 @@ export class AdController extends SingleTon<AdController>() {
           "completed",
           () => {
             console.log("completed");
-            adNode.removeFromParent(true);
-            this.onAdFinish(uniqueKey);
+            setTimeout(() => {
+              adNode.removeFromParent(true);
+              this.onAdFinish(uniqueKey);
+            }, 0);
           },
           this
         );
