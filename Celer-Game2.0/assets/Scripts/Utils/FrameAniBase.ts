@@ -24,7 +24,7 @@ export default class FrameAniBase extends cc.Component {
   public FrameCount: number = 0;
 
   @property
-  public Interval: number = 0.1;
+  public Interval: number = 0.05;
 
   @property
   public Priority: number = 0;
