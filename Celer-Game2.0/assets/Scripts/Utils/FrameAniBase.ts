@@ -64,7 +64,6 @@ export default class FrameAniBase extends cc.Component {
   }
 
   play() {
-    this.onStartPlay();
     this.isPlay = true;
     this.currentIndex = 0;
     if (this.isPlaying == false) {
@@ -210,6 +209,9 @@ export default class FrameAniBase extends cc.Component {
       this.Frames.getSpriteFrames &&
       this.Frames.getSpriteFrames().length > 0
     ) {
+      if (this.currentIndex == 0) {
+        this.onStartPlay();
+      }
       this.updateCurrentFrame();
       this.callEventFrame();
 
