@@ -1,4 +1,4 @@
-import { SingleTon } from "../Utils/ToSingleton";
+import { SingleTon } from "../utils/ToSingleton";
 
 export class AdController extends SingleTon<AdController>() {
   private hasBind = false;
@@ -7,6 +7,8 @@ export class AdController extends SingleTon<AdController>() {
 
   private adCount: number = 0;
   private msgMap = {};
+  private musicVolume: number = 0;
+  private effectVolume: number = 0;
 
   showAd(
     adUnitId: string,
@@ -32,6 +34,10 @@ export class AdController extends SingleTon<AdController>() {
 
     this.failedCallback[uniqueKey].push(failed);
 
+    this.musicVolume = cc.audioEngine.getMusicVolume();
+    this.effectVolume = cc.audioEngine.getEffectsVolume();
+    // cc.audioEngine.setEffectsVolume(0);
+    // cc.audioEngine.setMusicVolume(0);
     if (CELER_X) {
       celerSDK.showAd(uniqueKey);
     } else {
@@ -49,23 +55,18 @@ export class AdController extends SingleTon<AdController>() {
         let videoPlayer = adNode.addComponent(cc.VideoPlayer);
         videoPlayer.remoteURL = "https://vicat.wang/GameRes/catcatcat.mp4";
 
-        videoPlayer.isFullscreen = true;
         rootNode.width = 1464;
         rootNode.height = 2400;
         rootNode.addChild(adNode);
 
         adNode.setPosition(0, 0);
 
-        console.log(
-          cc.view.getFrameSize(),
-          cc.game.canvas.width,
-          cc.game.canvas.height
-        );
-
         videoPlayer.node.on(
           "ready-to-play",
           () => {
             console.log("ready-to-play");
+            adNode.width = 1080;
+            adNode.height = 1920;
             videoPlayer.play();
           },
           this
@@ -83,6 +84,21 @@ export class AdController extends SingleTon<AdController>() {
           "clicked",
           () => {
             console.log("clicked");
+
+            adNode["pauseCount"]++;
+            if (adNode["pauseCount"] >= 5) {
+              let cocosVideos = document.getElementsByClassName("cocosVideo");
+              for (let i = 0; i < cocosVideos.length; i++) {
+                let element = cocosVideos.item(i);
+                if (element) {
+                  element.remove();
+                }
+              }
+              setTimeout(() => {
+                adNode.removeFromParent(true);
+                this.onAddFaild(uniqueKey);
+              }, 0);
+            }
           },
           this
         );
@@ -99,14 +115,6 @@ export class AdController extends SingleTon<AdController>() {
           "paused",
           () => {
             console.log("paused");
-            adNode["pauseCount"]++;
-            if (adNode["pauseCount"] >= 3) {
-              videoPlayer.isFullscreen = false;
-              setTimeout(() => {
-                adNode.removeFromParent(true);
-                this.onAddFaild(uniqueKey);
-              }, 0);
-            }
           },
           this
         );
@@ -123,6 +131,14 @@ export class AdController extends SingleTon<AdController>() {
           "completed",
           () => {
             console.log("completed");
+            videoPlayer.stop();
+            let cocosVideos = document.getElementsByClassName("cocosVideo");
+            for (let i = 0; i < cocosVideos.length; i++) {
+              let element = cocosVideos.item(i);
+              if (element) {
+                element.remove();
+              }
+            }
             setTimeout(() => {
               adNode.removeFromParent(true);
               this.onAdFinish(uniqueKey);
