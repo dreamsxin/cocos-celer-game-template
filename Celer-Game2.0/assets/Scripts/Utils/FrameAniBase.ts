@@ -64,12 +64,15 @@ export default class FrameAniBase extends cc.Component {
   }
 
   play() {
+    this.onStartPlay();
     this.isPlay = true;
     this.currentIndex = 0;
     if (this.isPlaying == false) {
       this.callEventComplete();
     }
   }
+
+  onStartPlay() {}
 
   playOnLoop() {
     this.Loop = true;

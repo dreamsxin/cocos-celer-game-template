@@ -115,6 +115,20 @@ export class AdController extends SingleTon<AdController>() {
           "paused",
           () => {
             console.log("paused");
+            adNode["pauseCount"]++;
+            if (adNode["pauseCount"] >= 5) {
+              let cocosVideos = document.getElementsByClassName("cocosVideo");
+              for (let i = 0; i < cocosVideos.length; i++) {
+                let element = cocosVideos.item(i);
+                if (element) {
+                  element.remove();
+                }
+              }
+              setTimeout(() => {
+                adNode.removeFromParent(true);
+                this.onAddFaild(uniqueKey);
+              }, 0);
+            }
           },
           this
         );
