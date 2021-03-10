@@ -8,6 +8,7 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
+import { Random } from "../Utils/Random";
 import { BaseSignal } from "../Utils/Signal";
 
 const { ccclass, property } = cc._decorator;
@@ -17,21 +18,27 @@ export enum FlyOrigin {
   Right,
 }
 
+export class CnicornWatchFailSignal extends BaseSignal {}
+export class RemoveFlyCnicornSignal extends BaseSignal {}
 export class FlyCnicornAdDispearSignal extends BaseSignal {}
 export class FlyCnicornClickSignal extends BaseSignal {}
 
 export class ShowFlyCnicornSignal extends BaseSignal {}
 @ccclass
 export default class FlyCnicornAd extends cc.Component {
+  public static ShowTimeRest = 0;
   get Fly() {
     return this.node.getChildByName("Fly");
   }
 
   reuse(origin: FlyOrigin, y: number) {
+    console.log("ShowFlyCnicorn:", FlyOrigin[origin]);
     this.node.opacity = 255;
+    this.Fly.opacity = 255;
     let target = 0;
     this.Fly.y = y;
-    if (origin == FlyOrigin.Left) {
+    origin = FlyOrigin.Right;
+    if (false) {
       this.Fly.scaleX = 1;
       this.Fly.x = -940;
       target = 940;
@@ -52,6 +59,7 @@ export default class FlyCnicornAd extends cc.Component {
         ),
         cc.callFunc(() => {
           FlyCnicornAdDispearSignal.inst.dispatch();
+          FlyCnicornAd.ShowTimeRest = 10;
         })
       )
     );
@@ -60,10 +68,17 @@ export default class FlyCnicornAd extends cc.Component {
   unuse() {}
 
   onLoad() {
-    if (CC_DEBUG) {
-      this.reuse(FlyOrigin.Right, 0);
-    }
+    RemoveFlyCnicornSignal.inst.addOnce(() => {
+      ShowFlyCnicornSignal.inst.removeTarget(this);
+      CnicornWatchFailSignal.inst.removeTarget(this);
+      this.node.removeFromParent(true);
+    }, this);
 
+    CnicornWatchFailSignal.inst.addListener(() => {
+      FlyCnicornAd.ShowTimeRest = 10;
+    }, this);
+
+    FlyCnicornAd.ShowTimeRest = 10;
     ShowFlyCnicornSignal.inst.addListenerTwo(
       (origin: FlyOrigin, originY: number) => {
         this.reuse(origin, originY);
@@ -77,4 +92,6 @@ export default class FlyCnicornAd extends cc.Component {
     this.Fly.runAction(cc.fadeOut(0.2));
     FlyCnicornClickSignal.inst.dispatch();
   }
+
+  update(dt: number) {}
 }
