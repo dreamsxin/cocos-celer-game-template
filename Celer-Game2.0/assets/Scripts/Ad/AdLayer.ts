@@ -84,9 +84,7 @@ export default class AdLayer extends cc.Component {
 
   onAdFinish(adUnitId: string) {
     AdFinishSignal.inst.dispatchOne(adUnitId);
-    if (GameStateController.inst.isPause()) {
-      // TODO 隐藏暂停界面
-    }
+
     if (adUnitId == AdType[AdType.Sun]) {
       CELER_X && HideWildAdButtonSignal.inst.dispatch();
     } else {
@@ -99,9 +97,6 @@ export default class AdLayer extends cc.Component {
   }
 
   onAdFailed(adUnitId: string) {
-    if (GameStateController.inst.isPause()) {
-      // TODO 隐藏暂停界面
-    }
     this.FailTip.active = true;
     this.Panel.active = false;
     if (adUnitId == AdType[AdType.Cnicorn]) {

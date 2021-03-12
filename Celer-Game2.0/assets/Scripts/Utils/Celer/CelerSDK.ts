@@ -97,7 +97,11 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
     if (CELER_X) {
       celerSDK.onPause(() => {
         console.log(" on pause ");
-        if (GameStateController.inst.isGameOver()) return;
+        if (
+          GameStateController.inst.isGameOver() ||
+          GameStateController.inst.isPause()
+        )
+          return;
         ShowPauseLayerSignal.inst.dispatch();
       });
 
@@ -108,7 +112,11 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
     } else {
       cc.game.on(cc.game.EVENT_HIDE, () => {
         console.log(" on pause ");
-        if (GameStateController.inst.isGameOver()) return;
+        if (
+          GameStateController.inst.isGameOver() ||
+          GameStateController.inst.isPause()
+        )
+          return;
         ShowPauseLayerSignal.inst.dispatch();
       });
 
