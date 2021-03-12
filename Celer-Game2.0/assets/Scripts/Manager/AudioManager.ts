@@ -14,6 +14,7 @@ import { RoundEndType } from "../Controller/GameStateController";
 import { SingleTon } from "../Utils/ToSingleton";
 import { BaseSignal } from "../Utils/Signal";
 import { ShakePokerSignal } from "../GamePlay/View/Poker/PokerPosMediator";
+import { AdFinishSignal } from "../Ad/AdLayer";
 
 interface AudioItem {
   loop: boolean;
@@ -159,9 +160,14 @@ class AudioController extends SingleTon<AudioController>() {
       //   }
     }, this);
 
+    AdFinishSignal.inst.addListener(() => {
+      this.playEffect("change_horce");
+    }, this);
+
     PlayPokerFlySignal.inst.addListener(() => {
       this.playEffect("pokerFly");
     }, this);
+
     PlayPokerPlaceSignal.inst.addListener(() => {
       if (this.audioID["pokerPlace"]) return;
       this.audioID["pokerPlace"] = true;
@@ -169,6 +175,7 @@ class AudioController extends SingleTon<AudioController>() {
         this.audioID["pokerPlace"] = null;
       });
     }, this);
+
     PlayToDeskSignal.inst.addListener(() => {
       this.playEffect("lay_success");
     }, this);

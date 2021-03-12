@@ -9,6 +9,8 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import { AdController } from "../Controller/AdController";
+import { GameStateController } from "../Controller/GameStateController";
+import { BaseSignal } from "../Utils/Signal";
 import {
   CnicornWatchFailSignal,
   FlyCnicornClickSignal,
@@ -17,7 +19,7 @@ import {
 import { HideWildAdButtonSignal, WildAdButtonClick } from "./WildAdButton";
 
 const { ccclass, property } = cc._decorator;
-
+export class AdFinishSignal extends BaseSignal {}
 enum AdType {
   Cnicorn,
   Sun,
@@ -81,6 +83,10 @@ export default class AdLayer extends cc.Component {
   }
 
   onAdFinish(adUnitId: string) {
+    AdFinishSignal.inst.dispatchOne(adUnitId);
+    if (GameStateController.inst.isPause()) {
+      // TODO 隐藏暂停界面
+    }
     if (adUnitId == AdType[AdType.Sun]) {
       CELER_X && HideWildAdButtonSignal.inst.dispatch();
     } else {
@@ -93,6 +99,9 @@ export default class AdLayer extends cc.Component {
   }
 
   onAdFailed(adUnitId: string) {
+    if (GameStateController.inst.isPause()) {
+      // TODO 隐藏暂停界面
+    }
     this.FailTip.active = true;
     this.Panel.active = false;
     if (adUnitId == AdType[AdType.Cnicorn]) {
