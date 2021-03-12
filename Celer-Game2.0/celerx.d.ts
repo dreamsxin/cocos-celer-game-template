@@ -16,6 +16,7 @@ declare interface MatchInfo {
 }
 
 declare class celerSDK {
+  static hasMethod(name: string): boolean;
   /** onStart触发后获取随机种子等信息 */
   static getMatch(): MatchInfo;
 
