@@ -4,6 +4,8 @@ import { Random } from "../Random";
 import { ShowPauseLayerSignal } from "../../Command/CommonSignal";
 import { PlayModelProxy } from "../../Model/PlayModelProxy";
 import { GameStateController } from "../../Controller/GameStateController";
+import { HideWildAdButtonSignal } from "../../Ad/WildAdButton";
+import { RemoveFlyCnicornSignal } from "../../Ad/FlyCnicornAd";
 
 export class CelerSDK extends SingleTon<CelerSDK>() {
   private alreadySubmit: boolean = false;
@@ -95,6 +97,11 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
     }
 
     if (CELER_X) {
+      if (celerSDK.hasMethod("showAd") != true) {
+        HideWildAdButtonSignal.inst.dispatch();
+        RemoveFlyCnicornSignal.inst.dispatch();
+      }
+
       celerSDK.onPause(() => {
         console.log(" on pause ");
         if (
