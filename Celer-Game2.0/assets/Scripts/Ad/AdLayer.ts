@@ -137,6 +137,7 @@ export default class AdLayer extends cc.Component {
       ).spriteFrame = this.AdAtlas.getSpriteFrame("btn_to clear");
     }
 
+    this.WatchAd.targetOff(this);
     this.WatchAd.once(
       cc.Node.EventType.TOUCH_END,
       () => {
