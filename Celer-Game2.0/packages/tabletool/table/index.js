@@ -15,7 +15,7 @@
 var fs = require("fs");
 var xlsx = require("xlsx");
 var pinyin = require("node-pinyin");
-var tabMgr = require("../tableMgr");
+var tabMgr = require("../tableMgr").concat();
 module.exports = {
   /**是否是无前缀类型 */
   isSimpleMode: true,
