@@ -8,25 +8,18 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-
-
 const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class Test extends cc.Component {
+  // LIFE-CYCLE CALLBACKS:
 
+  onLoad() {
+    this.node.active = CC_EDITOR;
+    //-1427.234
+  }
 
-    // LIFE-CYCLE CALLBACKS:
+  start() {}
 
-    onLoad() {
-
-        this.node.active = CC_DEBUG;
-
-    }
-
-    start() {
-
-    }
-
-    // update (dt) {}
+  // update (dt) {}
 }
