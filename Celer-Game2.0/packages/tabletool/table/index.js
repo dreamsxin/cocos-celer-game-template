@@ -511,27 +511,29 @@ module.exports = {
             break;
 
           case "enum":
-            if (this.enumValue[tableName][key]) {
+            if (this.enumValue[tableName][tableKey]) {
               let py = this.toPinYin(val[key]);
-              val[key] = this.isSimpleMode
-                ? val[key]
-                : this.enumValue[tableName][key][py]["value"];
+              val[key] = parseInt(
+                this.enumValue[tableName][tableKey][py]["value"]
+              );
             }
             break;
           case "enum[]":
-            !val[key] && Editor.log(key);
-            let arrStr = this.isSimpleMode
-              ? val[key].toString().split(",")
-              : val[key].toString().split("\n");
-            val[key] = [];
-            for (let str of arrStr) {
-              let py = this.toPinYin(str);
-              val[key].push(
-                this.isSimpleMode
-                  ? str
-                  : this.enumValue[tableName][key][py]["value"]
-              );
+            if (this.enumValue[tableName][tableKey]) {
+              !val[key] && Editor.log(key);
+              let arrStr = this.isSimpleMode
+                ? val[key].toString().split(",")
+                : val[key].toString().split("\n");
+              val[key] = [];
+
+              for (let str of arrStr) {
+                let py = this.toPinYin(str);
+                val[key].push(
+                  parseInt(this.enumValue[tableName][tableKey][py]["value"])
+                );
+              }
             }
+
             break;
           case "string":
             val[key] = val[key].toString();
