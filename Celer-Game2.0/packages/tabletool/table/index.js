@@ -492,7 +492,7 @@ module.exports = {
           case "number[]":
             let numArr =
               this.isSimpleMode && val[key]
-                ? val[key].toString().split("_")
+                ? val[key].toString().split(",")
                 : val[key].toString().split("\n");
             for (let i = 0; i < numArr.length; i++) {
               numArr[i] =
@@ -506,7 +506,7 @@ module.exports = {
           case "string[]":
             val[key] =
               this.isSimpleMode && val[key]
-                ? val[key].toString().split("_")
+                ? val[key].toString().split(",")
                 : val[key].toString().split("\n");
             break;
 
@@ -521,7 +521,7 @@ module.exports = {
           case "enum[]":
             !val[key] && Editor.log(key);
             let arrStr = this.isSimpleMode
-              ? val[key].toString().split("_")
+              ? val[key].toString().split(",")
               : val[key].toString().split("\n");
             val[key] = [];
             for (let str of arrStr) {
