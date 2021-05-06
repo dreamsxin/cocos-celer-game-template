@@ -8,6 +8,7 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
+import { CelerSDK } from "../Utils/Celer/CelerSDK";
 import { Random } from "../Utils/Random";
 import { BaseSignal } from "../Utils/Signal";
 
@@ -72,6 +73,7 @@ export default class FlyCnicornAd extends cc.Component {
       ShowFlyCnicornSignal.inst.removeTarget(this);
       CnicornWatchFailSignal.inst.removeTarget(this);
       this.node.removeFromParent(true);
+      this.node.destroy();
     }, this);
 
     CnicornWatchFailSignal.inst.addListener(() => {
@@ -85,6 +87,9 @@ export default class FlyCnicornAd extends cc.Component {
       },
       this
     );
+    if (CelerSDK.inst.isAndroidWeb == false && !CC_DEBUG) {
+      RemoveFlyCnicornSignal.inst.dispatch();
+    }
   }
 
   onAddTouch(ev: cc.Event.EventTouch) {
