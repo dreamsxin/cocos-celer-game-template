@@ -13,10 +13,9 @@ import LoadingView from "./LoadingView";
 import { CelerSDK } from "../../Utils/Celer/CelerSDK";
 import {
   GameReadySignal,
-  GameStartSignal,
   ShowTutorialSignal,
 } from "../../Command/CommonSignal";
-import { GameStateController } from "../../Controller/GameStateController";
+import { PlayModelProxy } from "../../Model/PlayModelProxy";
 
 const { ccclass, property } = cc._decorator;
 
@@ -27,7 +26,7 @@ export default class LoadingPageMediator extends BaseMediator<LoadingView> {
   onRegister() {
     this.startTime = Date.now();
 
-    GameReadySignal.inst.addListener(this.onGameReady, this);
+    GameReadySignal.inst.addOnce(this.onGameReady, this);
   }
 
   onGameReady() {
@@ -49,12 +48,10 @@ export default class LoadingPageMediator extends BaseMediator<LoadingView> {
   startGame() {
     if (CelerSDK.inst.isNew()) {
       ShowTutorialSignal.inst.dispatchOne(() => {
-        GameStartSignal.inst.dispatch();
-        GameStateController.inst.isReady = true;
+        PlayModelProxy.inst.gameReadyShow();
       });
     } else {
-      GameStartSignal.inst.dispatch();
-      GameStateController.inst.isReady = true;
+      PlayModelProxy.inst.gameReadyShow();
     }
   }
 

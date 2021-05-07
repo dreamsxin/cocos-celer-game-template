@@ -9,7 +9,6 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import { CelerSDK } from "../Utils/Celer/CelerSDK";
-import { Random } from "../Utils/Random";
 import { BaseSignal } from "../Utils/Signal";
 
 const { ccclass, property } = cc._decorator;
@@ -83,7 +82,9 @@ export default class FlyCnicornAd extends cc.Component {
     FlyCnicornAd.ShowTimeRest = 10;
     ShowFlyCnicornSignal.inst.addListenerTwo(
       (origin: FlyOrigin, originY: number) => {
-        this.reuse(origin, originY);
+        console.log(" Show Cnicorn");
+        if (this.Fly.getNumberOfRunningActions() > 0) return;
+        this.reuse(FlyOrigin.Right, 665.607);
       },
       this
     );

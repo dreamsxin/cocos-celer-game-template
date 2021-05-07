@@ -4,6 +4,7 @@ import { LoadAudioCommand } from "../Command/LoadAudioCommand";
 import { LoadPrefabCommand } from "../Command/LoadPrefabCommand";
 import { CelerSDK } from "../../Utils/Celer/CelerSDK";
 import { StepManager } from "../../Manager/StepManager";
+import { LoadJsonCommand } from "../Command/LoadJsonCommand";
 
 export class InitialFacade {
   public static MULTITON_KEY: string = "INITIAL_FCADE";
@@ -40,11 +41,9 @@ export class InitialFacade {
       this.facade.sendNotification(InitialFacade.START_UP, this);
     });
 
-
     this.stepMgr.register(() => {
       CelerSDK.inst.celerXReady();
     }, InitialFacade.TOTAL_STEPS);
-
   }
 
   private unregister() {
@@ -58,18 +57,15 @@ export class InitialFacade {
     this.facade.sendNotification(InitialFacade.INITIALIZATION, this);
   }
 
-
-
   private static TOTAL_STEPS: string[] = [
     LoadAudioCommand.STEP,
     LoadPrefabCommand.STEP,
+    LoadJsonCommand.STEP,
   ];
-
 
   step(commandName: string) {
     console.log(" initialization step:", commandName);
 
     this.stepMgr.nextStep(commandName);
-
   }
 }

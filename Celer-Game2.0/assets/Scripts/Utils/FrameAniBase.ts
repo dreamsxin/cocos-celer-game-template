@@ -66,6 +66,8 @@ export default class FrameAniBase extends cc.Component {
   play() {
     this.isPlay = true;
     this.currentIndex = 0;
+    this.node.opacity = 255;
+    this.updateCurrentFrame();
     if (this.isPlaying == false) {
       this.callEventComplete();
     }
@@ -133,7 +135,9 @@ export default class FrameAniBase extends cc.Component {
     return this;
   }
 
-  onComplete() {}
+  onComplete() {
+    this.node.runAction(cc.fadeOut(0.2));
+  }
 
   callEventFrame() {
     this.onKeyFrame(this.currentIndex);
@@ -146,10 +150,13 @@ export default class FrameAniBase extends cc.Component {
   }
 
   callEventComplete() {
-    this.onComplete();
+    this.isPlay = false;
+    //  this.Sprite.spriteFrame = null;
+
     for (let complete of this.complateEvent) {
       complete.f.apply(complete.target, [this["__classname__"]]);
     }
+    this.onComplete();
   }
 
   private complateEvent: {
@@ -164,9 +171,10 @@ export default class FrameAniBase extends cc.Component {
   }
 
   get TotalFrameCount() {
-    if (this.PrefixName != "" && this.FrameCount > 0) return this.FrameCount;
+    if (this.PrefixName != "" && this.FrameCount > 0)
+      return this.Loop ? this.FrameCount : this.FrameCount + 1;
     return this.Frames && this.Frames.getSpriteFrames
-      ? this.Frames.getSpriteFrames().length
+      ? this.Frames.getSpriteFrames().length + 1
       : 0;
   }
 

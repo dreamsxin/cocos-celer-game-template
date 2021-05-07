@@ -1,11 +1,11 @@
 import { SingleTon } from "../Utils/ToSingleton";
 import { HashMap } from "../Utils/HashMap";
-import { Poker, PokerType } from "../GamePlay/Model/Poker/PokerModel";
 
 export const Title = {
   Complete: "font_complete",
-  TimeUp: "font_time's up",
-  Over: "font_over",
+  TimeUp: "font_timeup",
+  Over: "font_gameover",
+  OutOfMove: "font_outofmove",
 };
 
 export const PauseFont = {
@@ -23,34 +23,17 @@ export const Font = {
   ShowScore: "showScore",
 };
 
-export const PokerSprite = {
-  [Poker.$_A]: "bg_solitarie_[color]A",
-  [Poker.$_2]: "bg_solitarie_[color]2",
-  [Poker.$_3]: "bg_solitarie_[color]3",
-  [Poker.$_4]: "bg_solitarie_[color]4",
-  [Poker.$_5]: "bg_solitarie_[color]5",
-  [Poker.$_6]: "bg_solitarie_[color]6",
-  [Poker.$_7]: "bg_solitarie_[color]7",
-  [Poker.$_8]: "bg_solitarie_[color]8",
-  [Poker.$_9]: "bg_solitarie_[color]9",
-  [Poker.$_10]: "bg_solitarie_[color]10",
-  [Poker.$_J]: "bg_solitarie_[color]J",
-  [Poker.$_Q]: "bg_solitarie_[color]Q",
-  [Poker.$_K]: "bg_solitarie_[color]K",
-};
-
-export const PokerColorType = {
-  [PokerType.Club]: "03",
-  [PokerType.Diamond]: "04",
-  [PokerType.Heart]: "02",
-  [PokerType.Spade]: "01",
-};
-
+export enum AnimationType {
+  UI,
+  GamePlay,
+}
 export class ResourceController extends SingleTon<ResourceController>() {
   private fontMap: HashMap<string, cc.Font> = new HashMap();
 
   private UIAtlas: cc.SpriteAtlas = null;
-  private Animation: cc.SpriteAtlas = null;
+  private ResultAtlas: cc.SpriteAtlas = null;
+  private PauseAtlas: cc.SpriteAtlas = null;
+  private Animations: HashMap<AnimationType, cc.SpriteAtlas> = new HashMap();
 
   setFont(key: string, font: cc.Font) {
     this.fontMap.add(key, font);
@@ -61,21 +44,39 @@ export class ResourceController extends SingleTon<ResourceController>() {
     this.UIAtlas = atlas;
   }
 
+  setResultAtlas(atlas: cc.SpriteAtlas) {
+    console.assert(atlas != null, "game atlas is null!");
+    this.ResultAtlas = atlas;
+  }
+
+  setPauseAtlas(atlas: cc.SpriteAtlas) {
+    console.assert(atlas != null, "game atlas is null!");
+    this.PauseAtlas = atlas;
+  }
+
   getTitleSprite(name: string) {
     return this.UIAtlas.getSpriteFrame(name);
+  }
+
+  getResultSprite(name: string) {
+    return this.ResultAtlas.getSpriteFrame(name);
   }
 
   getAltas(name: string) {
     return this.UIAtlas.getSpriteFrame(name);
   }
 
-  setAnimationAtlas(atlas: cc.SpriteAtlas) {
-    console.assert(atlas != null, "animation atlas is null!");
-    this.Animation = atlas;
+  getPauseAtlas(name: string) {
+    return this.PauseAtlas.getSpriteFrame(name);
   }
 
-  getAnimationAtlas(name: string) {
-    return this.Animation.getSpriteFrame(name);
+  pushAnimationAtlas(animationType: AnimationType, atlas: cc.SpriteAtlas) {
+    console.assert(atlas != null, "animation atlas is null!");
+    this.Animations.add(animationType, atlas);
+  }
+
+  getAnimationAtlas(animationType: AnimationType, name: string) {
+    return this.Animations.get(animationType).getSpriteFrame(name);
   }
   getAddScoreFont() {
     return this.fontMap.get(Font.AddScore);
@@ -86,15 +87,15 @@ export class ResourceController extends SingleTon<ResourceController>() {
   }
 
   getSoundDisabled() {
-    return this.UIAtlas.getSpriteFrame("btn_nosound");
+    return this.PauseAtlas.getSpriteFrame("btn_nosound");
   }
 
   getSoundEnable() {
-    return this.UIAtlas.getSpriteFrame("btn_sound");
+    return this.PauseAtlas.getSpriteFrame("btn_sound");
   }
 
   getPauseFont(name: string) {
-    return this.UIAtlas.getSpriteFrame(name);
+    return this.PauseAtlas.getSpriteFrame(name);
   }
 
   getTimeRedFont() {
@@ -103,10 +104,5 @@ export class ResourceController extends SingleTon<ResourceController>() {
 
   getTimeWhiteFont() {
     return this.fontMap.get(Font.TimeWhite);
-  }
-
-  getPokerSprite(point: Poker, color: PokerType) {
-    let key = PokerSprite[point].replace("[color]", PokerColorType[color]);
-    return this.UIAtlas.getSpriteFrame(key);
   }
 }

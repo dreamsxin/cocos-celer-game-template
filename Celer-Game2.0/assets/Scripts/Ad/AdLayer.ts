@@ -11,7 +11,7 @@
 import { AdController } from "../Controller/AdController";
 import { GameStateController } from "../Controller/GameStateController";
 import { BaseSignal } from "../Utils/Signal";
-import {
+import FlyCnicornAd, {
   CnicornWatchFailSignal,
   FlyCnicornClickSignal,
   RemoveFlyCnicornSignal,
@@ -20,7 +20,7 @@ import { HideWildAdButtonSignal, WildAdButtonClick } from "./WildAdButton";
 
 const { ccclass, property } = cc._decorator;
 export class AdFinishSignal extends BaseSignal {}
-enum AdType {
+export enum AdType {
   Cnicorn,
   Sun,
 }
@@ -47,6 +47,10 @@ export default class AdLayer extends cc.Component {
 
   get SubContent() {
     return this.Panel.getChildByName("font_freeprop2").getComponent(cc.Sprite);
+  }
+
+  get MoveBonus() {
+    return this.Panel.getChildByName("Moves");
   }
 
   get Title() {
@@ -76,6 +80,8 @@ export default class AdLayer extends cc.Component {
       () => {
         setTimeout(() => {
           this.node.active = false;
+          GameStateController.inst.resume();
+          FlyCnicornAd.ShowTimeRest = 10;
         }, 0);
       },
       this
@@ -93,6 +99,7 @@ export default class AdLayer extends cc.Component {
 
     setTimeout(() => {
       this.node.active = false;
+      GameStateController.inst.resume();
     }, 0);
   }
 
@@ -104,32 +111,40 @@ export default class AdLayer extends cc.Component {
     }
     setTimeout(() => {
       this.node.active = false;
+      GameStateController.inst.resume();
     }, 2000);
   }
 
   Show(type: AdType) {
     if (this.node.active == true) return;
+
+    GameStateController.inst.pause(true);
     this.node.active = true;
     this.FailTip.active = false;
     this.Panel.active = true;
     this.WatchAd.active = true;
 
     if (type == AdType.Sun) {
-      this.Title.spriteFrame = this.AdAtlas.getSpriteFrame("bg_title_freeprop");
-      this.Content.spriteFrame = this.AdAtlas.getSpriteFrame("font_freeprop1");
+      this.Title.spriteFrame = this.AdAtlas.getSpriteFrame("font_free");
+      this.Content.spriteFrame = this.AdAtlas.getSpriteFrame("font_get prop1");
       this.SubContent.spriteFrame = this.AdAtlas.getSpriteFrame(
-        "font_freeprop2"
+        "font_get prop2"
       );
       this.WatchAd.getComponent(
         cc.Sprite
-      ).spriteFrame = this.AdAtlas.getSpriteFrame("btn_get");
+      ).spriteFrame = this.AdAtlas.getSpriteFrame("btn_getprop");
+      this.MoveBonus.active = false;
     } else {
-      this.Title.spriteFrame = this.AdAtlas.getSpriteFrame("font_title_clear");
-      this.Content.spriteFrame = this.AdAtlas.getSpriteFrame("font_clear1");
-      this.SubContent.spriteFrame = this.AdAtlas.getSpriteFrame("font_clear2");
+      this.Title.spriteFrame = this.AdAtlas.getSpriteFrame("font_add");
+      this.Content.spriteFrame = this.AdAtlas.getSpriteFrame("font_addmoves1");
+      this.SubContent.spriteFrame = this.AdAtlas.getSpriteFrame(
+        "font_addmoves2"
+      );
+      this.MoveBonus.active = true;
+      this.MoveBonus.getComponent(cc.Label).string = "3";
       this.WatchAd.getComponent(
         cc.Sprite
-      ).spriteFrame = this.AdAtlas.getSpriteFrame("btn_to clear");
+      ).spriteFrame = this.AdAtlas.getSpriteFrame("btn_addmoves");
     }
 
     this.WatchAd.targetOff(this);

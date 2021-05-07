@@ -1,4 +1,5 @@
 import { GameStateController } from "../../Controller/GameStateController";
+import { BaseSignal } from "../../Utils/Signal";
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -14,34 +15,44 @@ import GlobalSingleTouchView from "./GlobalSingleTouchView";
 
 const { ccclass, property } = cc._decorator;
 
+export class ShowTipSignal extends BaseSignal {}
 @ccclass
 export default class GlobalSingleTouchMediator extends SingleTouchMediator<GlobalSingleTouchView> {
+  onRegister() {
+    super.onRegister();
+    this.node["_touchListener"].swallowTouches = false;
+  }
 
-
-
-    onRegister() {
-        super.onRegister();
-        this.node["_touchListener"].swallowTouches = false;
-
+  protected onTouchStart(event: cc.Event.EventTouch) {
+    if (
+      GameStateController.inst.canStart() &&
+      GameStateController.inst.isRoundStart() == false
+    ) {
+      GameStateController.inst.roundStart();
     }
 
-    protected onTouchStart(event: cc.Event.EventTouch) {
+    this.time = 0;
+  }
 
-        if (GameStateController.inst.canStart() && GameStateController.inst.isRoundStart() == false) {
-            GameStateController.inst.roundStart();
-        }
+  protected onTouchMove(event: cc.Event.EventTouch) {
+    this.time = 0;
+  }
+
+  protected onTouchEnd(event: cc.Event.EventTouch) {
+    this.time = 0;
+  }
+
+  protected onTouchCancel(event: cc.Event.EventTouch) {
+    this.time = 0;
+  }
+
+  private time: number = 0;
+  update(dt: number) {
+    this.time += dt;
+
+    if (this.time >= 3) {
+      this.time = 0;
+      ShowTipSignal.inst.dispatch();
     }
-
-    protected onTouchMove(event: cc.Event.EventTouch) {
-
-    }
-
-    protected onTouchEnd(event: cc.Event.EventTouch) {
-
-
-    }
-
-    protected onTouchCancel(event: cc.Event.EventTouch) {
-
-    }
+  }
 }

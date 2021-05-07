@@ -1,10 +1,10 @@
 {
   "ver": "1.1.0",
-  "uuid": "fc8d4cd6-5c2e-41b0-93f6-78cb7ba82eeb",
-  "itemWidth": 45,
-  "itemHeight": 59,
+  "uuid": "68b7f1c5-7ebd-47ae-bab0-5069545f6544",
+  "itemWidth": 68,
+  "itemHeight": 90,
   "startChar": "0",
-  "rawTextureUuid": "1e867280-7e56-4513-aa01-e7aa57914486",
-  "fontSize": 51.92,
+  "rawTextureUuid": "17d4d3b2-f73d-4158-b95f-9e35d05ea874",
+  "fontSize": 79.2,
   "subMetas": {}
 }

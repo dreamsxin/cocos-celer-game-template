@@ -13,7 +13,6 @@ export default class PrefabBaseView<T> extends cc.Component {
   }
 
   unuse() {
-    this.node.group = "default";
     if (this.model) {
     }
     this.model = null;

@@ -16,24 +16,17 @@ const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class ThemeView extends BaseView {
+  // LIFE-CYCLE CALLBACKS:
 
+  onLoad() {
+    GameThemeInit.inst.addListenerOne(this.onThemeInit, this);
+  }
 
-    // LIFE-CYCLE CALLBACKS:
+  start() {}
 
-    onLoad() {
+  onThemeInit(theme: Theme) {
+    this.node.active = this.node.name == Theme[theme];
+  }
 
-        GameThemeInit.inst.addListenerOne(this.onThemeInit, this);
-    }
-
-    start() {
-
-    }
-
-    onThemeInit(theme: Theme) {
-
-        this.node.active = this.node.name == Theme[theme];
-
-    }
-
-    // update (dt) {}
+  // update (dt) {}
 }

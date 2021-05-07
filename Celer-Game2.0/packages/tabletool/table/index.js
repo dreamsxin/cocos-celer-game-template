@@ -681,9 +681,9 @@ module.exports = {
       tableManagerTs += "}";
 
       // 生成结构体定义代码
-      if (Editor.assetdb.exists("db://assets/Scripts/table.d.ts")) {
+      if (Editor.assetdb.exists("db://assets/Scripts/table.ts")) {
         Editor.assetdb.saveExists(
-          "db://assets/Scripts/table.d.ts",
+          "db://assets/Scripts/table.ts",
           stringTs,
           function (err, meta) {
             if (err) this.sendMsg("error", "table生成失败:" + err);
@@ -692,7 +692,7 @@ module.exports = {
         );
       } else {
         Editor.assetdb.create(
-          "db://assets/Scripts/table.d.ts",
+          "db://assets/Scripts/table.ts",
           stringTs,
           function (err, results) {
             if (err) this.sendMsg("error", "table生成失败:" + err);

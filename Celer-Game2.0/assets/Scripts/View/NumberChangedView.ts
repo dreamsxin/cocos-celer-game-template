@@ -14,6 +14,12 @@ const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class NumberChangedView extends BaseView {
+  setNumber(val: number) {
+    this.showNum = val;
+    this.num = val;
+    this.Label.string = val.toString();
+  }
+
   // LIFE-CYCLE CALLBACKS:
 
   private num: number = 0;
@@ -35,11 +41,7 @@ export default class NumberChangedView extends BaseView {
   onLoad() {}
 
   start() {}
-  setNumber(val: number) {
-    this.showNum = val;
-    this.num = val;
-    this.Label.string = val.toString();
-  }
+
   onStep(step: number) {}
 
   private callback: Function = null;

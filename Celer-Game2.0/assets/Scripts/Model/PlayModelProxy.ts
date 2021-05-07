@@ -7,19 +7,25 @@ import { GamePlayModel, ScoreType } from "../GamePlay/Model/GamePlayModel";
 import {
   UpdateTimeNumber,
   TimeAnimationStateChanged,
+  GameStartSignal,
 } from "../Command/CommonSignal";
-import { FreePauseLimit } from "../Global/GameRule";
-import { PokerModel } from "../GamePlay/Model/Poker/PokerModel";
+import { FreePauseLimit, GetTotalLevel } from "../Global/GameRule";
+import { BaseSignal } from "../Utils/Signal";
+import { CelerSDK } from "../Utils/Celer/CelerSDK";
+import FlyCnicornAd, { ShowFlyCnicornSignal } from "../Ad/FlyCnicornAd";
+import { WildButtonReadySignal } from "../Ad/WildAdButton";
 
+export class NextLevelSignal extends BaseSignal {}
+export class StartInitMapSignal extends BaseSignal {}
+export class StartCountSignal extends BaseSignal {}
 export class PlayModelProxy extends SingleTon<PlayModelProxy>() {
   private constructor() {
     super();
     this.bindSignal();
   }
 
+  private isGameOver: boolean = false;
   private playerModel: GamePlayModel = null;
-
-  public isOnTutorial: boolean = false;
 
   public get Model() {
     return this.playerModel
@@ -33,10 +39,6 @@ export class PlayModelProxy extends SingleTon<PlayModelProxy>() {
 
   get PlayerScore() {
     return this.Model.PlayerScore;
-  }
-
-  get MoveCount() {
-    return this.Model.MoveCount;
   }
 
   get NoviceScore() {
@@ -75,6 +77,7 @@ export class PlayModelProxy extends SingleTon<PlayModelProxy>() {
 
   /** 初始化随机主题 */
   initGametheme() {
+    StartInitMapSignal.inst.dispatch();
     this.Model.initGametheme();
   }
 
@@ -86,16 +89,34 @@ export class PlayModelProxy extends SingleTon<PlayModelProxy>() {
     this.Model.addPauseCount();
   }
 
+  setTotalTime(time: number) {
+    this.Model.Time = time;
+    UpdateTimeNumber.inst.dispatchOne(this.Model.Time);
+  }
+
+  private hasStartCount: boolean = false;
   addGameTime(dt: number) {
     if (
       GameStateController.inst.isPause() ||
-      GameStateController.inst.isRoundStart() == false ||
-      this.isOnTutorial
+      GameStateController.inst.isRoundStart() == false
     ) {
       return;
     }
 
+    if (this.isGameOver) return;
+
+    if (this.hasStartCount == false) {
+      this.hasStartCount = true;
+      StartCountSignal.inst.dispatch();
+    }
     this.Model.Time += dt;
+
+    if (FlyCnicornAd.ShowTimeRest > 0) {
+      FlyCnicornAd.ShowTimeRest += dt;
+      if (FlyCnicornAd.ShowTimeRest <= 0) {
+        ShowFlyCnicornSignal.inst.dispatch();
+      }
+    }
 
     UpdateTimeNumber.inst.dispatchOne(this.Model.Time);
     TimeAnimationStateChanged.inst.dispatchOne(this.Model.Time <= 30);
@@ -110,42 +131,58 @@ export class PlayModelProxy extends SingleTon<PlayModelProxy>() {
     return this.Model.getScoreByType(type);
   }
 
-  checkIsShowFront(pokerModel: PokerModel): boolean {
-    return this.Model.checkIsShowFront(pokerModel);
-  }
-
-  addPlayerScore(
-    score: number,
-    type: ScoreType,
-    times: number,
-    fromNode: cc.Node
-  ) {
-    this.Model.addPlayerScore(score, type, times, fromNode);
-  }
-
   dump() {
     this.Model.dump();
   }
 
   init() {
-    GameStateController.inst.setRoundStart(false);
     this.Model.initGameData();
   }
 
-  initTutorial() {
-    this.Model.initGameTutorial();
+  gameReadyToStart() {
+    GameStartSignal.inst.dispatch();
+    GameStateController.inst.isReady = true;
+    console.log("gameReadyToStart");
+    WildButtonReadySignal.inst.dispatch();
   }
 
-  onCancel(ID: string) {
-    this.Model.Logic.onCancel(ID);
+  gameReadyShow() {
+    this.gameReadyToStart();
   }
 
-  onMoved(ID: string, detal: cc.Vec2) {
-    this.Model.Logic.onMoved(ID, detal);
+  /*************************  Test ******************************* */
+
+  testNextLevel() {
+    if (this.Level >= GetTotalLevel()) {
+      this.Level = 0;
+    } else {
+      // this.Model.addGoldCount(0);
+      this.Level++;
+      // if (this.Level >= GetTotalLevel()) {
+      //   this.Level = 0;
+      // }
+    }
   }
 
-  onMovedEnd(ID: string) {
-    this.Model.Logic.onMovedEnd(ID);
+  testScale(scale: number) {}
+
+  testGameComplete() {
+    //this.Model.MoveCount = 11;
+    setTimeout(() => {
+      GameStateController.inst.roundEnd(RoundEndType.Complete);
+    }, 200);
+  }
+
+  testGameOver() {
+    GameStateController.inst.roundEnd(RoundEndType.Over);
+  }
+
+  testTimeUp() {
+    GameStateController.inst.roundEnd(RoundEndType.TimeUp);
+  }
+
+  testOutOfMove() {
+    GameStateController.inst.roundEnd(RoundEndType.OutOfMove);
   }
 }
 

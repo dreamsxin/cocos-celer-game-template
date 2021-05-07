@@ -8,6 +8,7 @@ import { ResourceController } from "../../../Controller/ResourceController";
 import { gFactory } from "../../../Factory/GameFactory";
 import { PlayModelProxy } from "../../../Model/PlayModelProxy";
 import { ConvertToNodeSpaceAR, Distance } from "../../../Utils/Cocos";
+import { BaseSignal } from "../../../Utils/Signal";
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -19,9 +20,10 @@ import { ConvertToNodeSpaceAR, Distance } from "../../../Utils/Cocos";
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import NumberChangedView from "../../../View/NumberChangedView";
-import { PLayerScoreInitSignal } from "../../Model/GamePlayModel";
 
 const { ccclass, property } = cc._decorator;
+
+export class PLayerScoreInitSignal extends BaseSignal {}
 
 @ccclass
 export default class ScoreLabelView extends NumberChangedView {

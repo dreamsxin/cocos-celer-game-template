@@ -120,6 +120,7 @@ class GameFactory {
   init(callback: Function) {
     this.doneCallback = callback;
     this.startTime = Date.now();
+
     cc.loader.loadResDir(
       "prefabs/",
       cc.Prefab,

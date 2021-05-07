@@ -21,6 +21,7 @@ export default class WildAdButton extends cc.Component {
   onLoad() {
     this.node.active =
       cc.sys.isMobile && cc.sys.isBrowser && cc.sys.os == cc.sys.OS_ANDROID;
+    this.node.parent.active = this.node.active;
 
     this.node.scale = 0;
 
@@ -35,6 +36,7 @@ export default class WildAdButton extends cc.Component {
             cc.callFunc(() => {
               this.node.getComponent(cc.Button).transition =
                 cc.Button.Transition.SCALE;
+              this.node.getComponent(cc.Button).zoomScale = 0.94;
               this.node.on(
                 cc.Node.EventType.TOUCH_END,
                 () => {
@@ -50,6 +52,7 @@ export default class WildAdButton extends cc.Component {
 
     HideWildAdButtonSignal.inst.addListener(() => {
       this.node.active = false;
+      this.node.parent.active = false;
     }, this);
   }
 }

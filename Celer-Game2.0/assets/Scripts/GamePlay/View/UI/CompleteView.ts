@@ -13,7 +13,10 @@ import {
   OpenResultLayerSignal,
 } from "../../../Command/CommonSignal";
 import { RoundEndType } from "../../../Controller/GameStateController";
-import { ResourceController } from "../../../Controller/ResourceController";
+import {
+  AnimationType,
+  ResourceController,
+} from "../../../Controller/ResourceController";
 import FireWorkAnimation from "../Animation/FireWorkAnimation";
 
 const { ccclass, property } = cc._decorator;
@@ -28,29 +31,46 @@ export default class CompleteView extends cc.Component {
     return this.node.getChildByName("Con");
   }
 
+  get FireWork() {
+    return this.node.getChildByName("FireWork").getComponent(FireWorkAnimation);
+  }
+
   onLoad() {
     GameOverSignal.inst.addListenerOne(this.onGameOver, this);
     this.Font.node.active = false;
     this.Con.active = false;
   }
 
-  start() {}
+  start() {
+    this.FireWork.node.active = false;
+  }
 
   onGameOver(type: RoundEndType) {
     this.Font.node.active = type != RoundEndType.Complete;
 
+    let delay = 2000;
     switch (type) {
       case RoundEndType.Complete:
+        this.FireWork.node.active = true;
         this.Con.active = true;
+        delay = 2500;
         break;
       case RoundEndType.Over:
         this.Font.spriteFrame = ResourceController.inst.getAnimationAtlas(
-          "font__game_over"
+          AnimationType.UI,
+          "font_gameover"
         );
         break;
       case RoundEndType.TimeUp:
         this.Font.spriteFrame = ResourceController.inst.getAnimationAtlas(
-          "font_time"
+          AnimationType.UI,
+          "font_timeup"
+        );
+        break;
+      case RoundEndType.OutOfMove:
+        this.Font.spriteFrame = ResourceController.inst.getAnimationAtlas(
+          AnimationType.UI,
+          "font_outofmove"
         );
         break;
     }
@@ -58,8 +78,9 @@ export default class CompleteView extends cc.Component {
     if (this.Font.node.active) {
       this.Font.node.scaleX = 0;
 
-      this.Font.node.runAction(cc.scaleTo(0.1, 1, 1));
+      this.Font.node.runAction(cc.scaleTo(0.1, 1.2));
     } else {
+      this.FireWork.play();
       this.Con.scale = 0;
       this.Con.runAction(
         cc.sequence(
@@ -72,6 +93,6 @@ export default class CompleteView extends cc.Component {
 
     setTimeout(() => {
       OpenResultLayerSignal.inst.dispatchOne(type);
-    }, 2000);
+    }, delay);
   }
 }

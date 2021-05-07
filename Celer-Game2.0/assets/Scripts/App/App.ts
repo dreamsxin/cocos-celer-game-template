@@ -8,7 +8,12 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import { Font, ResourceController } from "../Controller/ResourceController";
+import {
+  AnimationType,
+  Font,
+  ResourceController,
+} from "../Controller/ResourceController";
+import { GameRecorder } from "../GameRecorder/GameRecorder";
 import { InitialFacade } from "../Initialization/Facade/InitialFacade";
 import { PlayModelProxy } from "../Model/PlayModelProxy";
 import { HashMap } from "../Utils/HashMap";
@@ -19,8 +24,18 @@ const { ccclass, property } = cc._decorator;
 export default class App extends cc.Component {
   @property(cc.SpriteAtlas)
   UI: cc.SpriteAtlas = null;
+
   @property(cc.SpriteAtlas)
-  Animation: cc.SpriteAtlas = null;
+  PauseUI: cc.SpriteAtlas = null;
+
+  @property(cc.SpriteAtlas)
+  ResultUI: cc.SpriteAtlas = null;
+
+  @property(cc.SpriteAtlas)
+  UIAnimation: cc.SpriteAtlas = null;
+  @property(cc.SpriteAtlas)
+  GamePlayAnimation: cc.SpriteAtlas = null;
+
   @property(cc.Font)
   Add: cc.Font = null;
   @property(cc.Font)
@@ -34,20 +49,13 @@ export default class App extends cc.Component {
   @property(cc.Font)
   Result: cc.Font = null;
 
-  @property(cc.Node)
-  Draw: cc.Node = null;
-  @property(cc.Node)
-  Revert: cc.Node = null;
-
   public static TuneMatchMap: HashMap<number, cc.Node> = new HashMap();
   public static TuneRootMap: HashMap<number, cc.Node> = new HashMap();
-
-  public static AppInstance: App;
   onLoad() {
-    App.AppInstance = this;
     console.log(" app onload ");
     this.UI && ResourceController.inst.setAtlas(this.UI);
-    this.Animation && ResourceController.inst.setAnimationAtlas(this.Animation);
+    this.PauseUI && ResourceController.inst.setPauseAtlas(this.PauseUI);
+    this.ResultUI && ResourceController.inst.setResultAtlas(this.ResultUI);
 
     this.Result &&
       ResourceController.inst.setFont(Font.ResultScore, this.Result);
@@ -58,9 +66,25 @@ export default class App extends cc.Component {
     this.TimeRed && ResourceController.inst.setFont(Font.TimeRed, this.TimeRed);
     this.TimeWhite &&
       ResourceController.inst.setFont(Font.TimeWhite, this.TimeWhite);
+    this.UIAnimation &&
+      ResourceController.inst.pushAnimationAtlas(
+        AnimationType.UI,
+        this.UIAnimation
+      );
+
+    this.GamePlayAnimation &&
+      ResourceController.inst.pushAnimationAtlas(
+        AnimationType.GamePlay,
+        this.GamePlayAnimation
+      );
+
+    cc.game.setFrameRate(60);
+
+    cc.debug.setDisplayStats(!CELER_X);
   }
 
   start() {
+    GameRecorder.inst.init();
     InitialFacade.inst.start();
   }
 

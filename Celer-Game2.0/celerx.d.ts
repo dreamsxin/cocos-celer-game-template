@@ -2,6 +2,7 @@
 
 /** Running with celerx SDK*/
 declare let CELER_X: boolean;
+declare let MENU_SCENE: boolean;
 
 /** 匹配信息 */
 declare interface MatchInfo {
@@ -11,12 +12,11 @@ declare interface MatchInfo {
   sharedRandomSeed: number;
   /** 难度信息(目前根据游戏有的游戏不需要用到) */
   difficultyLevel: number;
-  /** 是否需要新手指引 */
+  /** 是否  新手 */
   shouldLaunchTutorial: boolean;
 }
 
 declare class celerSDK {
-  static hasMethod(name: string): boolean;
   /** onStart触发后获取随机种子等信息 */
   static getMatch(): MatchInfo;
 
@@ -26,11 +26,11 @@ declare class celerSDK {
    */
   static submitScore(score: number);
 
-  /** 游戏加载完成后，通知app显示ready按钮 */
+  /** 游戏加载完成后，通知app游戏可以开始 */
   static ready(): void;
 
   /**
-   *  进入webview游戏显示时触发（玩家点击ready后）
+   *  app展示webview游戏显示时触发
    * @param callback 游戏正式开始的逻辑
    */
   static onStart(callback: () => void);
@@ -48,23 +48,24 @@ declare class celerSDK {
   static log(msg: string): void;
 
   /**
-   * app切回前台触发
-   * @param callback
-   */
-  static onResume(callback: () => void);
-
-  /**
    * app切后台触发
    * @param callback
    */
   static onPause(callback: () => void);
 
   /**
+   * app切回前台触发
+   * @param callback
+   */
+  static onResume(callback: () => void);
+  /**
    * 请求看广告
    * @param sequenceId 广告对应的ID, 每个广告的结束回调会回传这个ID
    */
   static showAd(sequenceId: string);
 
+  /** 判断有没有接口 */
+  static hasMethod(name: string): boolean;
   /**
    * 注册看广告完成的回调
    * @param callback

@@ -7,8 +7,8 @@ export class AdController extends SingleTon<AdController>() {
 
   private adCount: number = 0;
   private msgMap = {};
-  private musicVolume: number = 0;
-  private effectVolume: number = 0;
+
+  private volume: number = 0;
 
   showAd(
     adUnitId: string,
@@ -34,10 +34,6 @@ export class AdController extends SingleTon<AdController>() {
 
     this.failedCallback[uniqueKey].push(failed);
 
-    this.musicVolume = cc.audioEngine.getMusicVolume();
-    this.effectVolume = cc.audioEngine.getEffectsVolume();
-    // cc.audioEngine.setEffectsVolume(0);
-    // cc.audioEngine.setMusicVolume(0);
     if (CELER_X) {
       celerSDK.showAd(uniqueKey);
     } else {
@@ -60,6 +56,8 @@ export class AdController extends SingleTon<AdController>() {
         rootNode.addChild(adNode);
 
         adNode.setPosition(0, 0);
+        this.volume = cc.audioEngine.getMusicVolume();
+        cc.audioEngine.setMusicVolume(0);
 
         videoPlayer.node.on(
           "ready-to-play",
@@ -96,6 +94,7 @@ export class AdController extends SingleTon<AdController>() {
               }
               setTimeout(() => {
                 adNode.removeFromParent(true);
+                adNode.destroy();
                 this.onAddFaild(uniqueKey);
               }, 0);
             }
@@ -126,6 +125,7 @@ export class AdController extends SingleTon<AdController>() {
               }
               setTimeout(() => {
                 adNode.removeFromParent(true);
+                adNode.destroy();
                 this.onAddFaild(uniqueKey);
               }, 0);
             }
@@ -155,6 +155,7 @@ export class AdController extends SingleTon<AdController>() {
             }
             setTimeout(() => {
               adNode.removeFromParent(true);
+              adNode.destroy();
               this.onAdFinish(uniqueKey);
             }, 0);
           },
@@ -187,6 +188,10 @@ export class AdController extends SingleTon<AdController>() {
       this.failedCallback[uniqeKey] = null;
       this.msgMap[uniqeKey] = null;
     }
+
+    if (!CELER_X) {
+      cc.audioEngine.setMusicVolume(this.volume);
+    }
   }
 
   private onAddFaild(uniqeKey: string) {
@@ -200,6 +205,10 @@ export class AdController extends SingleTon<AdController>() {
       this.failedCallback[uniqeKey] = null;
       this.finishCallback[uniqeKey] = null;
       this.msgMap[uniqeKey] = null;
+    }
+
+    if (!CELER_X) {
+      cc.audioEngine.setMusicVolume(this.volume);
     }
   }
 }

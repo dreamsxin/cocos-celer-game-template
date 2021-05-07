@@ -14,7 +14,7 @@ import {
   ButtonClickSignal,
   HideHelpLayerSignal,
 } from "../Command/CommonSignal";
-import Page1 from "../GamePlay/View/new/Page1";
+import Page from "../GamePlay/View/new/Page";
 
 const { ccclass, property } = cc._decorator;
 enum State {
@@ -83,27 +83,21 @@ export default class HelpLayerView extends BaseView {
     if (
       this.GuidePage.content.children[
         this.GuidePage.getCurrentPageIndex()
-      ].children[0].getComponent(Page1)
+      ].getComponent(Page)
     ) {
-      this.GuidePage.content.children[
-        this.GuidePage.getCurrentPageIndex()
-      ].children[0]
-        .getComponent(Page1)
+      this.GuidePage.content.children[this.GuidePage.getCurrentPageIndex()]
+        .getComponent(Page)
         .play();
     }
     if (
       this.GuidePage.getCurrentPageIndex() >=
       this.GuidePage.content.childrenCount - 1
     ) {
-      setTimeout(() => {
-        this.Next.active = false;
-        this.Close.active = true;
-      }, 0);
+      this.Next.active = false;
+      this.Close.active = true;
     } else {
-      setTimeout(() => {
-        this.Next.active = true;
-        this.Close.active = false;
-      }, 0);
+      this.Next.active = true;
+      this.Close.active = false;
     }
   }
 

@@ -19,6 +19,10 @@ export default class EaseBaseView extends BaseView {
   private lastTime: number = 0;
   private completeCallback: Function = null;
 
+  get CompleteCallback() {
+    return this.completeCallback;
+  }
+
   protected get StartTime() {
     return this.startTime;
   }
@@ -31,16 +35,21 @@ export default class EaseBaseView extends BaseView {
     return this.targetVal;
   }
 
-  end() {
-    this.onComplete();
-
-    this.complete();
-  }
-
   onLoad() {}
 
   start() {}
 
+  private callOnStart: boolean = false;
+
+  onStart() {}
+
+  end() {
+    if (this.completeCallback == null) return;
+
+    this.onComplete();
+
+    this.complete();
+  }
   /**
    *
    * @param targetVal 目标值
@@ -54,6 +63,7 @@ export default class EaseBaseView extends BaseView {
     callback: Function,
     delayTime: number = 0
   ) {
+    this.callOnStart = false;
     this.targetVal = targetVal;
 
     this.startTime = Date.now() + delayTime * 1000;
@@ -62,7 +72,7 @@ export default class EaseBaseView extends BaseView {
     this.completeCallback = callback;
   }
 
-  private complete() {
+  protected complete() {
     this.startTime = this.lastTime = 0;
 
     if (this.completeCallback) {
@@ -70,6 +80,10 @@ export default class EaseBaseView extends BaseView {
       this.completeCallback = null;
       callback();
     }
+  }
+
+  protected clear() {
+    this.startTime = this.lastTime = 0;
   }
 
   update(dt: number) {
@@ -82,6 +96,11 @@ export default class EaseBaseView extends BaseView {
       this.complete();
     } else {
       if (this.canStart()) {
+        if (this.callOnStart == false) {
+          this.callOnStart = true;
+          this.onStart();
+        }
+
         this.onStep();
       } else {
         // do nothing

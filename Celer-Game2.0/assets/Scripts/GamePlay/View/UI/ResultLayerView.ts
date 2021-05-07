@@ -13,9 +13,12 @@ import {
 import { PlayModelProxy } from "../../../Model/PlayModelProxy";
 import { CelerSDK } from "../../../Utils/Celer/CelerSDK";
 import { ScoreType } from "../../Model/GamePlayModel";
+import ResultAnimation from "../../../Animation/ResultAnimation";
+import { BaseSignal } from "../../../Utils/Signal";
 
 const { ccclass, property } = cc._decorator;
 
+export class PlayResultAnimationSignal extends BaseSignal {}
 @ccclass
 export default class ResultLayerView extends BaseView {
   // LIFE-CYCLE CALLBACKS:
@@ -50,8 +53,14 @@ export default class ResultLayerView extends BaseView {
     );
   }
 
-  get MoveCount() {
-    return this.Root.getChildByName("MoveCountLabel").getComponent(
+  get GoldsScore() {
+    return this.Root.getChildByName("GoldsScore").getComponent(
+      NumberChangedView
+    );
+  }
+
+  get GoldCount() {
+    return this.Root.getChildByName("GoldCount").getComponent(
       NumberChangedView
     );
   }
@@ -61,7 +70,13 @@ export default class ResultLayerView extends BaseView {
     return this.Root.getChildByName("Submit");
   }
 
-  private CountTotal = 4;
+  get ResultAnimation() {
+    return this.Root.getChildByName("TitleAnimation").getComponent(
+      ResultAnimation
+    );
+  }
+
+  private CountTotal = 5;
 
   onLoad() {
     this.node.active = false;
@@ -70,24 +85,30 @@ export default class ResultLayerView extends BaseView {
   }
 
   onGameOver(type: RoundEndType) {
-    console.log("Open result:", RoundEndType[type], Date.now());
+    console.log("Open result:", RoundEndType[type]);
     this.Submit.scale = 0;
     if (type == RoundEndType.TimeUp) {
-      this.Title.spriteFrame = ResourceController.inst.getTitleSprite(
+      this.Title.spriteFrame = ResourceController.inst.getResultSprite(
         Title.TimeUp
       );
     } else if (type == RoundEndType.Complete) {
-      this.Title.spriteFrame = ResourceController.inst.getTitleSprite(
+      this.Title.spriteFrame = ResourceController.inst.getResultSprite(
         Title.Complete
       );
+    } else if (type == RoundEndType.OutOfMove) {
+      this.Title.spriteFrame = ResourceController.inst.getResultSprite(
+        Title.OutOfMove
+      );
     } else {
-      this.Title.spriteFrame = ResourceController.inst.getTitleSprite(
+      this.Title.spriteFrame = ResourceController.inst.getResultSprite(
         Title.Over
       );
     }
 
+    this.Title.node.scale = 0;
     this.Root.scale = 0;
     this.node.active = true;
+    this.ResultAnimation.node.opacity = 0;
     this.Root.runAction(
       cc.sequence(
         cc.scaleTo(0.1, 0.9, 1.3),
@@ -142,7 +163,8 @@ export default class ResultLayerView extends BaseView {
     this.TotalScore.STEP = 150;
     this.TimeBonus.STEP = 150;
     this.Score.STEP = 150;
-    this.MoveCount.STEP = 2;
+    this.GoldCount.STEP = 2;
+    this.GoldsScore.STEP = 100;
 
     let step = () => {
       ScoreCountingSignal.inst.dispatch();
@@ -151,7 +173,24 @@ export default class ResultLayerView extends BaseView {
     this.TimeBonus.onStep = step;
     this.TotalScore.onStep = step;
     this.Score.onStep = step;
-    this.MoveCount.onStep = step;
+    this.GoldCount.onStep = step;
+    this.GoldsScore.onStep = step;
+
+    this.Title.node.runAction(
+      cc.sequence(
+        cc.scaleTo(0.1, 1.5),
+        cc.scaleTo(0.1, 1),
+        cc.scaleTo(0.1, 1.2),
+        cc.scaleTo(0.1, 1)
+      )
+    );
+
+    this.ResultAnimation.onComplete = () => {
+      this.ResultAnimation.node.runAction(cc.fadeOut(0.1));
+    };
+    this.ResultAnimation.node.opacity = 255;
+    PlayResultAnimationSignal.inst.dispatch();
+    this.ResultAnimation.play();
 
     this.TimeBonus.onNumberChanged(PlayModelProxy.inst.TimeBonus, () => {
       this.Count++;
@@ -164,16 +203,21 @@ export default class ResultLayerView extends BaseView {
     });
 
     this.Score.onNumberChanged(
-      PlayModelProxy.inst.getScoreByType(ScoreType.Normal),
+      PlayModelProxy.inst.getTotalScore() -
+        PlayModelProxy.inst.Model.getScoreByType(ScoreType.GoldGain) -
+        PlayModelProxy.inst.TimeBonus,
       () => {
         this.Count++;
         console.log("Score Done");
       }
     );
 
-    this.MoveCount.onNumberChanged(-PlayModelProxy.inst.MoveCount, () => {
-      this.Count++;
-      console.log("MoveCount Done");
-    });
+    this.GoldsScore.onNumberChanged(
+      PlayModelProxy.inst.Model.getScoreByType(ScoreType.GoldGain),
+      () => {
+        this.Count++;
+        console.log("GoldsScore Done");
+      }
+    );
   }
 }

@@ -4,7 +4,6 @@ import {
   ShowSubmitSignal,
   OpenResultLayerSignal,
   PlayerScoreChanged,
-  GamePauseSignal,
   ButtonClickSignal,
   CountDownSignal,
   UpdateTimeNumber,
@@ -12,9 +11,8 @@ import {
 } from "../Command/CommonSignal";
 import { RoundEndType } from "../Controller/GameStateController";
 import { SingleTon } from "../Utils/ToSingleton";
-import { BaseSignal } from "../Utils/Signal";
-import { ShakePokerSignal } from "../GamePlay/View/Poker/PokerPosMediator";
-import { AdFinishSignal } from "../Ad/AdLayer";
+import { NextLevelSignal, StartCountSignal } from "../Model/PlayModelProxy";
+import { PlayResultAnimationSignal } from "../GamePlay/View/UI/ResultLayerView";
 
 interface AudioItem {
   loop: boolean;
@@ -30,18 +28,6 @@ if (window.oncanplay) {
     AudioController.canPlay = true;
   };
 }
-
-export class PlayDispatchPokerSignal extends BaseSignal {}
-
-export class PlayToDeskSignal extends BaseSignal {}
-
-export class PlayPokerPlaceSignal extends BaseSignal {}
-
-export class PlayPokerFlySignal extends BaseSignal {}
-
-export class PlayRecycleDrawSignal extends BaseSignal {}
-
-export class PlayShakeSignal extends BaseSignal {}
 
 const PATH = "sounds/";
 
@@ -132,52 +118,29 @@ class AudioController extends SingleTon<AudioController>() {
     this.setEffectVolume(1);
     this.setMusicVolume(1);
 
-    ShakePokerSignal.inst.addListener(() => {
-      this.playEffect("shake");
-    }, this);
-
-    PlayRecycleDrawSignal.inst.addListener(() => {
-      this.playEffect("recyclePoker");
-    }, this);
     // bgm
     UpdateTimeNumber.inst.addListenerOne((time: number) => {
-      //   if (time >= 30) {
-      //     if (
-      //       cc.audioEngine.getState(this.audioID["bgm"]) ==
-      //       cc.audioEngine.AudioState.PLAYING
-      //     ) {
-      //       return;
-      //     }
-      //     this.playMusic("bgm", true);
-      //   } else {
-      //     if (
-      //       cc.audioEngine.getState(this.audioID["bgm_30"]) ==
-      //       cc.audioEngine.AudioState.PLAYING
-      //     ) {
-      //       return;
-      //     }
-      //     this.playMusic("bgm_30", true);
-      //   }
+      if (time >= 30) {
+        if (
+          cc.audioEngine.getState(this.audioID["bgm"]) ==
+          cc.audioEngine.AudioState.PLAYING
+        ) {
+          return;
+        }
+        this.playMusic("bgm", true);
+      } else {
+        if (
+          cc.audioEngine.getState(this.audioID["bgm_30"]) ==
+          cc.audioEngine.AudioState.PLAYING
+        ) {
+          return;
+        }
+        this.playMusic("bgm_30", true);
+      }
     }, this);
 
-    AdFinishSignal.inst.addListener(() => {
-      this.playEffect("change_horce");
-    }, this);
-
-    PlayPokerFlySignal.inst.addListener(() => {
-      this.playEffect("pokerFly");
-    }, this);
-
-    PlayPokerPlaceSignal.inst.addListener(() => {
-      if (this.audioID["pokerPlace"]) return;
-      this.audioID["pokerPlace"] = true;
-      this.playEffect("pokerPlace", false, () => {
-        this.audioID["pokerPlace"] = null;
-      });
-    }, this);
-
-    PlayToDeskSignal.inst.addListener(() => {
-      this.playEffect("lay_success");
+    StartCountSignal.inst.addListener(() => {
+      this.playEffect("start_count");
     }, this);
 
     /** 结算分数跳动 */
@@ -187,15 +150,6 @@ class AudioController extends SingleTon<AudioController>() {
       this.playEffect("scoreCount", false, () => {
         this.audioID["scoreCount"] = null;
       });
-    }, this);
-
-    PlayDispatchPokerSignal.inst.addListener(() => {
-      if (this.audioID["devPoker"]) return;
-      this.audioID["devPoker"] = true;
-      this.playEffect("devPoker", false, () => {});
-      setTimeout(() => {
-        this.audioID["devPoker"] = null;
-      }, 10);
     }, this);
 
     /** 显示结算按钮 */
@@ -208,24 +162,33 @@ class AudioController extends SingleTon<AudioController>() {
     /** 打开结算界面 */
     OpenResultLayerSignal.inst.addListenerOne((type: RoundEndType) => {
       if (type == RoundEndType.TimeUp) {
-        this.playEffect("timeup");
+        this.playEffect("show_result");
       } else if (type == RoundEndType.Complete) {
-        this.playEffect("complete");
+        this.playEffect("show_result");
       } else {
-        this.playEffect("complete");
+        this.playEffect("show_result");
       }
     }, this);
 
+    PlayResultAnimationSignal.inst.addListener(() => {
+      this.playEffect("result_animation");
+    }, this);
     /** 玩家加分 */
     PlayerScoreChanged.inst.addListenerThree(
       (playerScore: number, addScore: number, times: number) => {},
       this
     );
 
-    /** 游戏暂停 */
-    GamePauseSignal.inst.addListener(() => {
-      this.playEffect("pause");
+    NextLevelSignal.inst.addListenerOne((level: number) => {
+      if (level == 0) return;
+      this.playEffect("pass_level");
+      this.playEffect("map_move");
     }, this);
+
+    // /** 游戏暂停 */
+    // GamePauseSignal.inst.addListener(() => {
+    //   this.playEffect("pause");
+    // }, this);
 
     /** 按钮点击 */
     ButtonClickSignal.inst.addListener(() => {
@@ -246,10 +209,11 @@ class AudioController extends SingleTon<AudioController>() {
           this.playEffect("timeup");
           break;
         case RoundEndType.Over:
-          this.playEffect("timeup");
+          this.playEffect("over");
           break;
 
         default:
+          this.playEffect("over");
           break;
       }
     }, this);

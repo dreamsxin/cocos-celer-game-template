@@ -8,7 +8,10 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import { ShowPauseLayerSignal } from "../../../Command/CommonSignal";
+import {
+  ButtonClickSignal,
+  ShowPauseLayerSignal,
+} from "../../../Command/CommonSignal";
 import { GameStateController } from "../../../Controller/GameStateController";
 import { ResourceController } from "../../../Controller/ResourceController";
 import { PlayModelProxy } from "../../../Model/PlayModelProxy";
@@ -47,6 +50,7 @@ export default class MenuLayerView extends BaseView {
       cc.Node.EventType.TOUCH_END,
       () => {
         GameStateController.inst.resume();
+        ButtonClickSignal.inst.dispatch();
         this.Hide();
       },
       this
@@ -56,7 +60,7 @@ export default class MenuLayerView extends BaseView {
       cc.Node.EventType.TOUCH_END,
       () => {
         this.Hide();
-
+        ButtonClickSignal.inst.dispatch();
         EndNowSignal.inst.dispatch();
       },
       this
@@ -71,14 +75,14 @@ export default class MenuLayerView extends BaseView {
 
     if (PlayModelProxy.inst.FreePauseCount <= 0) {
       this.FreePauseCount.node.active = false;
-      this.PauseInfo.spriteFrame = ResourceController.inst.getAltas(
-        "font_pauseno"
+      this.PauseInfo.spriteFrame = ResourceController.inst.getPauseAtlas(
+        "bg_font_nofree"
       );
     } else {
       this.FreePauseCount.node.active = true;
       this.FreePauseCount.string = PlayModelProxy.inst.FreePauseCount.toString();
-      this.PauseInfo.spriteFrame = ResourceController.inst.getAltas(
-        "font_pausehave"
+      this.PauseInfo.spriteFrame = ResourceController.inst.getPauseAtlas(
+        "bg_font_free"
       );
     }
     this.Show();

@@ -7,9 +7,8 @@ export class Level {
   /** 主题随机池 */
   static getThemeRandomPool(level: number) {
     while (this.pool.length < 120) {
-      this.pool.push(Theme.Blue);
-      this.pool.push(Theme.Green);
-      this.pool.push(Theme.Red);
+      this.pool.push(Theme.Wood);
+      this.pool.push(Theme.Stone);
     }
     disOrderArray(this.pool);
     return this.pool;

@@ -6,6 +6,7 @@ import { PlayModelProxy } from "../../Model/PlayModelProxy";
 import { GameStateController } from "../../Controller/GameStateController";
 import { HideWildAdButtonSignal } from "../../Ad/WildAdButton";
 import { RemoveFlyCnicornSignal } from "../../Ad/FlyCnicornAd";
+import { GetTotalTime } from "../../Global/GameRule";
 
 export class CelerSDK extends SingleTon<CelerSDK>() {
   private alreadySubmit: boolean = false;
@@ -47,7 +48,13 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
     if (CELER_X) {
       LogHandler.inst.initLog(celerSDK.log);
     } else {
-      console.log("v 1.4");
+      // console.error = (...args) => {
+      //   let str = "";
+      //   for (let msg of args) {
+      //     str += JSON.stringify(msg);
+      //   }
+      //   throw new Error(str);
+      // };
     }
   }
 
@@ -75,9 +82,9 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
       ? celerSDK.getMatch()
       : {
           matchId: "error : can not get id",
-          shouldLaunchTutorial: true,
-          sharedRandomSeed: Math.random(), //*/0.24907066062871674,//Math.random(),
-          difficultyLevel: 0,
+          shouldLaunchTutorial: false,
+          sharedRandomSeed: Math.random(), //*/0.24907066062871674,//Math.random(),0.9483376662548313, //
+          difficultyLevel: 1,
         };
 
     console.log(
@@ -87,8 +94,13 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
       this.match.sharedRandomSeed
     );
 
+    if (this.match.difficultyLevel == 0) {
+      this.match.difficultyLevel = 1;
+    }
+
     Random.setRandomSeed(this.match.sharedRandomSeed);
-    PlayModelProxy.inst.Level = this.match.difficultyLevel;
+
+    PlayModelProxy.inst.setTotalTime(GetTotalTime());
 
     if (this.match && this.match.shouldLaunchTutorial) {
       this.isNewPlayer = true;
