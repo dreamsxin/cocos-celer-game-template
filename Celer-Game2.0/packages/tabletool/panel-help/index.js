@@ -1,20 +1,12 @@
-
 Editor.Panel.extend({
-    style: `
+  style: `
       :host { margin: 5px; }
       h2 { color: #f90; }
     `,
 
-    template: `
-     
+  template: `
+     <div>拜拜<div>
     `,
 
-    $: {
-        btn: '#btn',
-        label: '#label',
-    },
-
-    ready() {
-        
-    },
+  ready() {},
 });

@@ -109,7 +109,7 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
     }
 
     if (CELER_X) {
-      if (celerSDK.hasMethod("showAd") != true) {
+      if (celerSDK.hasMethod("showAd") != true || this.isNewPlayer) {
         HideWildAdButtonSignal.inst.dispatch();
         RemoveFlyCnicornSignal.inst.dispatch();
       }

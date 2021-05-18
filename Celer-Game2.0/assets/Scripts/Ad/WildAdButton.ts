@@ -16,16 +16,24 @@ export class HideWildAdButtonSignal extends BaseSignal {}
 export class WildAdButtonClick extends BaseSignal {}
 
 export class WildButtonReadySignal extends BaseSignal {}
+export enum AdButtonType {
+  Default,
+}
 @ccclass
 export default class WildAdButton extends cc.Component {
+  @property({
+    type: cc.Enum(AdButtonType),
+  })
+  adType: AdButtonType = AdButtonType.Default;
   onLoad() {
     this.node.active =
       cc.sys.isMobile && cc.sys.isBrowser && cc.sys.os == cc.sys.OS_ANDROID;
     this.node.parent.active = this.node.active;
-
     this.node.scale = 0;
 
-    WildButtonReadySignal.inst.addOnce(() => {
+    WildButtonReadySignal.inst.addOnceOne((type: AdButtonType) => {
+      if (this.adType != type && type != null) return;
+
       console.log(" Wild button :", this.node.active);
       if (this.node.active) {
         this.node.getComponent(cc.Button).transition =
@@ -36,7 +44,7 @@ export default class WildAdButton extends cc.Component {
             cc.callFunc(() => {
               this.node.getComponent(cc.Button).transition =
                 cc.Button.Transition.SCALE;
-              this.node.getComponent(cc.Button).zoomScale = 0.94;
+              this.node.getComponent(cc.Button).zoomScale = 1.2;
               this.node.on(
                 cc.Node.EventType.TOUCH_END,
                 () => {
@@ -50,9 +58,16 @@ export default class WildAdButton extends cc.Component {
       }
     }, this);
 
-    HideWildAdButtonSignal.inst.addListener(() => {
+    HideWildAdButtonSignal.inst.addListenerOne((type: AdButtonType) => {
+      if (this.adType != type && type != null) return;
       this.node.active = false;
       this.node.parent.active = false;
+      for (let child of this.node.parent.children) {
+        if (child.active) {
+          this.node.parent.active = true;
+          break;
+        }
+      }
     }, this);
   }
 }

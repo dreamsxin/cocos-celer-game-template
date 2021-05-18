@@ -12,8 +12,6 @@ import {
 import { RoundEndType } from "../Controller/GameStateController";
 import { SingleTon } from "../Utils/ToSingleton";
 import { NextLevelSignal, StartCountSignal } from "../Model/PlayModelProxy";
-import { PlayResultAnimationSignal } from "../GamePlay/View/UI/ResultLayerView";
-
 interface AudioItem {
   loop: boolean;
   volume: number;
@@ -31,12 +29,25 @@ if (window.oncanplay) {
 
 const PATH = "sounds/";
 
+const EffectLimitTime = 100;
+const EffectCountLimit = 15;
+
 class AudioController extends SingleTon<AudioController>() {
   private static PlayedList: AudioItem[] = [];
   public static canPlay: boolean = CC_DEBUG || cc.sys.WIN32 == cc.sys.platform;
   private static hasBindTouch: boolean = false;
 
   private audioID = {};
+  private effectCount: number = 0;
+
+  get EffectCount() {
+    return this.effectCount;
+  }
+
+  set EffectCount(val: number) {
+    this.effectCount = val;
+    this.effectCount = Math.max(0, this.effectCount);
+  }
 
   private clips: HashMap<string, cc.AudioClip> = new HashMap();
   init(callback: Function) {
@@ -170,9 +181,6 @@ class AudioController extends SingleTon<AudioController>() {
       }
     }, this);
 
-    PlayResultAnimationSignal.inst.addListener(() => {
-      this.playEffect("result_animation");
-    }, this);
     /** 玩家加分 */
     PlayerScoreChanged.inst.addListenerThree(
       (playerScore: number, addScore: number, times: number) => {},
@@ -182,7 +190,7 @@ class AudioController extends SingleTon<AudioController>() {
     NextLevelSignal.inst.addListenerOne((level: number) => {
       if (level == 0) return;
       this.playEffect("pass_level");
-      this.playEffect("map_move");
+      // this.playEffect("map_move");
     }, this);
 
     // /** 游戏暂停 */
@@ -201,6 +209,7 @@ class AudioController extends SingleTon<AudioController>() {
     }, this);
 
     GameOverSignal.inst.addListenerOne((type: RoundEndType) => {
+      this.effectCount = 0;
       switch (type) {
         case RoundEndType.Complete:
           this.playEffect("complete");
@@ -225,6 +234,12 @@ class AudioController extends SingleTon<AudioController>() {
       return;
     }
 
+    if (this.effectCount >= EffectCountLimit) return;
+
+    if (EffectLimitTime > 0) {
+      if (this.audioID[name] != null) return;
+    }
+
     if (cc.audioEngine.getEffectsVolume() <= 0.05) return;
 
     let effect = this.clips.get(name);
@@ -235,9 +250,18 @@ class AudioController extends SingleTon<AudioController>() {
       // cc.audioEngine.setFinishCallback(this.audioID[name], () => {
       //   this.audioID[name] = null;
       // });
+
+      this.EffectCount++;
       cc.audioEngine.setFinishCallback(this.audioID[name], () => {
+        this.audioID[name] = null;
+        this.EffectCount--;
         finishCallback && finishCallback();
       });
+      if (EffectLimitTime > 0) {
+        setTimeout(() => {
+          this.audioID[name] = null;
+        }, EffectLimitTime);
+      }
     } else {
       cc.loader.loadRes(PATH + name, cc.AudioClip, (err, res) => {
         if (err) {
@@ -254,9 +278,17 @@ class AudioController extends SingleTon<AudioController>() {
           this.clips.add(res.name, res);
           // if (this.audioID[name]) return;
           this.audioID[name] = cc.audioEngine.playEffect(res, loop);
+          this.EffectCount++;
           cc.audioEngine.setFinishCallback(this.audioID[name], () => {
             finishCallback && finishCallback();
+            this.audioID[name] = null;
+            this.EffectCount--;
           });
+          if (EffectLimitTime > 0) {
+            setTimeout(() => {
+              this.audioID[name] = null;
+            }, EffectLimitTime);
+          }
           // cc.audioEngine.setFinishCallback(this.audioID[name], () => {
           //   this.audioID[name] = null;
           // });

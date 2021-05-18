@@ -2,6 +2,7 @@
   "android-instant": {
     "REMOTE_SERVER_ROOT": "",
     "host": "",
+    "packageName": "org.cocos2d.DominoCash",
     "pathPattern": "",
     "recordPath": "",
     "scheme": "https",
@@ -15,7 +16,9 @@
     "subContext": ""
   },
   "encryptJs": true,
-  "excludeScenes": [],
+  "excludeScenes": [
+    "579f160d-566d-4138-8457-bd7b56a8281f"
+  ],
   "fb-instant-games": {},
   "includeSDKBox": false,
   "inlineSpriteFrames": true,
@@ -45,5 +48,15 @@
     "subContext": ""
   },
   "xxteaKey": "2e965932-e8d5-4b",
-  "zipCompressJs": true
+  "zipCompressJs": true,
+  "android": {
+    "packageName": "org.cocos2d.DominoCash"
+  },
+  "ios": {
+    "packageName": "org.cocos2d.DominoCash"
+  },
+  "mac": {
+    "packageName": "org.cocos2d.DominoCash"
+  },
+  "win32": {}
 }

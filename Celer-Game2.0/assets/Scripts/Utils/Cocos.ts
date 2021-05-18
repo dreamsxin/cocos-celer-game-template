@@ -73,3 +73,23 @@ export function IndexToi(index: number, modSize: number) {
 export function IndexToj(index: number, modSize: number) {
   return index % modSize;
 }
+
+export function GetPixels(
+  xInView: number,
+  yInView: number,
+  width: number = 10,
+  height: number = 10
+) {
+  let gl = cc.renderer.device.gl;
+  let pixels = new Uint8Array(width * height * 4);
+  gl.readPixels(
+    xInView,
+    yInView,
+    width,
+    height,
+    gl.RGBA,
+    gl.UNSIGNED_BYTE,
+    pixels
+  );
+  return pixels;
+}

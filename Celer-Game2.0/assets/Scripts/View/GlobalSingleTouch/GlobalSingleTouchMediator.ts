@@ -1,4 +1,5 @@
 import { GameStateController } from "../../Controller/GameStateController";
+import { GetPixels } from "../../Utils/Cocos";
 import { BaseSignal } from "../../Utils/Signal";
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html

@@ -31,6 +31,7 @@ export default class FlyCnicornAd extends cc.Component {
     return this.node.getChildByName("Fly");
   }
 
+  private initY: number = 0;
   reuse(origin: FlyOrigin, y: number) {
     console.log("ShowFlyCnicorn:", FlyOrigin[origin]);
     this.node.opacity = 255;
@@ -68,6 +69,7 @@ export default class FlyCnicornAd extends cc.Component {
   unuse() {}
 
   onLoad() {
+    this.initY = this.node.y;
     RemoveFlyCnicornSignal.inst.addOnce(() => {
       ShowFlyCnicornSignal.inst.removeTarget(this);
       CnicornWatchFailSignal.inst.removeTarget(this);
@@ -84,7 +86,7 @@ export default class FlyCnicornAd extends cc.Component {
       (origin: FlyOrigin, originY: number) => {
         console.log(" Show Cnicorn");
         if (this.Fly.getNumberOfRunningActions() > 0) return;
-        this.reuse(FlyOrigin.Right, 665.607);
+        this.reuse(FlyOrigin.Right, this.initY);
       },
       this
     );

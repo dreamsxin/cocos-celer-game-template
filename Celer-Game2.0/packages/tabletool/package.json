@@ -5,17 +5,28 @@
   "author": "吃吃大魔王",
   "main": "main.js",
   "main-menu": {
-    "转表工具/转表": {
+    "吃吃的工具/转表": {
       "message": "tabletool:openTableToolPanel"
     },
-    "转表工具/帮助": {
+    "吃吃的工具/生成polygon数据": {
+      "message": "tabletool:openPolygonToolPanel"
+    },
+    "吃吃的工具/帮助": {
       "message": "tabletool:openTableHelpPanel"
     }
   },
   "panel-table": {
     "main": "panel-table/index.js",
     "type": "dockable",
-    "title": "转表工具",
+    "title": "工具",
+    "width": 600,
+    "height": 800,
+    "resizable": "false"
+  },
+  "panel-polygon": {
+    "main": "panel-polygon/index.js",
+    "type": "dockable",
+    "title": "工具",
     "width": 600,
     "height": 800,
     "resizable": "false"
