@@ -11,11 +11,9 @@
 import BaseMediator from "../../View/BaseMediator";
 import LoadingView from "./LoadingView";
 import { CelerSDK } from "../../Utils/Celer/CelerSDK";
-import {
-  GameReadySignal,
-  ShowTutorialSignal,
-} from "../../Command/CommonSignal";
+import { GameReadySignal } from "../../Command/CommonSignal";
 import { PlayModelProxy } from "../../Model/PlayModelProxy";
+import { ShowTutorialSignal } from "../../Tutorial/TutorialView";
 
 const { ccclass, property } = cc._decorator;
 

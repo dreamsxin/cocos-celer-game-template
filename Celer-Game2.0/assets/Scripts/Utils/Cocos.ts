@@ -74,6 +74,7 @@ export function IndexToj(index: number, modSize: number) {
   return index % modSize;
 }
 
+/** 获取对应像素位置的rgb */
 export function GetPixels(
   xInView: number,
   yInView: number,
@@ -92,4 +93,175 @@ export function GetPixels(
     pixels
   );
   return pixels;
+}
+
+/**
+ * 获取旋转后的坐标点
+ * @param point
+ * @param angle
+ * @param center
+ * @param isFollowClock
+ */
+export function RotatePoint(
+  point: cc.Vec2,
+  angle: number,
+  center: cc.Vec2 = cc.v2(0, 0),
+  isFollowClock: boolean = true
+) {
+  let direction = isFollowClock ? -1 : 1;
+  let rad = (angle / 180) * Math.PI;
+  let p = cc.v2(point.x, point.y);
+  point.x =
+    (p.x - center.x) * Math.cos(direction * rad) -
+    (p.y - center.y) * Math.sin(direction * rad) +
+    center.x;
+
+  point.y =
+    (p.x - center.x) * Math.sin(direction * rad) +
+    (p.y - center.y) * Math.cos(direction * rad) +
+    center.y;
+}
+
+let mat4 = {
+  mul: null,
+};
+mat4.mul = function (out, a, b) {
+  let a00 = a.m00,
+    a01 = a.m01,
+    a02 = a.m02,
+    a03 = a.m03,
+    a10 = a.m04,
+    a11 = a.m05,
+    a12 = a.m06,
+    a13 = a.m07,
+    a20 = a.m08,
+    a21 = a.m09,
+    a22 = a.m10,
+    a23 = a.m11,
+    a30 = a.m12,
+    a31 = a.m13,
+    a32 = a.m14,
+    a33 = a.m15;
+
+  // Cache only the current line of the second matrix
+  let b0 = b.m00,
+    b1 = b.m01,
+    b2 = b.m02,
+    b3 = b.m03;
+  out.m00 = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+  out.m01 = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+  out.m02 = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+  out.m03 = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+
+  b0 = b.m04;
+  b1 = b.m05;
+  b2 = b.m06;
+  b3 = b.m07;
+  out.m04 = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+  out.m05 = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+  out.m06 = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+  out.m07 = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+
+  b0 = b.m08;
+  b1 = b.m09;
+  b2 = b.m10;
+  b3 = b.m11;
+  out.m08 = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+  out.m09 = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+  out.m10 = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+  out.m11 = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+
+  b0 = b.m12;
+  b1 = b.m13;
+  b2 = b.m14;
+  b3 = b.m15;
+  out.m12 = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+  out.m13 = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+  out.m14 = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+  out.m15 = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+  return out;
+};
+
+/** 获取世界坐标下的包围盒 */
+export function GetBoxToWorld(node: cc.Node, exceptNode?: cc.Node): cc.Rect {
+  if (node["_parent"]) {
+    node["_parent"]._updateWorldMatrix();
+    return _getBoundingBoxTo(node, node["_parent"]._worldMatrix, exceptNode);
+  } else {
+    return getBoundingBox(node, exceptNode);
+  }
+}
+
+export function getBoundingBox(node: cc.Node, exceptNode: cc.Node): cc.Rect {
+  node["_updateLocalMatrix"]();
+  let width = node["_contentSize"].width;
+  let height = node["_contentSize"].height;
+  let rect = cc.rect(
+    -node["_anchorPoint"].x * width,
+    -node["_anchorPoint"].y * height,
+    width,
+    height
+  );
+  let res: any = rect.transformMat4(rect, node["_matrix"]);
+
+  if (!exceptNode) return res;
+
+  let rect2 = GetBoxToWorld(exceptNode);
+  if (!rect2.intersects(rect)) return rect;
+  let inter = rect2.intersection(rect2, rect);
+  res = RectSub(res, inter);
+
+  return res;
+}
+
+function _getBoundingBoxTo(
+  node: cc.Node,
+  parentMat: any,
+  exceptNode: cc.Node
+): cc.Rect {
+  node["_updateLocalMatrix"]();
+  let width = node["_contentSize"].width;
+  let height = node["_contentSize"].height;
+  let rect = cc.rect(
+    -node["_anchorPoint"].x * width,
+    -node["_anchorPoint"].y * height,
+    width,
+    height
+  );
+
+  parentMat = mat4.mul(node["_worldMatrix"], parentMat, node["_matrix"]);
+  rect.transformMat4(rect, parentMat);
+
+  //query child's BoundingBox
+  if (!exceptNode) return rect;
+
+  let rect2 = GetBoxToWorld(exceptNode);
+  if (!rect2.intersects(rect)) return rect;
+
+  let inter = rect2.intersection(rect2, rect);
+  rect = RectSub(rect, inter);
+  return rect;
+}
+
+/** a-b减掉矩形 */
+export function RectSub(a: cc.Rect, rectB: cc.Rect): cc.Rect {
+  let ax = a.x,
+    ay = a.y,
+    aw = a.width,
+    ah = a.height;
+  let bx = rectB.x,
+    by = rectB.y,
+    bw = rectB.width,
+    bh = rectB.height;
+
+  a.x = ax;
+  a.y = ay + bh;
+  a.height = Math.abs(ah - bh);
+
+  return a;
+}
+
+/** 近似相等 */
+export function Approx(a: number, b: number, maxDiff = 0.000001) {
+  return Math.abs(a - b) <= maxDiff;
 }

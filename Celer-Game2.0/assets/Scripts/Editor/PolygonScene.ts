@@ -10,10 +10,11 @@
 
 const { ccclass, property, executeInEditMode } = cc._decorator;
 
-const Threshold = 10;
 @ccclass
 @executeInEditMode
 export default class PolygonScene extends cc.Component {
+  @property
+  Threshold: number = 10;
   private physicsUtils: any = null;
   private ipcListener: Editor.IpcListener;
 
@@ -47,26 +48,12 @@ export default class PolygonScene extends cc.Component {
   }
 
   onLoad() {
-    cc.director.getPhysicsManager().enabled = true;
-    cc.director.getPhysicsManager().gravity = cc.v2(0, -1000);
-    cc.director.getPhysicsManager().debugDrawFlags =
-      cc.PhysicsManager.DrawBits.e_shapeBit;
-
     if (CC_EDITOR) {
       this.physicsUtils = Editor.require("scene://utils/physics");
       this.IpcListener.clear();
       this.IpcListener.once(
         "start-gen-polygon",
         this.startGeneratePolygonData.bind(this)
-      );
-    } else {
-      cc.loader.loadRes(
-        "./polygonData/polygon",
-        cc.JsonAsset,
-        (err, json: cc.JsonAsset) => {
-          this.polygonData = json.json;
-          this.show();
-        }
       );
     }
   }
@@ -178,13 +165,13 @@ export default class PolygonScene extends cc.Component {
     let polygon = node.addComponent(cc.PolygonCollider);
     this.node.addChild(node);
 
-    this.physicsUtils.resetPoints(polygon, { threshold: Threshold });
-    this.polygonData[spriteFrame.name] = [];
+    this.physicsUtils.resetPoints(polygon, { threshold: this.Threshold });
 
     setTimeout(() => {
       if (polygon.points.length < 4) {
         Editor.error(" points error:" + spriteFrame.name);
       } else {
+        this.polygonData[spriteFrame.name] = [];
         for (let point of polygon.points) {
           this.polygonData[spriteFrame.name].push({ x: point.x, y: point.y });
         }

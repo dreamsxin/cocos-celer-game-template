@@ -28,6 +28,9 @@ export class Random {
 
   public static setRandomSeed(seed: number) {
     console.log(" set random seed:", seed);
+    // if (CELER_X) {
+    //   Math.random = this.getRandom.bind(this);
+    // }
     this.randomSeed = seed;
     this.sharedSeed = seed;
     RandomSeedInitSignal.inst.dispatchOne(seed);

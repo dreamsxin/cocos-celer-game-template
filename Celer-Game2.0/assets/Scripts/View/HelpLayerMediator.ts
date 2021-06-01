@@ -8,52 +8,48 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-
 import HelpLayerView from "./HelpLayerView";
 import BaseMediator from "./BaseMediator";
-import { ShowHelpLayerSignal, HideHelpLayerSignal, ShowTutorialSignal } from "../Command/CommonSignal";
+import {
+  ShowHelpLayerSignal,
+  HideHelpLayerSignal,
+} from "../Command/CommonSignal";
 import { GameStateController } from "../Controller/GameStateController";
+import { ShowTutorialSignal } from "../Tutorial/TutorialView";
 
 const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class HelpLayerMediator extends BaseMediator<HelpLayerView> {
+  private closeCallback: Function = null;
 
+  onRegister() {
+    ShowHelpLayerSignal.inst.addListenerOne(this.showHelp, this);
+    ShowTutorialSignal.inst.addListenerOne(this.showGuide, this);
+    HideHelpLayerSignal.inst.addListenerOne(this.hideGuide, this);
+  }
 
+  showHelp(callback: Function) {
+    if (this.View.isShowed()) return;
 
-    private closeCallback: Function = null;
+    GameStateController.inst.pause();
+    this.closeCallback = callback;
+    this.View.Show();
+  }
 
-    onRegister() {
+  showGuide(callback: Function) {
+    if (this.View.isShowed()) return;
 
-        ShowHelpLayerSignal.inst.addListenerOne(this.showHelp, this);
-        ShowTutorialSignal.inst.addListenerOne(this.showGuide, this);
-        HideHelpLayerSignal.inst.addListenerOne(this.hideGuide, this);
+    GameStateController.inst.pause(true);
+    this.closeCallback = callback;
+    this.View.Show();
+  }
 
-    }
+  hideGuide() {
+    if (this.View.isShowed() == false) return;
 
-    showHelp(callback: Function) {
-        if (this.View.isShowed()) return;
-
-        GameStateController.inst.pause();
-        this.closeCallback = callback;
-        this.View.Show();
-    }
-
-    showGuide(callback: Function) {
-
-        if (this.View.isShowed()) return;
-
-        GameStateController.inst.pause(true);
-        this.closeCallback = callback;
-        this.View.Show();
-    }
-
-    hideGuide() {
-        if (this.View.isShowed() == false) return;
-
-        GameStateController.inst.resume();
-        this.View.Hide(this.closeCallback);
-        this.closeCallback = null;
-
-    }
+    GameStateController.inst.resume();
+    this.View.Hide(this.closeCallback);
+    this.closeCallback = null;
+  }
 }

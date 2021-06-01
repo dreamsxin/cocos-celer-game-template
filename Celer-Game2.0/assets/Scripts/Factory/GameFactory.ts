@@ -9,8 +9,12 @@ class ObjPool {
 
   /** 对象的唯一标识 */
   hashKey: string;
-  constructor(template: cc.Prefab, initSize: number, handle?: Function) {
-    this.completeHandler = handle;
+  constructor(
+    template: cc.Prefab,
+    initSize: number,
+    completeHandle?: Function
+  ) {
+    this.completeHandler = completeHandle;
     this.template = template;
     this.totalSize = initSize;
     this.hashKey = "ObjPool:" + this.template.name + " - " + this.totalSize;
@@ -145,6 +149,23 @@ class GameFactory {
             }, i * 10);
           }
         }
+      }
+    );
+  }
+
+  addObject(name: string, url: string, count: number) {
+    return new Promise(
+      (solve: (name: string) => void, reject: (err: Error) => void) => {
+        cc.loader.loadRes(url, (err: Error, prefab: cc.Prefab) => {
+          if (err) {
+            reject(err);
+          } else {
+            let objPool = new ObjPool(prefab, count, () => {
+              solve(name);
+            });
+            this.objPool.add(name, objPool);
+          }
+        });
       }
     );
   }

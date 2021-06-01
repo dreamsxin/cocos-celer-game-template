@@ -1,0 +1,296 @@
+import { Collision, Manifold } from "../collision/mainfold";
+import { Util } from "../common/util";
+import { ContactConstraint } from "../constraint/contact";
+import { JointConstraint } from "../constraint/JointConstraint";
+import { Joint } from "../joint/Joint";
+import { Vector, _tempVector3 } from "../math/vector";
+import { TimeStepper } from "./timeStepper";
+import { Body } from "../body/body";
+import { Detector } from "../collision/detector";
+import { ManifoldTable } from "../collision/mainfoldTable";
+import { Sleeping } from "./sleeping";
+
+/**
+ * 引擎相关配置项
+ */
+export interface EngineOpt {
+  /**帧率 */
+  fps: number;
+  /**  是否固定步长 */
+  deltaFixed: boolean;
+
+  /** 是否开启碰撞检测 */
+  enableCollisionDetection: boolean;
+  /** 约束求解迭代次数 */
+  iteration: number;
+  /** 是否开启休眠 */
+  enableSleeping: boolean;
+  /** 是否开启缓存 */
+  enableCache: boolean;
+
+  /** 是否只检测可视窗口区域 */
+  enableViewFilter: boolean;
+
+  /** 重力 */
+  gravity: Vector;
+
+  /** 方法 */
+  methods: {
+    tickStart: () => void;
+    tickEnd: () => void;
+    beforeUpdate: () => void;
+    afterUpdate: () => void;
+    beforeRender: () => void;
+    afterRender: () => void;
+    start: () => void;
+    pause: () => void;
+    collisionStart: (manifolds: Manifold[]) => void;
+    collisionActive: (manifolds: Manifold[]) => void;
+    collisionEnd: (manifolds: Manifold[]) => void;
+  };
+}
+
+/**
+ * 主引擎
+ */
+export class Engine {
+  /** 模拟窗口宽度 */
+  width: number;
+  /** 模拟窗口高度 */
+  height: number;
+
+  /** 是否开启休眠机制 */
+  enableSleeping: boolean;
+  /** 是否开启碰撞检测 */
+  enableCollisionDetection: boolean;
+  /** 约束求解迭代次数 */
+  iteration: number;
+
+  /** 重力 */
+  gravity: Vector;
+  /** 空气阻力 */
+  airFriction: number;
+  /** 是否只检测可视窗口区域 */
+  enableViewFilter: boolean;
+  /** 刚体列表 */
+  bodies: Body[];
+  /**  关节列表 */
+  joints: Joint[];
+  /** 时间步迭代器 */
+  timeStepper: TimeStepper;
+  /** 碰撞检测器 */
+  detector: Detector;
+  /** 流形表 */
+  manifoldTable: ManifoldTable;
+  /** 接触约束求解器 */
+  contactConstraint: ContactConstraint;
+  /** 关节约束求解器 */
+  jointConstraint: JointConstraint;
+  /** 休眠管理器 */
+  sleeping: Sleeping;
+  /** 引力缩放因子 */
+  gravityScaler: number = 50;
+  /** 方法 */
+  methods: EngineOpt["methods"];
+
+  constructor(width: number, height: number, opt: EngineOpt) {
+    this.width = width || 0;
+    this.height = height || 0;
+
+    this.gravity = new Vector(0, 9);
+    this.airFriction = 0;
+
+    this.enableViewFilter = true;
+    this.enableSleeping = true;
+    this.enableCollisionDetection = true;
+    this.iteration = 20;
+
+    this.methods = {
+      tickStart: () => {},
+      tickEnd: () => {},
+      beforeUpdate: () => {},
+      afterUpdate: () => {},
+      beforeRender: () => {},
+      afterRender: () => {},
+      start: () => {},
+      pause: () => {},
+      collisionStart: (manifolds: Manifold[]) => {},
+      collisionActive: (manifolds: Manifold[]) => {},
+      collisionEnd: (manifolds: Manifold[]) => {},
+    };
+
+    Util.merge(this, opt);
+
+    this.bodies = [];
+    this.joints = [];
+    this.timeStepper = new TimeStepper(this, opt);
+    this.detector = new Detector(this, opt);
+    this.manifoldTable = new ManifoldTable(opt);
+    this.contactConstraint = new ContactConstraint();
+    this.jointConstraint = new JointConstraint();
+    this.sleeping = new Sleeping(opt);
+  }
+
+  appendBody(body: Body) {
+    body.beforeAppend(this);
+    this.bodies.push(body);
+    body.afterAppend();
+  }
+
+  clearBodies() {
+    while (this.bodies.length > 0) {
+      let body = this.bodies[0];
+      body.beforeRemove();
+      Util.remove(this.bodies, body);
+      body.afterRemove();
+    }
+  }
+
+  /**
+   * 引擎更新
+   * @param dt 步长
+   * @param timeStamp 时间戳
+   */
+  update(dt: number, timeStamp: number) {
+    if (this.enableSleeping) {
+      // 更新刚体的休眠/唤醒状态
+      this.sleeping.update(this.bodies);
+    }
+
+    for (let i = 0; i < this.bodies.length; i++) {
+      let body = this.bodies[i],
+        gravityForce = _tempVector3;
+
+      if (body.ignoreGravity) {
+        continue;
+      }
+
+      gravityForce.x = this.gravity.x * body.mass * this.gravityScaler;
+      gravityForce.y = this.gravity.y * body.mass * this.gravityScaler;
+
+      // 应用受力
+      body.applyForce(gravityForce);
+      // 积分受力
+      body.integrateForces(dt);
+    }
+
+    // 进行碰撞检测
+    let collisions: Collision[] = [];
+
+    if (this.enableCollisionDetection) {
+      collisions = this.detector.detect(this.bodies);
+    }
+
+    //根据得到的碰撞对更新碰撞流形
+    this.manifoldTable.update(collisions, timeStamp);
+    // 移除缓存表超时的碰撞对
+    this.manifoldTable.filter(timeStamp);
+
+    // 若发现有休眠的刚体发生碰撞，则唤醒
+    if (this.enableSleeping)
+      this.sleeping.afterCollision(this.manifoldTable.list);
+
+    this.contactConstraint.preSolveVelocity(this.manifoldTable.list, dt);
+    this.jointConstraint.preSolveVelocity(this.joints, dt);
+
+    for (let i = 0; i < 20; i++) {
+      this.contactConstraint.solveVelocity(this.manifoldTable.list);
+      this.jointConstraint.solveVelocity(this.joints);
+    }
+
+    for (let i = 0; i < this.bodies.length; i++) {
+      // 积分速度
+      this.bodies[i].integrateVelocities(dt);
+      this.bodies[i].clearForce();
+    }
+
+    this.manifoldTable.collisionStart.length && this.collisionStart();
+    this.manifoldTable.collisionActive.length && this.collisionActive();
+    this.manifoldTable.collisionEnd.length && this.collisionEnd();
+  }
+
+  /**
+   * 渲染物理引擎
+   * @param dt
+   */
+  render(dt: number) {
+    let body: Body, joint: Joint, i, j;
+
+    for (i = 0; i < this.bodies.length; i++) {
+      body = this.bodies[i];
+
+      // 睡眠或者静态的刚体不用每一帧都渲染
+      if (body.sleeping || body.static) {
+        continue;
+      }
+
+      // 渲染刚体
+      body.render(body, dt);
+      if (body.parts[0] !== body) {
+        for (j = 0; j < body.parts.length; j++) {
+          body.parts[j].render(body.parts[j], dt);
+        }
+      }
+    }
+
+    for (i = 0; i < this.joints.length; i++) {
+      joint = this.joints[i];
+      joint.needRender && joint.render(joint, dt);
+    }
+  }
+
+  /**
+   * 设置引擎参数
+   * @param opt
+   */
+  setOption(opt: EngineOpt) {
+    Util.merge(this, opt);
+    Util.merge(this.timeStepper, opt);
+  }
+
+  // ----------------------------------------------- hook --------------------------
+
+  tickStart() {
+    this.methods.tickStart();
+  }
+
+  tickEnd() {
+    this.methods.tickEnd();
+  }
+
+  beforeUpdate() {
+    this.methods.beforeUpdate();
+  }
+
+  afterUpdate() {
+    this.methods.afterUpdate();
+  }
+
+  beforeRender() {
+    this.methods.beforeRender();
+  }
+
+  afterRender() {
+    this.methods.afterRender();
+  }
+
+  start() {
+    this.methods.start();
+  }
+
+  pause() {
+    this.methods.pause();
+  }
+
+  collisionStart() {
+    this.methods.collisionEnd(this.manifoldTable.collisionStart);
+  }
+
+  collisionActive() {
+    this.methods.collisionEnd(this.manifoldTable.collisionActive);
+  }
+
+  collisionEnd() {
+    this.methods.collisionEnd(this.manifoldTable.collisionEnd);
+  }
+}
