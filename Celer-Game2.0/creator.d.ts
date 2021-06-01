@@ -7015,6 +7015,10 @@ declare namespace cc {
 		!#en It can be cleared that need to ensure there is not use the CHAR cache in the current scene. Otherwise, the rendered text will not be displayed without repainting. 
 		*/
     static clearCharCache(): void;
+
+    enableBold(enable: boolean): void;
+    enableItalics(enable: boolean): void;
+    enableUnderline(enable: boolean): void;
   }
   /** !#en Outline effect used to change the display, only for system fonts or TTF fonts
 	!#zh 描边效果组件,用于字体描边,只能用于系统字体 */
@@ -14353,7 +14357,8 @@ declare namespace cc {
   /** undefined */
   export class PhysicsBoxCollider
     extends PhysicsCollider
-    implements Collider.Box {
+    implements Collider.Box
+  {
     /** !#en Position offset
 		!#zh 位置偏移量 */
     offset: Vec2;
@@ -14373,7 +14378,8 @@ declare namespace cc {
   /** undefined */
   export class PhysicsCircleCollider
     extends PhysicsCollider
-    implements Collider.Circle {
+    implements Collider.Circle
+  {
     /** !#en Position offset
 		!#zh 位置偏移量 */
     offset: Vec2;
@@ -14426,7 +14432,8 @@ declare namespace cc {
   /** undefined */
   export class PhysicsPolygonCollider
     extends PhysicsCollider
-    implements Collider.Polygon {
+    implements Collider.Polygon
+  {
     /** !#en Position offset
 		!#zh 位置偏移量 */
     offset: Vec2;
