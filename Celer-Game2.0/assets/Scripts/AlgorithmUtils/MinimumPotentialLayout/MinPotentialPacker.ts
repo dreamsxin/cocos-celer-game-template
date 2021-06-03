@@ -1,3 +1,4 @@
+import { Polygon } from "../../Physic2DEngine/body/polygon";
 import { Approx, Distance } from "../../Utils/Cocos";
 import { HashMap } from "../../Utils/HashMap";
 import { Random } from "../../Utils/Random";
@@ -111,13 +112,14 @@ export class MinPotentialPacker extends BasePacker {
       this.addPack(polygon);
     }
 
-    console.log(
-      " polygons cost:",
-      Date.now() - startTime,
-      " ms",
-      ", total Pack:",
-      currentCount
-    );
+    !CELER_X &&
+      console.log(
+        " polygons cost:",
+        Date.now() - startTime,
+        " ms",
+        ", total Pack:",
+        currentCount
+      );
 
     this.done();
   }
@@ -182,8 +184,36 @@ export class MinPotentialPacker extends BasePacker {
     isNeedRotate: boolean,
     targetHeight: number
   ) {
+    // this.trySide(polygon);
     let interPolygon = this.tryPhysic(polygon);
     // this.downByForce(polygon, targetHeight);
+  }
+
+  private trySide(polygon: GeometryPolygon) {
+    let sidePolygon: GeometryPolygon[] = [];
+    let step = 0;
+    if (this.count % 2 == 0) {
+      // 左对齐
+      step = -1;
+      sidePolygon = this.sideCount.get(this.warpCount).left;
+    } else {
+      // 右对齐
+      step = 1;
+      sidePolygon = this.sideCount.get(this.warpCount).right;
+    }
+
+    if (sidePolygon.length <= 0) return;
+    const TotalLoop = 100;
+    let canMove = true;
+    let loopCount = 0;
+    while (canMove && loopCount++ <= TotalLoop) {
+      canMove =
+        cc.Intersection.polygonPolygon(
+          sidePolygon[0].ExpendPoints,
+          polygon.ExpendPoints
+        ) == false;
+      polygon.moveBy(step, 0);
+    }
   }
 
   /** 往下挤压 */

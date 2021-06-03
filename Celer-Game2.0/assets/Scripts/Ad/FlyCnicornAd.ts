@@ -69,7 +69,7 @@ export default class FlyCnicornAd extends cc.Component {
   unuse() {}
 
   onLoad() {
-    this.initY = this.node.y;
+    this.initY = this.Fly.y;
     RemoveFlyCnicornSignal.inst.addOnce(() => {
       ShowFlyCnicornSignal.inst.removeTarget(this);
       CnicornWatchFailSignal.inst.removeTarget(this);

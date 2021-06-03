@@ -1,17 +1,1 @@
-[
-  { "ID": 0, "Type": 1, "Icons": ["dongwu_gou_2.png", "dongwu_gou_4.png"] },
-  { "ID": 1, "Type": 2, "Icons": ["dongwu_gou_2.png", "dongwu_gou_4.png"] },
-  { "ID": 2, "Type": 3, "Icons": ["dongwu_gou_2.png", "dongwu_gou_4.png"] },
-  { "ID": 3, "Type": 4, "Icons": ["dongwu_gou_2.png", "dongwu_gou_4.png"] },
-  { "ID": 4, "Type": 5, "Icons": ["dongwu_gou_2.png", "dongwu_gou_4.png"] },
-  { "ID": 5, "Type": 6, "Icons": ["dongwu_gou_2.png", "dongwu_gou_4.png"] },
-  { "ID": 6, "Type": 7, "Icons": ["dongwu_gou_2.png", "dongwu_gou_4.png"] },
-  { "ID": 7, "Type": 8, "Icons": ["dongwu_gou_2.png", "dongwu_gou_4.png"] },
-  { "ID": 8, "Type": 9, "Icons": ["dongwu_gou_2.png", "dongwu_gou_4.png"] },
-  { "ID": 9, "Type": 10, "Icons": ["dongwu_gou_2.png", "dongwu_gou_4.png"] },
-  { "ID": 10, "Type": 11, "Icons": ["dongwu_gou_2.png", "dongwu_gou_4.png"] },
-  { "ID": 11, "Type": 12, "Icons": ["dongwu_gou_2.png", "dongwu_gou_4.png"] },
-  { "ID": 12, "Type": 13, "Icons": ["dongwu_gou_2.png", "dongwu_gou_4.png"] },
-  { "ID": 13, "Type": 14, "Icons": ["dongwu_gou_2.png", "dongwu_gou_4.png"] },
-  { "ID": 14, "Type": 15, "Icons": ["dongwu_gou_2.png", "dongwu_gou_4.png"] }
-]
+[{"ID":0,"Type":101,"Icons":["dongwu_gou_2.png","dongwu_gou_4.png"]},{"ID":1,"Type":102,"Icons":["dongwu_gou_2.png","dongwu_gou_4.png"]},{"ID":2,"Type":103,"Icons":["dongwu_gou_2.png","dongwu_gou_4.png"]},{"ID":3,"Type":104,"Icons":["dongwu_gou_2.png","dongwu_gou_4.png"]},{"ID":4,"Type":105,"Icons":["dongwu_gou_2.png","dongwu_gou_4.png"]},{"ID":5,"Type":106,"Icons":["dongwu_gou_2.png","dongwu_gou_4.png"]},{"ID":6,"Type":107,"Icons":["dongwu_gou_2.png","dongwu_gou_4.png"]},{"ID":7,"Type":108,"Icons":["dongwu_gou_2.png","dongwu_gou_4.png"]},{"ID":8,"Type":109,"Icons":["dongwu_gou_2.png","dongwu_gou_4.png"]},{"ID":9,"Type":1010,"Icons":["dongwu_gou_2.png","dongwu_gou_4.png"]},{"ID":10,"Type":1011,"Icons":["dongwu_gou_2.png","dongwu_gou_4.png"]},{"ID":11,"Type":1012,"Icons":["dongwu_gou_2.png","dongwu_gou_4.png"]},{"ID":12,"Type":1013,"Icons":["dongwu_gou_2.png","dongwu_gou_4.png"]},{"ID":13,"Type":1014,"Icons":["dongwu_gou_2.png","dongwu_gou_4.png"]},{"ID":14,"Type":1015,"Icons":["dongwu_gou_2.png","dongwu_gou_4.png"]}]

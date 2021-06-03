@@ -7,6 +7,8 @@ import { GameStateController } from "../../Controller/GameStateController";
 import { HideWildAdButtonSignal } from "../../Ad/WildAdButton";
 import { RemoveFlyCnicornSignal } from "../../Ad/FlyCnicornAd";
 import { GetTotalTime } from "../../Global/GameRule";
+import { TableManager } from "../../TableManager";
+import { En_US } from "../../table";
 
 export class CelerSDK extends SingleTon<CelerSDK>() {
   private alreadySubmit: boolean = false;
@@ -85,6 +87,7 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
           shouldLaunchTutorial: false,
           sharedRandomSeed: Math.random(), //*/0.24907066062871674,//Math.random(),0.9483376662548313, //
           difficultyLevel: 1,
+          locale: "en_US",
         };
 
     console.log(
@@ -94,9 +97,14 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
       this.match.sharedRandomSeed
     );
 
+    this.match.locale = this.match.locale || "en_US";
+
     if (this.match.difficultyLevel == 0) {
       this.match.difficultyLevel = 1;
     }
+
+    /** 多语言 */
+    this.defineLan();
 
     Random.setRandomSeed(this.match.sharedRandomSeed);
 
@@ -148,6 +156,31 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
     if (this.celerStartCallback) {
       this.celerStartCallback();
       this.celerStartCallback = null;
+    }
+  }
+
+  private defineLan() {
+    lan.set(this.match.locale);
+    let textMap: { [key: number]: { [key: number]: string } } = {};
+    let textData: { [key: number]: En_US } = null;
+    switch (this.match.locale) {
+      case "en_US":
+        textData = TableManager.inst.getAll_En_US_Data();
+        break;
+
+      default:
+        break;
+    }
+
+    if (textData) {
+      for (let key in textData) {
+        let data = textData[key];
+        if (!textMap[data.View]) {
+          textMap[data.View] = {};
+        }
+        textMap[data.View][data.ID] = data.Text;
+      }
+      lan.define(this.match.locale, textMap);
     }
   }
 

@@ -13,9 +13,11 @@ import {
   ShowPauseLayerSignal,
 } from "../../../Command/CommonSignal";
 import { GameStateController } from "../../../Controller/GameStateController";
-import { ResourceController } from "../../../Controller/ResourceController";
+import { GetScoreByType } from "../../../Global/GameRule";
 import { PlayModelProxy } from "../../../Model/PlayModelProxy";
+import { En_US_ID, En_US_View } from "../../../table";
 import BaseView from "../../../View/BaseView";
+import { ScoreType } from "../../Model/GamePlayModel";
 import { MenuButtonClickSignal } from "./MenuButtonView";
 import { EndNowSignal } from "./SubmitLayerView";
 
@@ -33,12 +35,12 @@ export default class MenuLayerView extends BaseView {
     return this.node.getChildByName("EndNow");
   }
 
-  get FreePauseCount() {
-    return this.node.getChildByName("FreePauseCount").getComponent(cc.Label);
+  get Content1() {
+    return this.node.getChildByName("Content1").getComponent(cc.Label);
   }
 
-  get PauseInfo() {
-    return this.node.getChildByName("PauseInfo").getComponent(cc.Sprite);
+  get Content2() {
+    return this.node.getChildByName("Content2").getComponent(cc.RichText);
   }
 
   onLoad() {
@@ -73,18 +75,29 @@ export default class MenuLayerView extends BaseView {
   onShow() {
     if (this.node.active) return;
 
+    this.Content1.string = lan.t(
+      En_US_View.ZanTingJieMian,
+      En_US_ID.ZanTingMiaoShuYi
+    );
+
     if (PlayModelProxy.inst.FreePauseCount <= 0) {
-      this.FreePauseCount.node.active = false;
-      this.PauseInfo.spriteFrame = ResourceController.inst.getPauseAtlas(
-        "bg_font_nofree"
+      this.Content2.string = lan.t(
+        En_US_View.ZanTingJieMian,
+        En_US_ID.ZanTingMiaoShuErKouFen,
+        ["-" + GetScoreByType(ScoreType.PauseCost)]
       );
     } else {
-      this.FreePauseCount.node.active = true;
-      this.FreePauseCount.string = PlayModelProxy.inst.FreePauseCount.toString();
-      this.PauseInfo.spriteFrame = ResourceController.inst.getPauseAtlas(
-        "bg_font_free"
+      this.Content2.string = lan.t(
+        En_US_View.ZanTingJieMian,
+        En_US_ID.ZanTingMiaoShuErMianFei,
+        [
+          PlayModelProxy.inst.FreePauseCount.toString(),
+
+          "-" + GetScoreByType(ScoreType.PauseCost),
+        ]
       );
     }
+
     this.Show();
     GameStateController.inst.pause();
   }

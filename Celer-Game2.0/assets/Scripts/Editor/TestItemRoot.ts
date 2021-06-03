@@ -70,7 +70,7 @@ export default class TestItemRoot extends cc.Component {
   private speed: number = 150;
   onLoad() {
     cc.director.getPhysicsManager().enabled = true;
-    cc.director.getPhysicsManager().enabled = false;
+    // cc.director.getPhysicsManager().enabled = false;
     if (cc.director.getPhysicsManager().enabled) {
       cc.director.getPhysicsManager().gravity = cc.v2(0, 0);
       cc.director.getPhysicsManager().enabledAccumulator = true;

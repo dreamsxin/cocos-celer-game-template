@@ -53,30 +53,12 @@ export default class ResultLayerView extends BaseView {
     );
   }
 
-  get GoldsScore() {
-    return this.Root.getChildByName("GoldsScore").getComponent(
-      NumberChangedView
-    );
-  }
-
-  get GoldCount() {
-    return this.Root.getChildByName("GoldCount").getComponent(
-      NumberChangedView
-    );
-  }
-
   /** 提交按钮 */
   get Submit() {
     return this.Root.getChildByName("Submit");
   }
 
-  get ResultAnimation() {
-    return this.Root.getChildByName("TitleAnimation").getComponent(
-      ResultAnimation
-    );
-  }
-
-  private CountTotal = 5;
+  private CountTotal = 3;
 
   onLoad() {
     this.node.active = false;
@@ -108,7 +90,6 @@ export default class ResultLayerView extends BaseView {
     this.Title.node.scale = 0;
     this.Root.scale = 0;
     this.node.active = true;
-    this.ResultAnimation.node.opacity = 0;
     this.Root.runAction(
       cc.sequence(
         cc.scaleTo(0.1, 0.9, 1.3),
@@ -163,8 +144,6 @@ export default class ResultLayerView extends BaseView {
     this.TotalScore.STEP = 150;
     this.TimeBonus.STEP = 150;
     this.Score.STEP = 150;
-    this.GoldCount.STEP = 2;
-    this.GoldsScore.STEP = 100;
 
     let step = () => {
       ScoreCountingSignal.inst.dispatch();
@@ -173,8 +152,6 @@ export default class ResultLayerView extends BaseView {
     this.TimeBonus.onStep = step;
     this.TotalScore.onStep = step;
     this.Score.onStep = step;
-    this.GoldCount.onStep = step;
-    this.GoldsScore.onStep = step;
 
     this.Title.node.runAction(
       cc.sequence(
@@ -184,13 +161,6 @@ export default class ResultLayerView extends BaseView {
         cc.scaleTo(0.1, 1)
       )
     );
-
-    this.ResultAnimation.onComplete = () => {
-      this.ResultAnimation.node.runAction(cc.fadeOut(0.1));
-    };
-    this.ResultAnimation.node.opacity = 255;
-    PlayResultAnimationSignal.inst.dispatch();
-    this.ResultAnimation.play();
 
     this.TimeBonus.onNumberChanged(PlayModelProxy.inst.TimeBonus, () => {
       this.Count++;
@@ -203,20 +173,10 @@ export default class ResultLayerView extends BaseView {
     });
 
     this.Score.onNumberChanged(
-      PlayModelProxy.inst.getTotalScore() -
-        PlayModelProxy.inst.Model.getScoreByType(ScoreType.GoldGain) -
-        PlayModelProxy.inst.TimeBonus,
+      PlayModelProxy.inst.getTotalScore() - PlayModelProxy.inst.TimeBonus,
       () => {
         this.Count++;
         console.log("Score Done");
-      }
-    );
-
-    this.GoldsScore.onNumberChanged(
-      PlayModelProxy.inst.Model.getScoreByType(ScoreType.GoldGain),
-      () => {
-        this.Count++;
-        console.log("GoldsScore Done");
       }
     );
   }

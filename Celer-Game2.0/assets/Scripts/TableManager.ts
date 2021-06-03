@@ -1,4 +1,4 @@
-import { Animals,Ball,Books,Buildings,Class,Food,Fruits,Makeup,Ornament,Other,Outlet,Plants,Shape,Tool,Vegetable,} from  './table';
+import { Animals,Ball,Books,Buildings,Class,En_US,Food,Fruits,Makeup,Ornament,Other,Outlet,Plants,Shape,Tool,Vegetable,} from  './table';
 
 /**
 * json数据管理
@@ -74,6 +74,7 @@ private Ball: any = {};
 private Books: any = {};
 private Buildings: any = {};
 private Class: any = {};
+private En_US: any = {};
 private Food: any = {};
 private Fruits: any = {};
 private Makeup: any = {};
@@ -124,6 +125,14 @@ private Vegetable: any = {};
  }
  public getAll_Class_Data() : any{
  return this.Class;}
+ public getEn_US (key: string|number) : En_US{
+    if (this.En_US[key]){
+ return this.En_US[key];
+}
+ else { console.error('En_US 不存key：'+key); return null;}
+ }
+ public getAll_En_US_Data() : any{
+ return this.En_US;}
  public getFood (key: string|number) : Food{
     if (this.Food[key]){
  return this.Food[key];

@@ -14,6 +14,8 @@ declare interface MatchInfo {
   difficultyLevel: number;
   /** 是否  新手 */
   shouldLaunchTutorial: boolean;
+  /** 语种 en_US|zh_CN|pt_BR */
+  locale: "en_US" | "zh_CN" | "pt_BR";
 }
 
 declare class celerSDK {
@@ -92,4 +94,30 @@ declare class celerSDK {
   private static getOnChainActionDeadline(callback: () => void);
   private static getCurrentBlockNumber(): number;
   private static finalizeOnChainGame(callback: () => void);
+}
+
+/**
+ * 多语言转换
+ */
+declare class lan {
+  /**
+   * 配置语言
+   * @param lan
+   * @param stringMap
+   */
+  static define(
+    lan: "en_US" | "zh_CN" | "pt_BR",
+    stringMap: { [key: number]: { [key: number]: string } }
+  );
+
+  /** 设置语种 */
+  static set(lan: "en_US" | "zh_CN" | "pt_BR");
+
+  /**
+   * 翻译
+   * @param key 界面key
+   * @param contentKey 内容key
+   * @param replace 替换文本
+   */
+  static t(key: number, contentKey: number, replace?: string[]): string;
 }

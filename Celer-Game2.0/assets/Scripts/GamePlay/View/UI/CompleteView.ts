@@ -32,17 +32,19 @@ export default class CompleteView extends cc.Component {
   }
 
   get FireWork() {
-    return this.node.getChildByName("FireWork").getComponent(FireWorkAnimation);
+    return this.node.getChildByName("FireWork")
+      ? this.node.getChildByName("FireWork").getComponent(FireWorkAnimation)
+      : null;
   }
 
   onLoad() {
     GameOverSignal.inst.addListenerOne(this.onGameOver, this);
     this.Font.node.active = false;
-    this.Con.active = false;
+    this.Con && (this.Con.active = false);
   }
 
   start() {
-    this.FireWork.node.active = false;
+    this.FireWork && (this.FireWork.node.active = false);
   }
 
   onGameOver(type: RoundEndType) {
@@ -52,7 +54,7 @@ export default class CompleteView extends cc.Component {
     switch (type) {
       case RoundEndType.Complete:
         this.FireWork.node.active = true;
-        this.Con.active = true;
+        this.Con && (this.Con.active = true);
         delay = 2500;
         break;
       case RoundEndType.Over:
@@ -80,15 +82,17 @@ export default class CompleteView extends cc.Component {
 
       this.Font.node.runAction(cc.scaleTo(0.1, 1.2));
     } else {
-      this.FireWork.play();
-      this.Con.scale = 0;
-      this.Con.runAction(
-        cc.sequence(
-          cc.scaleTo(0.1, 1.2),
-          cc.delayTime(0.15),
-          cc.scaleTo(0.1, 1)
-        )
-      );
+      this.FireWork && this.FireWork.play();
+      if (this.Con) {
+        this.Con.scale = 0;
+        this.Con.runAction(
+          cc.sequence(
+            cc.scaleTo(0.1, 1.2),
+            cc.delayTime(0.15),
+            cc.scaleTo(0.1, 1)
+          )
+        );
+      }
     }
 
     setTimeout(() => {

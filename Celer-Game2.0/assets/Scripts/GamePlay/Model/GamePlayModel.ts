@@ -22,6 +22,7 @@ import {
 import { EndNowSignal } from "../View/UI/SubmitLayerView";
 import { NextLevelSignal } from "../../Model/PlayModelProxy";
 import { GameLogic } from "./GameLogic";
+import { TableManager } from "../../TableManager";
 export enum ScoreType {
   /** 消除 */
   Clear,
@@ -116,6 +117,15 @@ export class GamePlayModel {
     NextLevelSignal.inst.dispatchOne(this.level);
   }
 
+  nextLevel() {
+    if (this.Level + 1 >= GetTotalLevel()) {
+      GameStateController.inst.roundEnd(RoundEndType.Complete);
+      return;
+    }
+
+    this.Level++;
+  }
+
   get TotalScore() {
     return Math.max(this.Timebonus + this.ScoreSpread + this.playerScore, 0);
   }
@@ -174,6 +184,7 @@ export class GamePlayModel {
   initGameData() {
     console.log("init game data.");
     this.Level = 0;
+    console.log(TableManager.inst.getAll_Class_Data());
   }
 
   addPlayerScore(

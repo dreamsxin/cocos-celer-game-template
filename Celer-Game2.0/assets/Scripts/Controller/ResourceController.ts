@@ -2,15 +2,15 @@ import { SingleTon } from "../Utils/ToSingleton";
 import { HashMap } from "../Utils/HashMap";
 
 export const Title = {
-  Complete: "font_complete",
-  TimeUp: "font_timeup",
-  Over: "font_gameover",
-  OutOfMove: "font_outofmove",
+  Complete: "bg_font_complete",
+  TimeUp: "bg_font_time'sup",
+  Over: "bg_font_gameover",
+  OutOfMove: "bg_font_gameover",
 };
 
 export const PauseFont = {
-  HasFree: "bg_pause_font1",
-  NoneFree: "bg_pause_font2",
+  HasFree: "bg_fontfree",
+  NoneFree: "bg_fontnofree",
 };
 
 export const Font = {
@@ -87,7 +87,7 @@ export class ResourceController extends SingleTon<ResourceController>() {
   }
 
   getSoundDisabled() {
-    return this.PauseAtlas.getSpriteFrame("btn_nosound");
+    return this.PauseAtlas.getSpriteFrame("btn_no sound");
   }
 
   getSoundEnable() {

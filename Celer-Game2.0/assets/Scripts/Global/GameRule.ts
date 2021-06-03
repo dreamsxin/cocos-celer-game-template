@@ -1,5 +1,6 @@
 import { ScoreType } from "../GamePlay/Model/GamePlayModel";
 import { PlayModelProxy } from "../Model/PlayModelProxy";
+import { Random } from "../Utils/Random";
 
 export const DrawDebug = false;
 
@@ -30,7 +31,7 @@ export function GetScoreByType(type: ScoreType) {
     case ScoreType.GoldGain:
       return 500;
     case ScoreType.PauseCost:
-      return 500;
+      return 100;
     case ScoreType.StepBonus:
       return 100;
   }
@@ -39,4 +40,28 @@ export function GetScoreByType(type: ScoreType) {
 
 export function GetTotalLevel() {
   return 2;
+}
+
+export function GetCollectCount() {
+  return Random.getRandom() > 0.5 ? 4 : 5;
+}
+
+/** 得分模型 */
+export class ScoreModel {
+  private static lastType: string = "";
+
+  public static GetScore(type: string, setType: boolean = false): number {
+    if (this.lastType == null) {
+      if (setType) {
+        this.lastType = type;
+      }
+      return 50;
+    }
+
+    if (this.lastType == type) return 50;
+    if (setType) {
+      this.lastType = type;
+    }
+    return 60;
+  }
 }
