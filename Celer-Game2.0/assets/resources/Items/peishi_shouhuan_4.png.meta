@@ -1,0 +1,34 @@
+{
+  "ver": "2.3.3",
+  "uuid": "43dd0ce6-17a7-4506-abe8-50ed50f9af21",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "platformSettings": {},
+  "subMetas": {
+    "peishi_shouhuan_4": {
+      "ver": "1.0.4",
+      "uuid": "bf66752a-14e0-47bc-8ba1-dbafcf6c1d27",
+      "rawTextureUuid": "43dd0ce6-17a7-4506-abe8-50ed50f9af21",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0.5,
+      "offsetY": -0.5,
+      "trimX": 39,
+      "trimY": 39,
+      "width": 179,
+      "height": 179,
+      "rawWidth": 256,
+      "rawHeight": 256,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

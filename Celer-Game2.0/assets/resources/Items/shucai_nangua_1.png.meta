@@ -1,0 +1,34 @@
+{
+  "ver": "2.3.3",
+  "uuid": "3992ba18-3252-4e82-9622-dbf59d9933f5",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "platformSettings": {},
+  "subMetas": {
+    "shucai_nangua_1": {
+      "ver": "1.0.4",
+      "uuid": "dbec69c2-3b77-4240-936b-8932603e70cb",
+      "rawTextureUuid": "3992ba18-3252-4e82-9622-dbf59d9933f5",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0.5,
+      "offsetY": 0,
+      "trimX": 22,
+      "trimY": 26,
+      "width": 213,
+      "height": 204,
+      "rawWidth": 256,
+      "rawHeight": 256,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

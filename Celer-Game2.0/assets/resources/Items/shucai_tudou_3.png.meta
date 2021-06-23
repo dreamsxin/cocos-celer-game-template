@@ -1,0 +1,34 @@
+{
+  "ver": "2.3.3",
+  "uuid": "eb4fd1a9-e254-4761-8263-7098b8390c10",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "platformSettings": {},
+  "subMetas": {
+    "shucai_tudou_3": {
+      "ver": "1.0.4",
+      "uuid": "fa721803-ec23-4d98-934d-a075e43142e4",
+      "rawTextureUuid": "eb4fd1a9-e254-4761-8263-7098b8390c10",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": -0.5,
+      "offsetY": -0.5,
+      "trimX": 54,
+      "trimY": 58,
+      "width": 147,
+      "height": 141,
+      "rawWidth": 256,
+      "rawHeight": 256,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

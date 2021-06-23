@@ -145,6 +145,8 @@ module.exports = {
         let file = files[i];
         if (!file) continue;
         let book = {};
+        let fileArr = file.split(".");
+        fileType = fileArr[fileArr.length - 1];
         try {
           book = xlsx.readFile(this.tablePath + "/" + file);
         } catch (error) {
@@ -156,6 +158,7 @@ module.exports = {
           .trim()
           .split(" ")
           .join("_");
+
         if (this.file_list.indexOf(fileName) < 0) {
           this.file_list.push(fileName);
         }
@@ -249,6 +252,7 @@ module.exports = {
     let tableInterface = this.isSimpleMode ? arrJson[1] : arrJson[0];
     if (arrJson[0]) {
       for (let key in arrJson[0]) {
+        if (!key) continue;
         let testKey = this.isSimpleMode ? arrJson[0][key] : key;
         let tabStructKey = this.isSimpleMode ? tableInterface[key] : key;
 
@@ -407,12 +411,10 @@ module.exports = {
                           return;
                         }
                         hasVal = true;
-                        this.enumValue[tableName][next2Cell["v"]][Py][
-                          "value"
-                        ] = enumVal;
-                        this.enumValue[tableName][next2Cell["v"]][Py][
-                          "name"
-                        ] = this.isSimpleMode ? strVal[1] : strVal[0];
+                        this.enumValue[tableName][next2Cell["v"]][Py]["value"] =
+                          enumVal;
+                        this.enumValue[tableName][next2Cell["v"]][Py]["name"] =
+                          this.isSimpleMode ? strVal[1] : strVal[0];
                       } else {
                         this.sendMsg(
                           "error",
@@ -487,6 +489,12 @@ module.exports = {
       if (this.isSimpleMode && arrJson.indexOf(val) < 2) continue;
       for (let key in val) {
         let tableKey = this.isSimpleMode ? arrJson[1][key] : key;
+        if (
+          !this.tableStruct[tableName] ||
+          !this.tableStruct[tableName][tableKey] ||
+          !this.tableStruct[tableName][tableKey]["type"]
+        )
+          continue;
 
         switch (this.tableStruct[tableName][tableKey]["type"]) {
           case "number[]":

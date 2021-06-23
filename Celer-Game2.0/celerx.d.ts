@@ -15,7 +15,7 @@ declare interface MatchInfo {
   /** 是否  新手 */
   shouldLaunchTutorial: boolean;
   /** 语种 en_US|zh_CN|pt_BR */
-  locale: "en_US" | "zh_CN" | "pt_BR";
+  locale: string;
 }
 
 declare class celerSDK {
@@ -106,12 +106,12 @@ declare class lan {
    * @param stringMap
    */
   static define(
-    lan: "en_US" | "zh_CN" | "pt_BR",
+    lan: string,
     stringMap: { [key: number]: { [key: number]: string } }
   );
 
   /** 设置语种 */
-  static set(lan: "en_US" | "zh_CN" | "pt_BR");
+  static set(lan: string);
 
   /**
    * 翻译

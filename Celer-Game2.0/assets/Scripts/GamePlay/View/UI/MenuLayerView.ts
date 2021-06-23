@@ -15,7 +15,7 @@ import {
 import { GameStateController } from "../../../Controller/GameStateController";
 import { GetScoreByType } from "../../../Global/GameRule";
 import { PlayModelProxy } from "../../../Model/PlayModelProxy";
-import { En_US_ID, En_US_View } from "../../../table";
+import { En_ID, En_View } from "../../../table";
 import BaseView from "../../../View/BaseView";
 import { ScoreType } from "../../Model/GamePlayModel";
 import { MenuButtonClickSignal } from "./MenuButtonView";
@@ -35,12 +35,8 @@ export default class MenuLayerView extends BaseView {
     return this.node.getChildByName("EndNow");
   }
 
-  get Content1() {
-    return this.node.getChildByName("Content1").getComponent(cc.Label);
-  }
-
-  get Content2() {
-    return this.node.getChildByName("Content2").getComponent(cc.RichText);
+  get Content() {
+    return this.node.getChildByName("Content").getComponent(cc.RichText);
   }
 
   onLoad() {
@@ -75,25 +71,20 @@ export default class MenuLayerView extends BaseView {
   onShow() {
     if (this.node.active) return;
 
-    this.Content1.string = lan.t(
-      En_US_View.ZanTingJieMian,
-      En_US_ID.ZanTingMiaoShuYi
-    );
-
     if (PlayModelProxy.inst.FreePauseCount <= 0) {
-      this.Content2.string = lan.t(
-        En_US_View.ZanTingJieMian,
-        En_US_ID.ZanTingMiaoShuErKouFen,
-        ["-" + GetScoreByType(ScoreType.PauseCost)]
-      );
+      this.Content.string = lan.t(En_View.ZanTingJieMian, En_ID.ZanTingKouFen, [
+        PlayModelProxy.inst.FreePauseCount.toString(),
+
+        "" + GetScoreByType(ScoreType.PauseCost),
+      ]);
     } else {
-      this.Content2.string = lan.t(
-        En_US_View.ZanTingJieMian,
-        En_US_ID.ZanTingMiaoShuErMianFei,
+      this.Content.string = lan.t(
+        En_View.ZanTingJieMian,
+        En_ID.MianFeiZanTing,
         [
           PlayModelProxy.inst.FreePauseCount.toString(),
 
-          "-" + GetScoreByType(ScoreType.PauseCost),
+          "" + GetScoreByType(ScoreType.PauseCost),
         ]
       );
     }

@@ -8,7 +8,7 @@ import { HideWildAdButtonSignal } from "../../Ad/WildAdButton";
 import { RemoveFlyCnicornSignal } from "../../Ad/FlyCnicornAd";
 import { GetTotalTime } from "../../Global/GameRule";
 import { TableManager } from "../../TableManager";
-import { En_US } from "../../table";
+import { En } from "../../table";
 
 export class CelerSDK extends SingleTon<CelerSDK>() {
   private alreadySubmit: boolean = false;
@@ -97,8 +97,6 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
       this.match.sharedRandomSeed
     );
 
-    this.match.locale = this.match.locale || "en_US";
-
     if (this.match.difficultyLevel == 0) {
       this.match.difficultyLevel = 1;
     }
@@ -160,16 +158,24 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
   }
 
   private defineLan() {
+    this.match.locale = this.match.locale || "en_US";
+
+    if (CC_DEBUG) {
+      this.match.locale = "ef_US";
+    }
+
     lan.set(this.match.locale);
     let textMap: { [key: number]: { [key: number]: string } } = {};
-    let textData: { [key: number]: En_US } = null;
-    switch (this.match.locale) {
-      case "en_US":
-        textData = TableManager.inst.getAll_En_US_Data();
-        break;
-
-      default:
-        break;
+    let textData: { [key: number]: En } = null;
+    textData = TableManager.inst.getAll_En_Data();
+    let locale =
+      this.match.locale.split("_")[0].charAt(0).toUpperCase() +
+      this.match.locale.split("_")[0].substring(1);
+    if (
+      TableManager.inst["getAll_" + locale + "_Data"] &&
+      TableManager.inst["getAll_" + locale + "_Data"]()
+    ) {
+      textData = TableManager.inst["getAll_" + locale + "_Data"]();
     }
 
     if (textData) {
@@ -182,6 +188,8 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
       }
       lan.define(this.match.locale, textMap);
     }
+
+    /** 配置名词翻译 */
   }
 
   submitScore(score: number) {

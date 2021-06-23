@@ -185,7 +185,7 @@ export default class PolygonScene extends cc.Component {
       } else {
         this.generateByAtlas(atlas, index);
       }
-    }, 2000);
+    }, 5000);
   }
 
   done() {

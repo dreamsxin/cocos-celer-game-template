@@ -1,0 +1,34 @@
+{
+  "ver": "2.3.3",
+  "uuid": "d410b8d9-8384-4d6e-b00f-19a1162f3517",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "platformSettings": {},
+  "subMetas": {
+    "peishi_faqia_7": {
+      "ver": "1.0.4",
+      "uuid": "76419e6f-867b-4d06-ba0f-eee53ad38ede",
+      "rawTextureUuid": "d410b8d9-8384-4d6e-b00f-19a1162f3517",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0.5,
+      "offsetY": -0.5,
+      "trimX": 29,
+      "trimY": 78,
+      "width": 199,
+      "height": 101,
+      "rawWidth": 256,
+      "rawHeight": 256,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

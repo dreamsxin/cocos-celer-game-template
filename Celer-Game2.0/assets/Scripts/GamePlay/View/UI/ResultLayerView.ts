@@ -15,6 +15,7 @@ import { CelerSDK } from "../../../Utils/Celer/CelerSDK";
 import { ScoreType } from "../../Model/GamePlayModel";
 import ResultAnimation from "../../../Animation/ResultAnimation";
 import { BaseSignal } from "../../../Utils/Signal";
+import { En_ID, En_View } from "../../../table";
 
 const { ccclass, property } = cc._decorator;
 
@@ -58,6 +59,10 @@ export default class ResultLayerView extends BaseView {
     return this.Root.getChildByName("Submit");
   }
 
+  get Content() {
+    return this.Root.getChildByName("Content").getComponent(cc.RichText);
+  }
+
   private CountTotal = 3;
 
   onLoad() {
@@ -69,6 +74,7 @@ export default class ResultLayerView extends BaseView {
   onGameOver(type: RoundEndType) {
     console.log("Open result:", RoundEndType[type]);
     this.Submit.scale = 0;
+    this.Content.string = lan.t(En_View.JieSuanJieMian, En_ID.DeFen);
     if (type == RoundEndType.TimeUp) {
       this.Title.spriteFrame = ResourceController.inst.getResultSprite(
         Title.TimeUp

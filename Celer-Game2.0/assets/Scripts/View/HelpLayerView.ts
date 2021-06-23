@@ -15,6 +15,8 @@ import {
   HideHelpLayerSignal,
 } from "../Command/CommonSignal";
 import Page from "../GamePlay/View/new/Page";
+import { PlayModelProxy } from "../Model/PlayModelProxy";
+import { Theme } from "../Global/Theme";
 
 const { ccclass, property } = cc._decorator;
 enum State {
@@ -40,6 +42,10 @@ export default class HelpLayerView extends BaseView {
 
   @property(cc.Label)
   Page: cc.Label = null;
+
+  get Background() {
+    return this.node.getChildByName("Background");
+  }
 
   onLoad() {
     this.BindMedaitor(HelpLayerMediator);
@@ -110,6 +116,10 @@ export default class HelpLayerView extends BaseView {
     this.state = State.Show;
     this.node.active = true;
     this.node.stopAllActions();
+
+    for (let child of this.Background.children) {
+      child.active = child.name == Theme[PlayModelProxy.inst.Theme];
+    }
 
     this.node.scale = 0;
 
