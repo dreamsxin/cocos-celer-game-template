@@ -7,14 +7,12 @@ export class StartGameCommand extends puremvc.SimpleCommand {
   execute(notification: puremvc.INotification) {
     console.log("--------- excute StartGameCommand ---------");
 
-    PlayModelProxy.inst.initGametheme();
-
     if (CC_DEBUG && OpenTest) {
       this.testInit();
     } else {
       this.normalInit();
     }
-
+    PlayModelProxy.inst.initGametheme();
     // // 初始化完成
     GameReadySignal.inst.dispatch();
   }

@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "0507eff6-611d-4a6f-a343-bf615b639354",
+  "uuid": "42e1a1f4-3b1c-41cd-8300-b84fe6d560b5",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "peishi_faqia_10": {
       "ver": "1.0.4",
-      "uuid": "01c45f34-8600-4a40-8ba2-217b5552731a",
-      "rawTextureUuid": "0507eff6-611d-4a6f-a343-bf615b639354",
+      "uuid": "6ee97c71-3a2b-480f-adb5-0061eb0a526b",
+      "rawTextureUuid": "42e1a1f4-3b1c-41cd-8300-b84fe6d560b5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

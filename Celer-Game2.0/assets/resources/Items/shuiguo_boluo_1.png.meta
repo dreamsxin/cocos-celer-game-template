@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "ac07f7fe-b079-44d7-bc25-5505d041064a",
+  "uuid": "6525c700-541b-4fc3-8abb-a5c58d9d9bc8",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "shuiguo_boluo_1": {
       "ver": "1.0.4",
-      "uuid": "e77d79c7-ddc0-422c-986a-b03ceb0e30c7",
-      "rawTextureUuid": "ac07f7fe-b079-44d7-bc25-5505d041064a",
+      "uuid": "3e36fa7d-dd5b-4006-8270-bed5aca051ac",
+      "rawTextureUuid": "6525c700-541b-4fc3-8abb-a5c58d9d9bc8",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

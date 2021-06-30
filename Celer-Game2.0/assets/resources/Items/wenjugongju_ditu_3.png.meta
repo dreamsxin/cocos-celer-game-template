@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "aeb5e2d4-50cd-4644-b5e2-88057eb21232",
+  "uuid": "a09f9a5d-af39-433f-b56a-c2d8304d33fa",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "wenjugongju_ditu_3": {
       "ver": "1.0.4",
-      "uuid": "ef2e2761-dc00-48a4-a59f-4c61a370455e",
-      "rawTextureUuid": "aeb5e2d4-50cd-4644-b5e2-88057eb21232",
+      "uuid": "19f47ac1-7b6c-4cb6-9fe1-2b9780d8b38b",
+      "rawTextureUuid": "a09f9a5d-af39-433f-b56a-c2d8304d33fa",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

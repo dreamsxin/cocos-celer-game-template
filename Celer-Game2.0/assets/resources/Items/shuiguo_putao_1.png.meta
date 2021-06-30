@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "ffb00f55-f1f5-4f74-aa74-e2012b33bf48",
+  "uuid": "85816f9c-a46a-4d4b-9167-163597f13919",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "shuiguo_putao_1": {
       "ver": "1.0.4",
-      "uuid": "8e6660ac-8a74-488a-a9dd-0330332714d9",
-      "rawTextureUuid": "ffb00f55-f1f5-4f74-aa74-e2012b33bf48",
+      "uuid": "0fd47148-cf16-4fdd-b33f-6c4c67d26b78",
+      "rawTextureUuid": "85816f9c-a46a-4d4b-9167-163597f13919",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

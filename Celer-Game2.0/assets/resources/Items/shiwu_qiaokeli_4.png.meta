@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "2c780f10-6e45-4d97-bfe0-ce921b2c5bb2",
+  "uuid": "46bce66b-ebad-4188-9bac-315595f30e1d",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "shiwu_qiaokeli_4": {
       "ver": "1.0.4",
-      "uuid": "088f0090-cc58-498f-bcc0-1b3a2ab69dc3",
-      "rawTextureUuid": "2c780f10-6e45-4d97-bfe0-ce921b2c5bb2",
+      "uuid": "57373486-f54c-43d5-90cb-ac72b24dd852",
+      "rawTextureUuid": "46bce66b-ebad-4188-9bac-315595f30e1d",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

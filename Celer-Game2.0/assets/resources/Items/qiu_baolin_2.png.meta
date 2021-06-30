@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "1236dcc2-0ed5-4d64-b2c1-3e8fb6e3d834",
+  "uuid": "a5f096cf-37e0-4054-847f-d55323fa5b73",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "qiu_baolin_2": {
       "ver": "1.0.4",
-      "uuid": "5f136f4a-71e8-4123-969d-be92491a85dc",
-      "rawTextureUuid": "1236dcc2-0ed5-4d64-b2c1-3e8fb6e3d834",
+      "uuid": "fe195753-4168-4bc9-a4b6-ab8816436da1",
+      "rawTextureUuid": "a5f096cf-37e0-4054-847f-d55323fa5b73",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

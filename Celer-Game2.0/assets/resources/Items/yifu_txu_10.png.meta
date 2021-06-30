@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "925b3018-d494-495c-b102-3815fb429b07",
+  "uuid": "167da57d-7ed8-47a1-a365-3772835ff322",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "yifu_txu_10": {
       "ver": "1.0.4",
-      "uuid": "66d70dc1-19c1-452b-942a-6c67e2be1c27",
-      "rawTextureUuid": "925b3018-d494-495c-b102-3815fb429b07",
+      "uuid": "40b520bc-cad0-4d3d-9b7c-33be15bb9417",
+      "rawTextureUuid": "167da57d-7ed8-47a1-a365-3772835ff322",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

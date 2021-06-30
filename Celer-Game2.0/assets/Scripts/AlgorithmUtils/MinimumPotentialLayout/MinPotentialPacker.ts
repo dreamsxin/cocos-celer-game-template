@@ -1,12 +1,10 @@
-import { Polygon } from "../../Physic2DEngine/body/polygon";
-import { Approx, Distance } from "../../Utils/Cocos";
+import { UpdateLoadingSignal } from "../../Editor/PercentLabel2";
+import { GetTotalMapHeight } from "../../Global/GameRule";
+import { Approx } from "../../Utils/Cocos";
 import { HashMap } from "../../Utils/HashMap";
 import { Random } from "../../Utils/Random";
 import { BasePacker } from "../BasePacker";
-import {
-  intersectPolygon,
-  GeometryPolygon,
-} from "../GeometryPolygon/GeometryPolygon";
+import { GeometryPolygon } from "../GeometryPolygon/GeometryPolygon";
 
 /** 最小势能布局 */
 export class MinPotentialPacker extends BasePacker {
@@ -24,19 +22,286 @@ export class MinPotentialPacker extends BasePacker {
   /** 当前的下边界 */
   private borderY: number = 0;
 
+  private b2World: b2.World;
+
+  public DebugNode: cc.Node = null;
+
   pack() {
+    if (this.b2World == null) {
+      this.b2World = new b2.World(new b2.Vec2(0, -300));
+      this.b2World.SetAllowSleeping(true);
+
+      if (CC_DEBUG) {
+        window["b2World"] = this.b2World;
+        let node = new cc.Node("PHYSICS_MANAGER_DEBUG_DRAW");
+        this.DebugNode = node;
+        node.zIndex = cc.macro.MAX_ZINDEX;
+        cc.game.addPersistRootNode(node);
+        let debugDrawer = node.addComponent(cc.Graphics);
+
+        let debugDraw = new cc.PhysicsDebugDraw(debugDrawer);
+        debugDraw.SetFlags(b2.DrawFlags.e_shapeBit);
+        this.b2World.SetDebugDraw(debugDraw);
+      }
+
+      let worldHeight = GetTotalMapHeight() * 2;
+      let borderWidth = 100;
+      let groundWidth = 1080 * 2;
+
+      /** add left edge */
+      let left = new b2.BodyDef();
+      left.allowSleep = true;
+      left.angle = 0;
+      left.gravityScale = 0;
+      left.type = b2.BodyType.b2_staticBody;
+
+      let leftShape = new b2.PolygonShape();
+      leftShape.SetAsBox(
+        borderWidth / 2 / cc.PhysicsTypes.PTM_RATIO,
+        worldHeight / 2 / cc.PhysicsTypes.PTM_RATIO,
+        new b2.Vec2(
+          -borderWidth / 2 / cc.PhysicsTypes.PTM_RATIO,
+          0 / 2 / cc.PhysicsTypes.PTM_RATIO
+        )
+      );
+      let leftFixtureDef = new b2.FixtureDef();
+      leftFixtureDef.density = 1;
+      leftFixtureDef.shape = leftShape;
+      let leftBody = this.b2World.CreateBody(left);
+      leftBody.CreateFixture(leftFixtureDef);
+      leftBody.SetPosition(
+        new b2.Vec2(
+          0 / cc.PhysicsTypes.PTM_RATIO,
+          (worldHeight / 2 + borderWidth) / cc.PhysicsTypes.PTM_RATIO
+        )
+      );
+      leftBody.name = "left";
+
+      /** add right edge */
+      let right = new b2.BodyDef();
+      right.allowSleep = true;
+      right.angle = 0;
+      right.type = b2.BodyType.b2_staticBody;
+      right.gravityScale = 0;
+      let rightShape = new b2.PolygonShape();
+      rightShape.SetAsBox(
+        borderWidth / 2 / cc.PhysicsTypes.PTM_RATIO,
+        worldHeight / 2 / cc.PhysicsTypes.PTM_RATIO,
+        new b2.Vec2(
+          borderWidth / 2 / cc.PhysicsTypes.PTM_RATIO,
+          0 / 2 / cc.PhysicsTypes.PTM_RATIO
+        )
+      );
+      let rightFixtureDef = new b2.FixtureDef();
+      rightFixtureDef.density = 1;
+      rightFixtureDef.shape = rightShape;
+      let rightBody = this.b2World.CreateBody(left);
+      rightBody.CreateFixture(rightFixtureDef);
+      rightBody.SetPosition(
+        new b2.Vec2(
+          1080 / cc.PhysicsTypes.PTM_RATIO,
+          (worldHeight / 2 + borderWidth) / cc.PhysicsTypes.PTM_RATIO
+        )
+      );
+      rightBody.name = "right";
+
+      /** add bottom edge */
+      let bottom = new b2.BodyDef();
+      bottom.allowSleep = true;
+      bottom.type = b2.BodyType.b2_staticBody;
+      bottom.gravityScale = 0;
+      bottom.angle = 0;
+      let bottomShape = new b2.PolygonShape();
+      bottomShape.SetAsBox(
+        groundWidth / 2 / cc.PhysicsTypes.PTM_RATIO,
+        borderWidth / 2 / cc.PhysicsTypes.PTM_RATIO,
+        new b2.Vec2(0, borderWidth / 2 / cc.PhysicsTypes.PTM_RATIO)
+      );
+      let bottomFixtureDef = new b2.FixtureDef();
+      bottomFixtureDef.density = 1;
+      bottomFixtureDef.shape = bottomShape;
+      let bottomBody = this.b2World.CreateBody(bottom);
+      bottomBody.CreateFixture(bottomFixtureDef);
+      bottomBody.SetPosition(
+        new b2.Vec2(1080 / 2 / cc.PhysicsTypes.PTM_RATIO, 0)
+      );
+    }
+
     this.warpCount = 0;
     this.sideCount.add(this.warpCount, { left: [], right: [] });
-    this.borderY = 0;
-    this.startPack();
+    this.borderY = 256 / 2;
+    this.startPack(GetTotalMapHeight());
   }
 
-  public startPack(height: number = 1920 * 1.5 /*1920 * 1.5*/) {
-    let startTime: number = Date.now();
+  private Step(
+    isDraw: boolean = true,
+    dt: number = cc.PhysicsManager.FIXED_TIME_STEP,
+    velocityIterations: number = cc.PhysicsManager.VELOCITY_ITERATIONS,
+    positionIterations: number = cc.PhysicsManager.POSITION_ITERATIONS
+  ) {
+    CC_DEBUG && isDraw && this.b2World.ClearDebugDraw();
+    this.b2World.Step(dt, velocityIterations, positionIterations);
+    this.syncBody();
+    CC_DEBUG && isDraw && this.b2World.DrawDebugData();
+  }
 
+  private syncBody() {
+    this.b2World.SyncDynamicTransform(
+      (body: b2.Body, offset: b2.Vec2, angle: number) => {
+        if (body.data) {
+          let polygon = body.data as GeometryPolygon;
+
+          polygon.rotateBy(cc.PhysicsTypes.PHYSICS_ANGLE_TO_ANGLE * angle);
+          polygon.moveBy(
+            offset.x * cc.PhysicsTypes.PTM_RATIO,
+            offset.y * cc.PhysicsTypes.PTM_RATIO
+          );
+        }
+      }
+    );
+  }
+
+  private createBody(polygon: GeometryPolygon) {
+    let bodyDef = new b2.BodyDef();
+    bodyDef.allowSleep = true;
+    bodyDef.angle = 0;
+
+    // bodyDef.gravityScale = 0;
+    bodyDef.type = b2.BodyType.b2_dynamicBody;
+    bodyDef.bullet = false;
+    bodyDef.linearDamping = 0.5;
+    bodyDef.angularDamping = 0.5;
+    // bodyDef.fixedRotation = true;
+
+    let body = this.b2World.CreateBody(bodyDef);
+    body.data = polygon;
+    body.SetPosition(
+      new b2.Vec2(
+        polygon.Position.x / cc.PhysicsTypes.PTM_RATIO,
+        polygon.Position.y / cc.PhysicsTypes.PTM_RATIO
+      )
+    );
+
+    let shapes = cc.PolygonSeparator.ConvexPartition(polygon.ExpendPoints);
+
+    let polygonShapes = [];
+    for (let i = 0; i < shapes.length; i++) {
+      let points = shapes[i];
+      let vertices: b2.Vec2[] = [];
+
+      let b2Shape = null;
+      let firstVertices = null;
+
+      for (let j = 0; j < points.length; j++) {
+        if (b2Shape == null) {
+          b2Shape = new b2.PolygonShape();
+        }
+
+        let point = points[j];
+
+        let v = new b2.Vec2(
+          (point.x - polygon.Position.x) / cc.PhysicsTypes.PTM_RATIO,
+          (point.y - polygon.Position.y) / cc.PhysicsTypes.PTM_RATIO
+        );
+        vertices.push(v);
+        if (!firstVertices) {
+          firstVertices = v;
+        }
+
+        if (vertices.length === b2.maxPolygonVertices) {
+          b2Shape.Set(vertices, vertices.length);
+          polygonShapes.push(b2Shape);
+
+          b2Shape = null;
+
+          if (j < points.length - 1) {
+            vertices = [firstVertices, vertices[vertices.length - 1]];
+          }
+        }
+      }
+      if (b2Shape) {
+        b2Shape.Set(vertices, vertices.length);
+        polygonShapes.push(b2Shape);
+      }
+    }
+
+    for (let shape of polygonShapes) {
+      let bodyFixtureDef = new b2.FixtureDef();
+      bodyFixtureDef.density = 1;
+      bodyFixtureDef.isSensor = false;
+      //bodyFixtureDef.friction = 0.5;
+      bodyFixtureDef.shape = shape;
+
+      body.CreateFixture(bodyFixtureDef);
+    }
+    body.SyncTransform();
+  }
+
+  startPack(height: number = 1920 * 15 /*1920 * 1.5*/) {
+    this.packAsync(height);
+  }
+
+  private stepID: number = -1;
+  private packAsync(height: number) {
+    let startTime: number = Date.now();
     this.packeds().length = 0;
-    let currentCount = 0;
-    while (this.height <= height) {
+    let oldHeight = this.height;
+
+    const interval = 0;
+    const ToTalLoop = 30;
+
+    this.b2World.SetGravity(new b2.Vec2(0, -300));
+    this.b2World.m_AngleLimit = Math.abs(
+      1 / cc.PhysicsTypes.PHYSICS_ANGLE_TO_ANGLE
+    );
+    this.b2World.m_OffsetLimit = 1 / cc.PhysicsTypes.PTM_RATIO;
+    this.b2World.m_StaticRefLimit = 6;
+    this.b2World.m_VelocityLimit = 1;
+
+    this.stepID = setInterval(() => {
+      let Loop = ToTalLoop;
+      while (Loop--) {
+        this.Step(CC_DEBUG);
+
+        if (this.b2World.IsAllDynamicBodySleepingNow()) {
+          this.b2World.SetAllDynamic2Static();
+
+          if (this.height >= height) {
+            // done
+            clearInterval(this.stepID);
+            !CELER_X &&
+              console.log(
+                " polygons cost:",
+                Date.now() - startTime,
+                " ms",
+                ", total Pack:",
+                this.packeds().length,
+                ", height:",
+                this.height,
+                ", heightAdd:",
+                this.height - oldHeight
+              );
+
+            this.done();
+          } else {
+            this.updateHeight();
+            this.stepAsync(height);
+          }
+
+          break;
+        } else {
+        }
+      }
+      UpdateLoadingSignal.inst.dispatchOne(this.height / height);
+    }, interval) as unknown as number;
+  }
+
+  private stepAsync(targetHeight: number) {
+    if (this.height >= targetHeight) {
+      return;
+    }
+
+    while (true) {
       let sideCount = this.sideCount.get(this.warpCount);
 
       let leftX: number = 0;
@@ -55,12 +320,19 @@ export class MinPotentialPacker extends BasePacker {
       let polygonPool: GeometryPolygon[] = this.findPolygons(restWidth);
 
       if (polygonPool.length <= 0) {
-        this.wrap();
+        for (let polygon of sideCount.left) {
+          this.createBody(polygon);
+        }
 
-        continue;
+        for (let polygon of sideCount.right) {
+          this.createBody(polygon);
+        }
+        this.wrap();
+        break;
       }
 
       let polygon = polygonPool[Random.randomFloorToInt(0, polygonPool.length)];
+
       let originRotation = polygon.Rotation;
 
       if (this.warpCount == 0) {
@@ -82,7 +354,8 @@ export class MinPotentialPacker extends BasePacker {
       for (let i = 0; i < this.polygons<GeometryPolygon>().length; i++) {
         if (this.polygons<GeometryPolygon>()[i].ID == polygon.ID) {
           this.polygons<GeometryPolygon>().splice(i, 1);
-          this.setPolygons();
+          this.setPolygons(polygon.ID.split(":")[0]);
+          //this.setPolygons();
           break;
         }
       }
@@ -104,24 +377,19 @@ export class MinPotentialPacker extends BasePacker {
         sidePolygon = sideCount.right;
       }
 
-      this.tryDown(polygon, leftX, rightX, sidePolygon.length > 0, height);
       sidePolygon.unshift(polygon);
       this.count++;
-      currentCount++;
       polygon.isUpdate = true;
       this.addPack(polygon);
     }
+  }
 
-    !CELER_X &&
-      console.log(
-        " polygons cost:",
-        Date.now() - startTime,
-        " ms",
-        ", total Pack:",
-        currentCount
-      );
-
-    this.done();
+  done() {
+    if (CC_DEBUG) {
+      this.b2World.ClearDebugDraw();
+      this.b2World.DrawDebugData();
+    }
+    super.done();
   }
 
   private findPolygons(limitWidth: number) {
@@ -146,10 +414,10 @@ export class MinPotentialPacker extends BasePacker {
     let rotationStep = 0;
     if (this.count % 2 == 0) {
       // 左对齐
-      rotationStep = 0.5;
+      rotationStep = 1;
     } else {
       // 右对齐
-      rotationStep = -0.5;
+      rotationStep = -1;
     }
 
     let Count = 90;
@@ -176,269 +444,33 @@ export class MinPotentialPacker extends BasePacker {
     }
   }
 
-  /** 往下堆叠到最低 */
-  private tryDown(
-    polygon: GeometryPolygon,
-    leftBorder: number,
-    rightBorder: number,
-    isNeedRotate: boolean,
-    targetHeight: number
-  ) {
-    // this.trySide(polygon);
-    let interPolygon = this.tryPhysic(polygon);
-    // this.downByForce(polygon, targetHeight);
-  }
-
-  private trySide(polygon: GeometryPolygon) {
-    let sidePolygon: GeometryPolygon[] = [];
-    let step = 0;
-    if (this.count % 2 == 0) {
-      // 左对齐
-      step = -1;
-      sidePolygon = this.sideCount.get(this.warpCount).left;
-    } else {
-      // 右对齐
-      step = 1;
-      sidePolygon = this.sideCount.get(this.warpCount).right;
-    }
-
-    if (sidePolygon.length <= 0) return;
-    const TotalLoop = 100;
-    let canMove = true;
-    let loopCount = 0;
-    while (canMove && loopCount++ <= TotalLoop) {
-      canMove =
-        cc.Intersection.polygonPolygon(
-          sidePolygon[0].ExpendPoints,
-          polygon.ExpendPoints
-        ) == false;
-      polygon.moveBy(step, 0);
-    }
-  }
-
-  /** 往下挤压 */
-  private tryPhysic(polygon: GeometryPolygon): GeometryPolygon {
-    if (this.warpCount <= 0) {
-      while (polygon.ExpendBorder.bot.y > 0) {
-        polygon.moveBy(0, -1);
-      }
-      return null;
-    } else {
-      let interPolygon = null;
-      let canMove = true;
-      let loop = 0;
-      let sideCount1 = this.sideCount.get(this.warpCount - 1);
-      let sideCount2 = this.sideCount.get(this.warpCount - 2);
-      let sideCount3 = this.sideCount.get(this.warpCount - 3);
-      let sideCounts = [sideCount1];
-      if (sideCount2) {
-        sideCounts.push(sideCount2);
-      }
-
-      if (sideCount3) {
-        sideCounts.push(sideCount3);
-      }
-      const Step = 1;
-      const TotalLoop = 100;
-      while (canMove && loop++ <= TotalLoop) {
-        for (let sideCount of sideCounts) {
-          for (let poly of sideCount.left) {
-            if (
-              cc.Intersection.polygonPolygon(
-                poly.ExpendPoints,
-                polygon.ExpendPoints
-              )
-            ) {
-              interPolygon = intersectPolygon(polygon, poly);
-              canMove = false;
-              break;
-            }
-          }
-
-          if (canMove) {
-            for (let poly of sideCount.right) {
-              if (
-                cc.Intersection.polygonPolygon(
-                  poly.ExpendPoints,
-                  polygon.ExpendPoints
-                )
-              ) {
-                interPolygon = intersectPolygon(polygon, poly);
-                canMove = false;
-                break;
-              }
-            }
-          }
-
-          if (canMove) {
-            polygon.moveBy(0, -Step);
-          } else {
-            continue;
-          }
-        }
-      }
-
-      return interPolygon;
-    }
-  }
-
-  private downByForce(polygon: GeometryPolygon, targetHeight: number) {
-    if (this.warpCount == 0) return;
-    let force = cc.v2(0, 0);
-    let gravity = cc.v2(0, -1);
-
-    const Force = 1;
-
-    let testPolygons = [];
-    // let left = new GeometryPolygon([
-    //   { x: -100, y: 0 },
-    //   { x: 0, y: 0 },
-    //   { x: -100, y: targetHeight },
-    //   { x: 0, y: targetHeight },
-    // ]);
-    // testPolygons.push(left);
-
-    // let right = new GeometryPolygon([
-    //   { x: this.width, y: 0 },
-    //   { x: this.width + 100, y: 0 },
-    //   { x: this.width, y: targetHeight },
-    //   { x: this.width + 100, y: targetHeight },
-    // ]);
-    // testPolygons.push(right);
-
-    // let bot = new GeometryPolygon([
-    //   { x: 0, y: -100 },
-    //   { x: this.width, y: -100 },
-    //   { x: 0, y: 0 },
-    //   { x: this.width, y: 0 },
-    // ]);
-    // testPolygons.push(bot);
-
-    for (
-      let wrap = this.warpCount;
-      wrap >= 0 && wrap > this.warpCount - 3;
-      wrap--
-    ) {
-      let sideCount = this.sideCount.get(wrap);
-      if (sideCount) {
-        if (sideCount.left.length > 1) {
-          for (let i = 1; i < sideCount.left.length; i++) {
-            testPolygons.push(sideCount.left[i]);
-          }
-        }
-
-        if (sideCount.right.length > 1) {
-          for (let i = 1; i < sideCount.right.length; i++) {
-            testPolygons.push(sideCount.right[i]);
-          }
-        }
-      }
-    }
-
-    let loopCount = 0;
-    const TotalLoop = 40;
-    force.addSelf(gravity.mul(1));
-
-    while (force.mag() != 0 && loopCount++ < TotalLoop) {
-      force = cc.v2(0, 0);
-
-      force.addSelf(gravity.mul(1));
-      let hasTouchBot = false;
-      let hasTouchLeft = false;
-      let hasTouchRight = false;
-      let hasTouchTop = false;
-
-      for (let testPolygon of testPolygons) {
-        let interPolygon = intersectPolygon(polygon, testPolygon);
-        if (interPolygon && interPolygon.Points.length > 0) {
-          for (let point of interPolygon.Points) {
-            let length = Distance(point, polygon.Center);
-            let dx = polygon.Center.x - point.x;
-            let dy = polygon.Center.y - point.y;
-            if (!hasTouchBot) {
-              hasTouchBot = dy > 0;
-            }
-
-            if (!hasTouchTop) {
-              hasTouchBot = dy < 0;
-            }
-
-            if (!hasTouchLeft) {
-              hasTouchBot = dx > 0;
-            }
-
-            if (!hasTouchRight) {
-              hasTouchBot = dx < 0;
-            }
-
-            force.addSelf(cc.v2(dx / length, dy / length).mul(Force));
-
-            // let rotation = 0;
-            // if (force.y > 0) {
-            //   rotation = force.x < polygon.Center.x ? 1 : -1;
-            //   polygon.rotateBy(rotation);
-            // }
-            //force.y = Math.max(force.y, 0);
-          }
-        }
-      }
-      force.normalizeSelf();
-      // console.log(polygon.ID, force);
-      if (hasTouchBot) {
-        force.y = Math.max(0, force.y);
-      }
-
-      if (hasTouchTop) {
-        force.y = Math.min(0, force.y);
-      }
-
-      if (hasTouchLeft) {
-        force.x = Math.max(0, force.x);
-      }
-
-      if (hasTouchRight) {
-        force.x = Math.min(0, force.x);
-      }
-      polygon.moveBy(force.x, force.y);
-
-      if (hasTouchBot && hasTouchLeft && hasTouchRight) {
-        break;
-      }
-    }
-
-    if (loopCount >= TotalLoop) {
-      // console.error(" loop limit:", polygon.ID, force);
-    } else {
-    }
-  }
-
   /** 换行 */
   private wrap() {
-    let sideCount = this.sideCount.get(this.warpCount);
-    for (let polygon of sideCount.left) {
-      this.borderY = Math.max(this.borderY, polygon.ExpendBorder.top.y);
-    }
-
-    for (let polygon of sideCount.right) {
-      this.borderY = Math.max(this.borderY, polygon.ExpendBorder.top.y);
-    }
-    this.updateHeight(sideCount);
-
     this.warpCount++;
     this.sideCount.add(this.warpCount, { left: [], right: [] });
   }
 
-  private updateHeight(sideCount: {
-    left: GeometryPolygon[];
-    right: GeometryPolygon[];
-  }) {
-    this.height = 0;
+  private updateHeight() {
+    if (this.warpCount == 0) return;
+    let sideCount = this.sideCount.get(this.warpCount - 1);
+
     for (let polygon of sideCount.left) {
-      this.height = Math.max(this.height, polygon.ExpendBorder.top.y);
+      this.borderY = Math.max(this.borderY, polygon.ExpendBorder.top.y);
     }
 
     for (let polygon of sideCount.right) {
-      this.height = Math.max(this.height, polygon.ExpendBorder.top.y);
+      this.borderY = Math.max(this.borderY, polygon.ExpendBorder.top.y);
     }
+
+    let height = 0;
+    for (let polygon of sideCount.left) {
+      height = Math.max(this.height, polygon.ExpendBorder.top.y);
+    }
+
+    for (let polygon of sideCount.right) {
+      height = Math.max(this.height, polygon.ExpendBorder.top.y);
+    }
+
+    this.height = Math.max(height, this.height);
   }
 }

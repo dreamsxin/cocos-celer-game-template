@@ -4,6 +4,8 @@ import {
   GetScoreByType,
   GetTotalLevel,
   GetTotalTime,
+  GetTypeCount,
+  ScoreBonusCountdown,
 } from "../../Global/GameRule";
 import {
   GameThemeInit,
@@ -22,7 +24,9 @@ import {
 import { EndNowSignal } from "../View/UI/SubmitLayerView";
 import { NextLevelSignal } from "../../Model/PlayModelProxy";
 import { GameLogic } from "./GameLogic";
-import { TableManager } from "../../TableManager";
+import { Clamp } from "../../Utils/Cocos";
+import { HashMap } from "../../Utils/HashMap";
+import { ItemModel } from "./ItemModel";
 export enum ScoreType {
   /** 消除 */
   Clear,
@@ -52,9 +56,13 @@ export enum ScoreType {
   PauseCost,
 }
 
+export class ScoreCountDownUpdateSignal extends BaseSignal {}
+
 export class GameTypeInitSignal extends BaseSignal {}
 
 export class RevertButtonStateChangedSignal extends BaseSignal {}
+
+export class UpdateTypeLabelSignal extends BaseSignal {}
 
 interface RevertInterface {}
 
@@ -75,6 +83,13 @@ export class GamePlayModel {
   private totalStreak: number = 0;
   private maxSteak: number = 0;
 
+  private typeMatchs: number[] = [];
+
+  private items: HashMap<string, ItemModel> = new HashMap();
+
+  /** 分数加成倒计时 */
+  private scaleCountDown: number = ScoreBonusCountdown();
+
   private playerScoreMap = {};
   private reverts: RevertInterface[] = [];
 
@@ -85,6 +100,11 @@ export class GamePlayModel {
     EndNowSignal.inst.addListener(this.onEndNow, this);
 
     GameOverSignal.inst.addListenerOne((type: RoundEndType) => {}, this);
+    this.resetScaleCountDown();
+
+    while (this.typeMatchs.length < GetTotalLevel() * GetTypeCount()) {
+      this.typeMatchs.push(0);
+    }
   }
 
   get Time() {
@@ -94,6 +114,27 @@ export class GamePlayModel {
   set Time(val: number) {
     this.gameTime = val;
     this.gameTime = Math.max(0, this.gameTime);
+  }
+
+  addScaleCountDown(dt: number) {
+    if (this.scaleCountDown > 0) {
+      this.scaleCountDown += dt;
+      this.scaleCountDown = Clamp(
+        this.scaleCountDown,
+        ScoreBonusCountdown(),
+        0
+      );
+      ScoreCountDownUpdateSignal.inst.dispatchOne(
+        this.scaleCountDown / ScoreBonusCountdown()
+      );
+    }
+  }
+
+  resetScaleCountDown() {
+    this.scaleCountDown = ScoreBonusCountdown();
+    ScoreCountDownUpdateSignal.inst.dispatchOne(
+      this.scaleCountDown / ScoreBonusCountdown()
+    );
   }
 
   get Theme() {
@@ -114,11 +155,13 @@ export class GamePlayModel {
     console.log("set game Level:", val);
     this.level = val;
 
+    let startIndex = this.level * GetTypeCount();
+    UpdateTypeLabelSignal.inst.dispatchOne(startIndex);
     NextLevelSignal.inst.dispatchOne(this.level);
   }
 
   nextLevel() {
-    if (this.Level + 1 >= GetTotalLevel()) {
+    if (this.Level + 1 > GetTotalLevel()) {
       GameStateController.inst.roundEnd(RoundEndType.Complete);
       return;
     }
@@ -181,10 +224,11 @@ export class GamePlayModel {
     this.Theme = pool[Math.floor(Random.getRandom() * pool.length)];
   }
 
+  /** 初始化游戏数据 */
   initGameData() {
     console.log("init game data.");
     this.Level = 0;
-    console.log(TableManager.inst.getAll_Class_Data());
+    this.items.clear();
   }
 
   addPlayerScore(

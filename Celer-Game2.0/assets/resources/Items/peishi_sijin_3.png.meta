@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "f42d87b9-3b8f-4953-b93b-7eeed16b1b92",
+  "uuid": "d509812e-cc13-42cb-a8e4-6dbae552f687",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "peishi_sijin_3": {
       "ver": "1.0.4",
-      "uuid": "d983be7c-5e8c-40f3-b473-58eae04fd9ac",
-      "rawTextureUuid": "f42d87b9-3b8f-4953-b93b-7eeed16b1b92",
+      "uuid": "0a8feef6-68ef-4ec5-ba25-5f25a1ee57c2",
+      "rawTextureUuid": "d509812e-cc13-42cb-a8e4-6dbae552f687",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

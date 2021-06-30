@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "58ca7a48-fb5a-417b-9301-83d3db621cb1",
+  "uuid": "cbe5459c-4059-4b12-8fa4-87c1e0ea56d1",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "dongwu_gou_7": {
       "ver": "1.0.4",
-      "uuid": "f6995b1e-2ef5-420c-beee-aa16901b3159",
-      "rawTextureUuid": "58ca7a48-fb5a-417b-9301-83d3db621cb1",
+      "uuid": "0d1df858-09d5-4841-b1ff-5479ffe7787c",
+      "rawTextureUuid": "cbe5459c-4059-4b12-8fa4-87c1e0ea56d1",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

@@ -1,5 +1,6 @@
 import { SingleTon } from "../Utils/ToSingleton";
 import { HashMap } from "../Utils/HashMap";
+import { Random_ID } from "../table";
 
 export const Title = {
   Complete: "bg_font_complete",
@@ -34,6 +35,7 @@ export class ResourceController extends SingleTon<ResourceController>() {
   private ResultAtlas: cc.SpriteAtlas = null;
   private PauseAtlas: cc.SpriteAtlas = null;
   private Animations: HashMap<AnimationType, cc.SpriteAtlas> = new HashMap();
+  private ItemAtlas: HashMap<Random_ID, cc.SpriteAtlas> = new HashMap();
 
   setFont(key: string, font: cc.Font) {
     this.fontMap.add(key, font);
@@ -70,6 +72,17 @@ export class ResourceController extends SingleTon<ResourceController>() {
     return this.PauseAtlas.getSpriteFrame(name);
   }
 
+  pushItemAtlas(type: Random_ID, altas: cc.SpriteAtlas) {
+    this.ItemAtlas.add(type, altas);
+  }
+
+  getItemSprite(type: Random_ID, spName: string) {
+    if (this.ItemAtlas.has(type)) {
+      return this.ItemAtlas.get(type).getSpriteFrame(spName);
+    }
+    return null;
+  }
+
   pushAnimationAtlas(animationType: AnimationType, atlas: cc.SpriteAtlas) {
     console.assert(atlas != null, "animation atlas is null!");
     this.Animations.add(animationType, atlas);
@@ -78,6 +91,7 @@ export class ResourceController extends SingleTon<ResourceController>() {
   getAnimationAtlas(animationType: AnimationType, name: string) {
     return this.Animations.get(animationType).getSpriteFrame(name);
   }
+
   getAddScoreFont() {
     return this.fontMap.get(Font.AddScore);
   }

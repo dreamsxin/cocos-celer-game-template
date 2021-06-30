@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "c3b12a89-08a3-4e99-84ed-09d7240dbc30",
+  "uuid": "24cf403a-c29f-46d1-9309-31e3300d802b",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "huazhuangpin_jingzi_7": {
       "ver": "1.0.4",
-      "uuid": "ded7270b-f691-4951-bc0d-9da46db0b821",
-      "rawTextureUuid": "c3b12a89-08a3-4e99-84ed-09d7240dbc30",
+      "uuid": "0bd7c6dd-36de-4269-ae38-b138c124cd5e",
+      "rawTextureUuid": "24cf403a-c29f-46d1-9309-31e3300d802b",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

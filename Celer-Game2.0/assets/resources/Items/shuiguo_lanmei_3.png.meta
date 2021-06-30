@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "80d366a5-7249-4f59-aae9-9b8939280d08",
+  "uuid": "b05c73f5-376c-42e0-9b8c-f6cbfde4ee66",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "shuiguo_lanmei_3": {
       "ver": "1.0.4",
-      "uuid": "57d5f791-1cb3-46da-95d4-66574d12501c",
-      "rawTextureUuid": "80d366a5-7249-4f59-aae9-9b8939280d08",
+      "uuid": "a07ba071-f508-4b86-9feb-a51f6ca28539",
+      "rawTextureUuid": "b05c73f5-376c-42e0-9b8c-f6cbfde4ee66",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

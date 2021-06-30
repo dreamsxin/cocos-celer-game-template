@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "dbb02761-f256-4113-864e-885a87840967",
+  "uuid": "248a1a61-cdbb-4378-a58a-92f577e5160b",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "peishi_shoubiao_6": {
       "ver": "1.0.4",
-      "uuid": "06c5064b-df0c-4321-9219-b2fe75d1003a",
-      "rawTextureUuid": "dbb02761-f256-4113-864e-885a87840967",
+      "uuid": "ee0d8c7a-3ad5-461d-9e49-692276ff2266",
+      "rawTextureUuid": "248a1a61-cdbb-4378-a58a-92f577e5160b",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

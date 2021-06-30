@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "2f480ed9-7b84-432d-8a83-2ee319b771cc",
+  "uuid": "0636c560-b30a-4a4f-a319-e27e15f5b9ba",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "kuzi_duanku_8": {
       "ver": "1.0.4",
-      "uuid": "d133c2e3-8840-4534-9233-18db84a34432",
-      "rawTextureUuid": "2f480ed9-7b84-432d-8a83-2ee319b771cc",
+      "uuid": "c92aac5c-93c9-4079-80ac-b529f9b6363a",
+      "rawTextureUuid": "0636c560-b30a-4a4f-a319-e27e15f5b9ba",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

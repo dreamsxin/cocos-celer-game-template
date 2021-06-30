@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "a4e725d8-27fd-499c-a7d3-2e67fa74fd78",
+  "uuid": "ed187020-3520-475e-8b4f-c3f7756c46bc",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "peishi_wazi_1": {
       "ver": "1.0.4",
-      "uuid": "d92c9a3e-9c6a-4611-8284-f969e1d4ab22",
-      "rawTextureUuid": "a4e725d8-27fd-499c-a7d3-2e67fa74fd78",
+      "uuid": "1d205713-88e3-4414-95dd-4d0b397eafc4",
+      "rawTextureUuid": "ed187020-3520-475e-8b4f-c3f7756c46bc",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

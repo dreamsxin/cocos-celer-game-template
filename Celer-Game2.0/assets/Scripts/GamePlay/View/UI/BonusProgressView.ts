@@ -8,11 +8,13 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
+import { ScoreCountDownUpdateSignal } from "../../Model/GamePlayModel";
+
 const { ccclass, property } = cc._decorator;
 
 const Total = 680; // 100%
-const Double = 556; // 81.7%
-const Times1_5 = 325; // 47.7%
+const Double = 578; // 85%
+const Times1_5 = 408; // 40%
 
 /**
  *  分数翻倍进度条
@@ -21,5 +23,8 @@ const Times1_5 = 325; // 47.7%
 export default class BonusProgressView extends cc.Component {
   onLoad() {
     this.node.width = Total;
+    ScoreCountDownUpdateSignal.inst.addListenerOne((percent: number) => {
+      this.node.width = Total * percent;
+    }, this);
   }
 }

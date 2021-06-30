@@ -8,7 +8,7 @@ import { HideWildAdButtonSignal } from "../../Ad/WildAdButton";
 import { RemoveFlyCnicornSignal } from "../../Ad/FlyCnicornAd";
 import { GetTotalTime } from "../../Global/GameRule";
 import { TableManager } from "../../TableManager";
-import { En } from "../../table";
+import { Animals_en, En, Random_ID } from "../../table";
 
 export class CelerSDK extends SingleTon<CelerSDK>() {
   private alreadySubmit: boolean = false;
@@ -190,6 +190,41 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
     }
 
     /** 配置名词翻译 */
+
+    let wordMap: { [key: number]: { [key: number]: string } } = {};
+    let allTypes = TableManager.inst.getRandom(Random_ID.SuiJiChi).Pool;
+    for (let type of allTypes) {
+      let tableName = TableManager.inst.getClass(type).Table;
+      let typeData: { [key: number]: Animals_en } = null;
+
+      typeData = TableManager.inst["getAll_" + tableName + "_en_Data"]
+        ? TableManager.inst["getAll_" + tableName + "_en_Data"]()
+        : null;
+      if (
+        TableManager.inst[
+          "getAll_" + tableName + "_" + locale.toLocaleLowerCase() + "_Data"
+        ] &&
+        TableManager.inst[
+          "getAll_" + tableName + "_" + locale.toLocaleLowerCase() + "_Data"
+        ]()
+      ) {
+        typeData =
+          TableManager.inst[
+            "getAll_" + tableName + "_" + locale.toLocaleLowerCase() + "_Data"
+          ]();
+      }
+
+      if (typeData) {
+        for (let key in typeData) {
+          let data = typeData[key];
+          if (!wordMap[type]) {
+            wordMap[type] = {};
+          }
+          wordMap[type][data.ID] = data.Name;
+        }
+      }
+    }
+    lan.define(this.match.locale, wordMap);
   }
 
   submitScore(score: number) {

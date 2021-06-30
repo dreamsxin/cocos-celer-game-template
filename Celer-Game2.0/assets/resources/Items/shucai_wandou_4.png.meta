@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "64a3999d-718b-420f-bdf5-b5c8fe61e2ce",
+  "uuid": "b2ba6fed-8d30-4811-8b7a-f4f6fef4511b",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "shucai_wandou_4": {
       "ver": "1.0.4",
-      "uuid": "91e1209a-72d5-4925-8aab-512d953985c5",
-      "rawTextureUuid": "64a3999d-718b-420f-bdf5-b5c8fe61e2ce",
+      "uuid": "39f0a007-7e5b-4431-8991-9181694f5d26",
+      "rawTextureUuid": "b2ba6fed-8d30-4811-8b7a-f4f6fef4511b",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "cae240ac-7a6c-406e-907c-f9e907e6cda7",
+  "uuid": "c13721f4-7edb-4837-9b24-3671db331d2c",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "peishi_jiezhi_8": {
       "ver": "1.0.4",
-      "uuid": "2e540978-d257-4381-93c8-3d336f1bbc91",
-      "rawTextureUuid": "cae240ac-7a6c-406e-907c-f9e907e6cda7",
+      "uuid": "caddab66-4497-44ae-900a-9498afa103c9",
+      "rawTextureUuid": "c13721f4-7edb-4837-9b24-3671db331d2c",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

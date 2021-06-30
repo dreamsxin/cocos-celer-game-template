@@ -12,10 +12,15 @@ import {
 } from "../Controller/PolygonPacker";
 import { gFactory } from "../Factory/GameFactory";
 import { disOrderArray } from "../Utils/Cocos";
-import { HashMap } from "../Utils/HashMap";
 import { Random } from "../Utils/Random";
-import { Polygon } from "../Physic2DEngine/body/polygon";
 import { BaseSignal } from "../Utils/Signal";
+import {
+  GetTotalMapHeight,
+  GetTotalTime,
+  MapSpeedUpScale,
+  StartSpeed,
+} from "../Global/GameRule";
+import { Time } from "../Utils/Time";
 
 const { ccclass, property } = cc._decorator;
 
@@ -67,10 +72,11 @@ export default class TestItemRoot extends cc.Component {
 
   private initChildCount: number = 0;
 
-  private speed: number = 150;
+  private speed: number = StartSpeed();
+  private lastTime = 0;
   onLoad() {
     cc.director.getPhysicsManager().enabled = true;
-    // cc.director.getPhysicsManager().enabled = false;
+    cc.director.getPhysicsManager().enabled = false;
     if (cc.director.getPhysicsManager().enabled) {
       cc.director.getPhysicsManager().gravity = cc.v2(0, 0);
       cc.director.getPhysicsManager().enabledAccumulator = true;
@@ -78,12 +84,13 @@ export default class TestItemRoot extends cc.Component {
         cc.PhysicsManager.DrawBits.e_shapeBit;
     }
 
-    Random.setRandomSeed(0.3465421258226239);
     Random.setRandomSeed(Math.random());
+    // Random.setRandomSeed(0.42227920776368255);
+    // UpdatePanelHeightSignal.inst.addListenerOne((height: number) => {
+    //   this.node.height = height;
+    // }, this);
 
-    UpdatePanelHeightSignal.inst.addListenerOne((height: number) => {
-      this.node.height = height;
-    }, this);
+    this.node.height = GetTotalMapHeight();
 
     CreateDebugGridSignal.inst.addListenerOne((grid: Grid) => {
       let gridNode = gFactory.getObj("Grid", grid);
@@ -116,12 +123,8 @@ export default class TestItemRoot extends cc.Component {
       (ev: cc.Event.EventTouch) => {
         this.node.y += ev.getDeltaY();
 
-        this.offset += -ev.getDeltaY();
-        this.offset = Math.max(0, this.offset);
-
-        if (this.offset >= UpdateHeight) {
-          this.offset = 0;
-          MinPotentialPacker.inst.startPack(this.node.height + UpdateHeight);
+        if (MinPotentialPacker.inst.DebugNode) {
+          MinPotentialPacker.inst.DebugNode.y += ev.getDeltaY();
         }
       },
       this
@@ -130,7 +133,6 @@ export default class TestItemRoot extends cc.Component {
     if (this.type == PackType.MinPotential) {
       PolygonPackDoneSignal.inst.addListenerOne(this.onPackDone, this);
     } else {
-      PolygonPackDoneSignal.inst.addListenerOne(this.onPackDoneByPhysic, this);
     }
   }
 
@@ -141,10 +143,9 @@ export default class TestItemRoot extends cc.Component {
 
       return;
     }
-    // this.isStartMove = true;
+    this.isStartMove = true;
   }
 
-  private offset: number = 0;
   update(dt: number) {
     if (this.isStartMove == false) {
       return;
@@ -152,10 +153,16 @@ export default class TestItemRoot extends cc.Component {
 
     /** 应该放到if 里面 */
     this.node.y -= dt * this.speed;
-    this.offset += dt * this.speed;
-    if (this.offset >= UpdateHeight) {
-      this.offset = 0;
-      MinPotentialPacker.inst.startPack(this.node.height + UpdateHeight);
+    if (MinPotentialPacker.inst.DebugNode) {
+      MinPotentialPacker.inst.DebugNode.y -= dt * this.speed;
+    }
+
+    this.lastTime += dt;
+    console.log(Time.timeFormat(this.lastTime).replace("/", ":"));
+    this.speed += MapSpeedUpScale() * dt;
+
+    if (this.lastTime >= GetTotalTime()) {
+      this.isStartMove = false;
     }
 
     /** 应该放到if 里面 */
@@ -170,8 +177,6 @@ export default class TestItemRoot extends cc.Component {
   }
 
   checkNeedAdd() {}
-
-  onPackDoneByPhysic(polygons: Polygon) {}
 
   onPackDone(polygonMap: GeometryPolygon[]) {
     console.log("on pack done:", polygonMap.length);
@@ -208,12 +213,12 @@ export default class TestItemRoot extends cc.Component {
                 let item = new cc.Node();
                 item.name = polygon.ID;
 
-                // // 包围盒
-                let box = new cc.Node();
-                let boxCollider = box.addComponent(cc.PhysicsPolygonCollider);
-                boxCollider.points = polygon.ExpendBoxPoints;
-                boxCollider.sensor = true;
-                this.Items.addChild(box);
+                // // // 包围盒
+                // let box = new cc.Node();
+                // let boxCollider = box.addComponent(cc.PhysicsPolygonCollider);
+                // boxCollider.points = polygon.ExpendBoxPoints;
+                // boxCollider.sensor = true;
+                // this.Items.addChild(box);
 
                 // 中心点
                 let center = cc.instantiate(this.Center);

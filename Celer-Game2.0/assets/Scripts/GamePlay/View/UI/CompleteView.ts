@@ -16,6 +16,7 @@ import { RoundEndType } from "../../../Controller/GameStateController";
 import {
   AnimationType,
   ResourceController,
+  Title,
 } from "../../../Controller/ResourceController";
 import FireWorkAnimation from "../Animation/FireWorkAnimation";
 
@@ -48,31 +49,35 @@ export default class CompleteView extends cc.Component {
   }
 
   onGameOver(type: RoundEndType) {
-    this.Font.node.active = type != RoundEndType.Complete;
+    this.Font.node.active = true;
 
     let delay = 2000;
     switch (type) {
       case RoundEndType.Complete:
         this.FireWork.node.active = true;
         this.Con && (this.Con.active = true);
+        this.Font.spriteFrame = ResourceController.inst.getAnimationAtlas(
+          AnimationType.UI,
+          Title.Complete
+        );
         delay = 2500;
         break;
       case RoundEndType.Over:
         this.Font.spriteFrame = ResourceController.inst.getAnimationAtlas(
           AnimationType.UI,
-          "font_gameover"
+          Title.Over
         );
         break;
       case RoundEndType.TimeUp:
         this.Font.spriteFrame = ResourceController.inst.getAnimationAtlas(
           AnimationType.UI,
-          "font_timeup"
+          Title.TimeUp
         );
         break;
       case RoundEndType.OutOfMove:
         this.Font.spriteFrame = ResourceController.inst.getAnimationAtlas(
           AnimationType.UI,
-          "font_outofmove"
+          Title.OutOfMove
         );
         break;
     }

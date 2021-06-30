@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "af535a42-d619-448e-92ac-61a3b73b3279",
+  "uuid": "fa91ab85-7ce8-48dd-a2e3-f5f5d3ada12d",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "ganraowu_12": {
       "ver": "1.0.4",
-      "uuid": "09248e91-efeb-4873-8396-ab3eaf4269f5",
-      "rawTextureUuid": "af535a42-d619-448e-92ac-61a3b73b3279",
+      "uuid": "8d78554c-0b95-4e01-bc10-d27dc296ed53",
+      "rawTextureUuid": "fa91ab85-7ce8-48dd-a2e3-f5f5d3ada12d",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

@@ -9,13 +9,16 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import { ScoreModel } from "../../../Global/GameRule";
+import { Random_Pool } from "../../../table";
+import { GameLogic } from "../../Model/GameLogic";
+import { UpdateTypeLabelSignal } from "../../Model/GamePlayModel";
 
 const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class SubjectLabel extends cc.Component {
   get Type() {
-    return this.node.getChildByName("Type").getComponent(cc.Label);
+    return this.node.getChildByName("Type").getComponent(cc.RichText);
   }
 
   get Count() {
@@ -30,10 +33,23 @@ export default class SubjectLabel extends cc.Component {
     return this.node.getChildByName("Score").getComponent(cc.Label);
   }
 
-  private type: string = "";
+  private type: Random_Pool = null;
   onLoad() {
-    this.Type.enableBold(true);
-    this.Type.string = "Down\nJacket";
-    this.Score.string = "/" + ScoreModel.GetScore(this.type);
+    this.Type.string = "";
+    this.Score.string = "/" + ScoreModel.GetScore(Random_Pool[this.type]);
+
+    UpdateTypeLabelSignal.inst.addListenerOne(this.onTypeUpdate, this);
+  }
+
+  onTypeUpdate(startIndex: number) {
+    let index = parseInt(this.node.name) + startIndex;
+    let model = GameLogic.inst.Types[index];
+    if (model) {
+      this.type = model.SubType;
+      this.Score.string = "/" + ScoreModel.GetScore(Random_Pool[this.type]);
+      this.Type.string = lan.t(model.Type, model.SubType);
+    } else {
+      console.error(" 类别model不存在：", index, startIndex);
+    }
   }
 }

@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "d682346d-1a66-442a-b035-ffb301f94bde",
+  "uuid": "ea32d6cc-d646-446f-809b-329612835f19",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "shiwu_kafei_3": {
       "ver": "1.0.4",
-      "uuid": "7a7df170-b47b-4044-a431-52e3552b183b",
-      "rawTextureUuid": "d682346d-1a66-442a-b035-ffb301f94bde",
+      "uuid": "0529b3fe-4949-4d55-8467-f16ff6053969",
+      "rawTextureUuid": "ea32d6cc-d646-446f-809b-329612835f19",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

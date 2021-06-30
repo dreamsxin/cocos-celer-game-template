@@ -13,6 +13,7 @@ export class BasePacker extends SingleTon<BasePacker>() {
   protected width: number = 0;
   protected height: number = 0;
   protected indexMap: HashMap<string, number> = new HashMap();
+  DebugNode: any;
 
   get TotalArea() {
     return this.height * this.width;
@@ -35,7 +36,19 @@ export class BasePacker extends SingleTon<BasePacker>() {
     this.pack();
   }
 
-  protected setPolygons() {
+  protected setPolygons(sp: string = "") {
+    if (sp != "" && this._polygonsSort.length > 0) {
+      let ID = sp + ":" + this._idcount++;
+      let polygon = new GeometryPolygon(this._polygonData[sp], ID);
+      polygon.expend(10);
+      polygon.rotateTo(Random.randomFloorToInt(0, 360));
+      this._polygonsSort.push(polygon);
+      this._polygonsSort.sort((a: GeometryPolygon, b: GeometryPolygon) => {
+        return a.Area - b.Area;
+      });
+      return;
+    }
+
     if (this._polygonsSort.length <= 0) {
       for (let sp in this._polygonData) {
         let ID = sp + ":" + this._idcount++;

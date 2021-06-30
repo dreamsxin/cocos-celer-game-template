@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "bd88606d-525e-48ab-9d14-be9aa1f46dde",
+  "uuid": "698d676f-9377-4e43-a813-d611855ed8a6",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "wenjugongju_huapan_6": {
       "ver": "1.0.4",
-      "uuid": "e8063f66-1ed4-4ea9-96b3-b73315075ee6",
-      "rawTextureUuid": "bd88606d-525e-48ab-9d14-be9aa1f46dde",
+      "uuid": "80ab880f-495c-4276-9976-c3efcf168950",
+      "rawTextureUuid": "698d676f-9377-4e43-a813-d611855ed8a6",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

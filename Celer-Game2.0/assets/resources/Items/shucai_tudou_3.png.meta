@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "eb4fd1a9-e254-4761-8263-7098b8390c10",
+  "uuid": "db751a8f-232d-4556-af50-66713e073097",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "shucai_tudou_3": {
       "ver": "1.0.4",
-      "uuid": "fa721803-ec23-4d98-934d-a075e43142e4",
-      "rawTextureUuid": "eb4fd1a9-e254-4761-8263-7098b8390c10",
+      "uuid": "6f881e49-3814-43a1-bff5-5e790b125067",
+      "rawTextureUuid": "db751a8f-232d-4556-af50-66713e073097",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

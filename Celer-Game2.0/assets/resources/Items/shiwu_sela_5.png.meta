@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "5043ab33-89e8-4e6d-ba1b-c756bb808ee6",
+  "uuid": "2b8fa5e1-c492-4a30-ab3b-ca4ae2ebe727",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,16 +11,16 @@
   "subMetas": {
     "shiwu_sela_5": {
       "ver": "1.0.4",
-      "uuid": "8c090733-ec70-4302-83e3-7b2409a3b02d",
-      "rawTextureUuid": "5043ab33-89e8-4e6d-ba1b-c756bb808ee6",
+      "uuid": "5863c0e0-3267-42a1-b96a-3cb26c3cab5b",
+      "rawTextureUuid": "2b8fa5e1-c492-4a30-ab3b-ca4ae2ebe727",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
-      "offsetX": -3.5,
+      "offsetX": -3,
       "offsetY": -19.5,
       "trimX": 25,
       "trimY": 92,
-      "width": 199,
+      "width": 200,
       "height": 111,
       "rawWidth": 256,
       "rawHeight": 256,

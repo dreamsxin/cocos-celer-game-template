@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "65df5766-be06-4fed-a7d4-3d08e47aee08",
+  "uuid": "962c0f21-cb25-4c19-8e0c-4167bcc1e945",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "shucai_yumi_5": {
       "ver": "1.0.4",
-      "uuid": "7e2deeb2-a755-494f-86c9-448adea6cd71",
-      "rawTextureUuid": "65df5766-be06-4fed-a7d4-3d08e47aee08",
+      "uuid": "bc3bf02b-1023-440c-9430-0f766492af72",
+      "rawTextureUuid": "962c0f21-cb25-4c19-8e0c-4167bcc1e945",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

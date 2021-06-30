@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "30974f2b-be75-491b-b48c-2f9391cf729c",
+  "uuid": "c9d38eec-779e-44e9-94ad-dbf809c58cf9",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "shucai_nangua_5": {
       "ver": "1.0.4",
-      "uuid": "fa04f055-580f-42de-ae9b-0db54c7a7548",
-      "rawTextureUuid": "30974f2b-be75-491b-b48c-2f9391cf729c",
+      "uuid": "ae924e1e-c20b-4421-bac8-151379b0e062",
+      "rawTextureUuid": "c9d38eec-779e-44e9-94ad-dbf809c58cf9",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

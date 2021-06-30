@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "f47bf111-a937-4dd9-86e2-93d3119d245a",
+  "uuid": "7bdc23be-a463-445f-990a-06fe5c6913b9",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "shiwu_sela_1": {
       "ver": "1.0.4",
-      "uuid": "95575d67-cfa5-44a5-b072-c61aa94c174d",
-      "rawTextureUuid": "f47bf111-a937-4dd9-86e2-93d3119d245a",
+      "uuid": "00d7dee8-2529-4bcc-b10a-1d7f99c23850",
+      "rawTextureUuid": "7bdc23be-a463-445f-990a-06fe5c6913b9",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

@@ -95,6 +95,11 @@ export class PlayModelProxy extends SingleTon<PlayModelProxy>() {
   }
 
   private hasStartCount: boolean = false;
+  /**
+   *
+   * @param dt 负数
+   * @returns
+   */
   addGameTime(dt: number) {
     if (
       GameStateController.inst.isPause() ||
@@ -110,6 +115,7 @@ export class PlayModelProxy extends SingleTon<PlayModelProxy>() {
       StartCountSignal.inst.dispatch();
     }
     this.Model.Time += dt;
+    this.Model.addScaleCountDown(dt);
 
     if (FlyCnicornAd.ShowTimeRest > 0) {
       FlyCnicornAd.ShowTimeRest += dt;

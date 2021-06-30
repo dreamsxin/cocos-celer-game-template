@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "fa279a37-ef03-404e-8b6f-745d02342bda",
+  "uuid": "2f0069b9-89b3-4e29-87ac-d25c0baffee9",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,16 +11,16 @@
   "subMetas": {
     "shuiguo_taozi_5": {
       "ver": "1.0.4",
-      "uuid": "af77a68a-901e-48eb-9fbd-b5f76e6add84",
-      "rawTextureUuid": "fa279a37-ef03-404e-8b6f-745d02342bda",
+      "uuid": "1a63a8b7-ef98-494c-aebf-514e278c30ea",
+      "rawTextureUuid": "2f0069b9-89b3-4e29-87ac-d25c0baffee9",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
-      "offsetX": 0,
+      "offsetX": 0.5,
       "offsetY": -0.5,
       "trimX": 28,
       "trimY": 41,
-      "width": 200,
+      "width": 201,
       "height": 175,
       "rawWidth": 256,
       "rawHeight": 256,

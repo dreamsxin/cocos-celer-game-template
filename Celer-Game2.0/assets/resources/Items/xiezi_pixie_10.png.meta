@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "18d6daf2-6563-4c3f-82f0-7a40aa93a064",
+  "uuid": "3e92055e-3f0b-4446-93fc-c295944c9057",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "xiezi_pixie_10": {
       "ver": "1.0.4",
-      "uuid": "94bcd309-4339-4be0-969b-a11133ac28f6",
-      "rawTextureUuid": "18d6daf2-6563-4c3f-82f0-7a40aa93a064",
+      "uuid": "3be5067e-0e52-4ef4-8da0-980ae68544f8",
+      "rawTextureUuid": "3e92055e-3f0b-4446-93fc-c295944c9057",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

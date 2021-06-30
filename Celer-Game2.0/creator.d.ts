@@ -3,6 +3,21 @@ The main namespace of Cocos2d-JS, all engine core classes, functions, properties
 !#zh
 Cocos 引擎的主要命名空间，引擎代码中所有的类，函数，属性和常量都在这个命名空间中定义。 */
 declare namespace cc {
+  declare namespace PhysicsTypes {
+    declare var PTM_RATIO: number;
+    declare var PHYSICS_ANGLE_TO_ANGLE: number;
+  }
+
+  export class PhysicsDebugDraw {
+    constructor(drawer: cc.Component);
+    SetFlags(flag: number);
+  }
+
+  declare namespace PolygonSeparator {
+    export function ConvexPartition(vertices: cc.Vec2[]): cc.Vec2[][];
+    export function ForceCounterClockWise(vertices: cc.Vec2[]);
+    export function IsCounterClockWise(vertices: cc.Vec2[]);
+  }
   /** The current version of Cocos2d being used.<br/>
 	Please DO NOT remove this String, it is an important flag for bug tracking.<br/>
 	If you post a bug to forum, please attach this flag. */

@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "1261995d-9279-494b-8fc2-2f181029064d",
+  "uuid": "8ed5f5df-0c28-47ea-9960-30ba46de9cc0",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "peishi_maozi_2": {
       "ver": "1.0.4",
-      "uuid": "d5427bb9-a43b-4d74-a863-b910e4e1460b",
-      "rawTextureUuid": "1261995d-9279-494b-8fc2-2f181029064d",
+      "uuid": "2c70751b-c792-4af7-bd55-db720ee9c4de",
+      "rawTextureUuid": "8ed5f5df-0c28-47ea-9960-30ba46de9cc0",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
