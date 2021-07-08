@@ -21,6 +21,7 @@ import {
   StartSpeed,
 } from "../Global/GameRule";
 import { Time } from "../Utils/Time";
+import { Random_ID, Random_Pool } from "../table";
 
 const { ccclass, property } = cc._decorator;
 
@@ -40,7 +41,7 @@ export default class TestItemRoot extends cc.Component {
   })
   type: PackType.MinPotential = PackType.MinPotential;
 
-  private polygonData: { [key: number]: Array<{ x: number; y: number }> } = {};
+  private polygonData: { [key: string]: Array<{ x: number; y: number }> } = {};
 
   get GridRoot() {
     return this.node.getChildByName("GridRoot");
@@ -85,7 +86,7 @@ export default class TestItemRoot extends cc.Component {
     }
 
     Random.setRandomSeed(Math.random());
-    // Random.setRandomSeed(0.42227920776368255);
+    Random.setRandomSeed(0.6172724379868753);
     // UpdatePanelHeightSignal.inst.addListenerOne((height: number) => {
     //   this.node.height = height;
     // }, this);
@@ -221,22 +222,22 @@ export default class TestItemRoot extends cc.Component {
                 // this.Items.addChild(box);
 
                 // 中心点
-                let center = cc.instantiate(this.Center);
-                center.setPosition(polygon.Center);
-                item.addChild(center);
+                // let center = cc.instantiate(this.Center);
+                // center.setPosition(polygon.Center);
+                // item.addChild(center);
 
-                center.x -= polygon.Position.x;
-                center.y -= polygon.Position.y;
-                item.addComponent(cc.Sprite).spriteFrame = sp;
+                // center.x -= polygon.Position.x;
+                // center.y -= polygon.Position.y;
 
                 // let colliderNode = new cc.Node();
-                let collider = item.addComponent(cc.PhysicsPolygonCollider);
-                collider.points = polygon.ExpendOrginPoints;
-                collider.sensor = true;
+                // let collider = item.addComponent(cc.PhysicsPolygonCollider);
+                // collider.points = polygon.ExpendOrginPoints;
+                // collider.sensor = true;
                 item.rotation = polygon.Rotation;
                 item.setPosition(polygon.Position);
-
+                item.addComponent(cc.Sprite).spriteFrame = sp;
                 this.Items.addChild(item);
+                console.log("item:", item.anchorX, item.anchorY);
 
                 if (count >= polygonMap.length) {
                   if (this.initChildCount == 0) {
@@ -258,58 +259,73 @@ export default class TestItemRoot extends cc.Component {
 
   initPolygonPacker() {
     if (this.type == PackType.MinPotential) {
-      MinPotentialPacker.inst.init(this.node.width, this.polygonData);
+      /** 全部集合 */
+      let polygons: {
+        [key: string]: {
+          points: Array<{ x: number; y: number }>;
+          type: Random_ID;
+          subType: Random_Pool;
+        };
+      } = {};
+      for (let key in this.polygonData) {
+        polygons[key] = {
+          points: this.polygonData[key],
+          type: 0,
+          subType: 0,
+        };
+      }
+      MinPotentialPacker.inst.init(this.node.width, polygons, []);
     } else if (this.type == PackType.Physics) {
     }
   }
 
-  placeItems(spriteFrames: cc.SpriteFrame[]) {
-    let startTime: number = Date.now();
-    spriteFrames.length = 5;
-    let count = 0;
-    disOrderArray(spriteFrames);
-    while (spriteFrames.length > 0) {
-      count++;
-      let itemNode = new cc.Node();
-      itemNode.opacity = 200;
-      let index = Random.randomFloorToInt(0, spriteFrames.length);
-      let spriteFrame = spriteFrames.splice(index, 1)[0];
-      itemNode.addComponent(cc.Sprite).spriteFrame = spriteFrame;
+  // placeItems(spriteFrames: cc.SpriteFrame[]) {
+  //   let startTime: number = Date.now();
+  //   spriteFrames.length = 5;
+  //   let count = 0;
+  //   disOrderArray(spriteFrames);
+  //   while (spriteFrames.length > 0) {
+  //     count++;
+  //     let itemNode = new cc.Node();
+  //     itemNode.opacity = 200;
+  //     let index = Random.randomFloorToInt(0, spriteFrames.length);
+  //     let spriteFrame = spriteFrames.splice(index, 1)[0];
+  //     itemNode.addComponent(cc.Sprite).spriteFrame = spriteFrame;
 
-      let points = [];
-      let orgrinPoints = [];
-      for (let point of this.polygonData[spriteFrame.name]) {
-        points.push(cc.v2(point.x, point.y));
-        orgrinPoints.push(cc.v2(point.x, point.y));
-      }
+  //     let points = [];
+  //     let orgrinPoints = [];
+  //     for (let point of this.polygonData[spriteFrame.name]) {
+  //       points.push(cc.v2(point.x, point.y));
+  //       orgrinPoints.push(cc.v2(point.x, point.y));
+  //     }
 
-      let collider = itemNode.addComponent(cc.PhysicsPolygonCollider);
-      collider.points = points;
-      collider.sensor = true;
-      itemNode.on(
-        cc.Node.EventType.TOUCH_MOVE,
-        (ev: cc.Event.EventTouch) => {
-          itemNode.setPosition(itemNode.position.add(ev.getDelta()));
-          PolygonPacker.inst.testCheck(orgrinPoints, itemNode);
-        },
-        this
-      );
-      itemNode.rotation = Random.getRandom() * 360;
-      itemNode.setPosition(
-        PolygonPacker.inst.StartX,
-        PolygonPacker.inst.StartY
-      );
-      this.Items.addChild(itemNode);
-      PolygonPacker.inst.checkBorder(itemNode, orgrinPoints);
-    }
-    console.log(
-      " place items cost:",
-      Date.now() - startTime,
-      " ms,",
-      " items:",
-      this.Items.childrenCount
-    );
-  }
+  //     let collider = itemNode.addComponent(cc.PhysicsPolygonCollider);
+  //     collider.points = points;
+  //     collider.sensor = true;
+  //     itemNode.on(
+  //       cc.Node.EventType.TOUCH_MOVE,
+  //       (ev: cc.Event.EventTouch) => {
+  //         itemNode.setPosition(itemNode.position.add(ev.getDelta()));
+  //         PolygonPacker.inst.testCheck(orgrinPoints, itemNode);
+  //       },
+  //       this
+  //     );
+  //     itemNode.rotation = Random.getRandom() * 360;
+  //     itemNode.setPosition(
+  //       PolygonPacker.inst.StartX,
+  //       PolygonPacker.inst.StartY
+  //     );
+  //     this.Items.addChild(itemNode);
+  //     PolygonPacker.inst.checkBorder(itemNode, orgrinPoints);
+  //   }
+  //   console.log(
+  //     " place items cost:",
+  //     Date.now() - startTime,
+  //     " ms,",
+  //     " items:",
+  //     this.Items.childrenCount
+  //   );
+  // }
 }
 
 CC_DEBUG &&

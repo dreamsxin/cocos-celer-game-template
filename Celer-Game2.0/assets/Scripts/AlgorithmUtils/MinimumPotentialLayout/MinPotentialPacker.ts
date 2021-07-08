@@ -1,6 +1,13 @@
 import { UpdateLoadingSignal } from "../../Editor/PercentLabel2";
-import { GetTotalMapHeight } from "../../Global/GameRule";
-import { Approx } from "../../Utils/Cocos";
+import ItemRoot from "../../GamePlay/View/Game/ItemRoot";
+import {
+  GetCollectCount,
+  GetTotalLevel,
+  GetTotalMapHeight,
+  GetTypeCount,
+} from "../../Global/GameRule";
+import ThemeView from "../../Initialization/View/ThemeView";
+import { Approx, disOrderArray } from "../../Utils/Cocos";
 import { HashMap } from "../../Utils/HashMap";
 import { Random } from "../../Utils/Random";
 import { BasePacker } from "../BasePacker";
@@ -25,6 +32,10 @@ export class MinPotentialPacker extends BasePacker {
   private b2World: b2.World;
 
   public DebugNode: cc.Node = null;
+
+  private targetHeight: number = 0;
+
+  private level: number = 0;
 
   pack() {
     if (this.b2World == null) {
@@ -139,10 +150,10 @@ export class MinPotentialPacker extends BasePacker {
     velocityIterations: number = cc.PhysicsManager.VELOCITY_ITERATIONS,
     positionIterations: number = cc.PhysicsManager.POSITION_ITERATIONS
   ) {
-    CC_DEBUG && isDraw && this.b2World.ClearDebugDraw();
+    ItemRoot.DRAW && isDraw && this.b2World.ClearDebugDraw();
     this.b2World.Step(dt, velocityIterations, positionIterations);
     this.syncBody();
-    CC_DEBUG && isDraw && this.b2World.DrawDebugData();
+    ItemRoot.DRAW && isDraw && this.b2World.DrawDebugData();
   }
 
   private syncBody() {
@@ -168,7 +179,7 @@ export class MinPotentialPacker extends BasePacker {
 
     // bodyDef.gravityScale = 0;
     bodyDef.type = b2.BodyType.b2_dynamicBody;
-    bodyDef.bullet = false;
+    bodyDef.bullet = true;
     bodyDef.linearDamping = 0.5;
     bodyDef.angularDamping = 0.5;
     // bodyDef.fixedRotation = true;
@@ -238,6 +249,7 @@ export class MinPotentialPacker extends BasePacker {
   }
 
   startPack(height: number = 1920 * 15 /*1920 * 1.5*/) {
+    this.targetHeight = height;
     this.packAsync(height);
   }
 
@@ -247,16 +259,16 @@ export class MinPotentialPacker extends BasePacker {
     this.packeds().length = 0;
     let oldHeight = this.height;
 
-    const interval = 0;
+    const interval = 2;
     const ToTalLoop = 30;
 
     this.b2World.SetGravity(new b2.Vec2(0, -300));
     this.b2World.m_AngleLimit = Math.abs(
-      1 / cc.PhysicsTypes.PHYSICS_ANGLE_TO_ANGLE
+      2 / cc.PhysicsTypes.PHYSICS_ANGLE_TO_ANGLE
     );
-    this.b2World.m_OffsetLimit = 1 / cc.PhysicsTypes.PTM_RATIO;
-    this.b2World.m_StaticRefLimit = 6;
-    this.b2World.m_VelocityLimit = 1;
+    this.b2World.m_OffsetLimit = 10 / cc.PhysicsTypes.PTM_RATIO;
+    this.b2World.m_StaticRefLimit = 10;
+    this.b2World.m_VelocityLimit = 0.5;
 
     this.stepID = setInterval(() => {
       let Loop = ToTalLoop;
@@ -355,7 +367,7 @@ export class MinPotentialPacker extends BasePacker {
         if (this.polygons<GeometryPolygon>()[i].ID == polygon.ID) {
           this.polygons<GeometryPolygon>().splice(i, 1);
           this.setPolygons(polygon.ID.split(":")[0]);
-          //this.setPolygons();
+          // this.setPolygons();
           break;
         }
       }
@@ -386,14 +398,66 @@ export class MinPotentialPacker extends BasePacker {
 
   done() {
     if (CC_DEBUG) {
-      this.b2World.ClearDebugDraw();
-      this.b2World.DrawDebugData();
+      ItemRoot.DRAW && this.b2World.ClearDebugDraw();
+      ItemRoot.DRAW && this.b2World.DrawDebugData();
+      for (let polygon of this.polygonsNeed()) {
+        if (polygon.length > 0) {
+          console.error("生成解解没有全部生成。");
+        }
+      }
     }
     super.done();
+    if (this._completeCallback) {
+      this._completeCallback();
+    }
   }
 
+  private index: number = -1;
+  private answerIndex = 0;
+  private indexRef = 0;
   private findPolygons(limitWidth: number) {
     let polygonPool: GeometryPolygon[] = [];
+
+    let heightPerLevel = this.targetHeight / GetTotalLevel();
+    let polygons = this.polygonsNeed()[this.level];
+
+    let count = GetCollectCount() * GetTypeCount() * GetTotalLevel();
+    let height = heightPerLevel / count;
+
+    if (polygons && polygons.length > 0) {
+      disOrderArray(polygons);
+      let newIndex = Math.floor(this.height / height);
+      if (newIndex != this.index) {
+        this.index = newIndex;
+        this.indexRef = 0;
+      } else {
+        this.indexRef++;
+      }
+
+      if (this.indexRef <= 2) {
+        for (let i = 0; i < polygons.length; i++) {
+          let polygon = polygons[i];
+          if (
+            polygon.ExpendBox.width <= limitWidth ||
+            polygon.ExpendBox.height <= limitWidth
+          ) {
+            polygonPool.push(polygon);
+            polygons.splice(i, 1);
+            break;
+          } else {
+            //break;
+          }
+        }
+      }
+    }
+
+    if (polygonPool.length > 0) {
+      if (CC_DEBUG) {
+        // console.log(++this.answerIndex, " 生成解：", this.warpCount);
+      }
+      return polygonPool;
+    }
+
     for (let polygon of this.polygons<GeometryPolygon>()) {
       if (
         polygon.ExpendBox.width <= limitWidth ||
@@ -448,6 +512,9 @@ export class MinPotentialPacker extends BasePacker {
   private wrap() {
     this.warpCount++;
     this.sideCount.add(this.warpCount, { left: [], right: [] });
+    if (CC_DEBUG) {
+      // console.log("wrap:", this.warpCount);
+    }
   }
 
   private updateHeight() {
@@ -464,13 +531,27 @@ export class MinPotentialPacker extends BasePacker {
 
     let height = 0;
     for (let polygon of sideCount.left) {
-      height = Math.max(this.height, polygon.ExpendBorder.top.y);
+      if (height == 0) {
+        height = polygon.ExpendBorder.top.y;
+      } else {
+        height = Math.min(height, polygon.ExpendBorder.top.y);
+      }
     }
 
     for (let polygon of sideCount.right) {
-      height = Math.max(this.height, polygon.ExpendBorder.top.y);
+      height = Math.min(height, polygon.ExpendBorder.top.y);
     }
 
     this.height = Math.max(height, this.height);
+
+    let heightPerLevel = this.targetHeight / GetTotalLevel();
+    if (this.level != Math.floor(this.height / heightPerLevel)) {
+      this.index = -1;
+    }
+    this.level = Math.floor(this.height / heightPerLevel);
+
+    if (this._progressCallback) {
+      this._progressCallback(Math.min(1, this.height / this.targetHeight));
+    }
   }
 }

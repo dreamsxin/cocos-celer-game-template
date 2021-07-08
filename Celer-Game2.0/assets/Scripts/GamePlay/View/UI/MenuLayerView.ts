@@ -14,6 +14,7 @@ import {
 } from "../../../Command/CommonSignal";
 import { GameStateController } from "../../../Controller/GameStateController";
 import { GetScoreByType } from "../../../Global/GameRule";
+import { Theme } from "../../../Global/Theme";
 import { PlayModelProxy } from "../../../Model/PlayModelProxy";
 import { En_ID, En_View } from "../../../table";
 import BaseView from "../../../View/BaseView";
@@ -34,7 +35,9 @@ export default class MenuLayerView extends BaseView {
   get EndNow() {
     return this.node.getChildByName("EndNow");
   }
-
+  get Background() {
+    return this.node.getChildByName("Background");
+  }
   get Content() {
     return this.node.getChildByName("Content").getComponent(cc.RichText);
   }
@@ -70,11 +73,19 @@ export default class MenuLayerView extends BaseView {
 
   onShow() {
     if (this.node.active) return;
+    let count = 0;
+    for (let child of this.Background.children) {
+      child.active = child.name == Theme[PlayModelProxy.inst.Theme];
+      if (child.active) {
+        count++;
+      }
+    }
 
+    if (count <= 0) {
+      this.Background.children[0].active = true;
+    }
     if (PlayModelProxy.inst.FreePauseCount <= 0) {
       this.Content.string = lan.t(En_View.ZanTingJieMian, En_ID.ZanTingKouFen, [
-        PlayModelProxy.inst.FreePauseCount.toString(),
-
         "" + GetScoreByType(ScoreType.PauseCost),
       ]);
     } else {

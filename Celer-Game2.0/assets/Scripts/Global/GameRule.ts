@@ -14,29 +14,32 @@ export function GetTotalTime() {
 
 export function GetScoreByType(type: ScoreType) {
   switch (type) {
-    case ScoreType.Clear:
-      return 5;
-    case ScoreType.MergeCross:
-    case ScoreType.MergeLine:
-    case ScoreType.MergeSquare:
-      return 20;
-    case ScoreType.MergeRainbow:
-    case ScoreType.MergePeacok:
-      return 30;
-    case ScoreType.BlockAttack:
-      return 2;
-    case ScoreType.GoldAttack:
-      return 5;
-    case ScoreType.StoneAttack:
-      return 3;
-    case ScoreType.GoldGain:
-      return 500;
     case ScoreType.PauseCost:
-      return 100;
-    case ScoreType.StepBonus:
       return 100;
   }
   return 0;
+}
+
+/**
+ * const Total = 680; // 100%
+const Double = 578; // 85%
+const Times1_5 = 408; // 40%
+ * @param progress 
+ */
+export function GetScoreScale(progress: number) {
+  if (progress > 0.85) {
+    return 2;
+  }
+
+  if (progress > 0.4) {
+    return 1.5;
+  }
+
+  if (progress > 0) {
+    return 1.2;
+  }
+
+  return 1;
 }
 
 /** 得分模型
@@ -58,6 +61,10 @@ export class ScoreModel {
       this.lastType = type;
     }
     return 60;
+  }
+
+  public static NextLevel() {
+    this.lastType = null;
   }
 }
 
@@ -110,7 +117,7 @@ export function MapSpeedUpScale() {
 
 /** 初始移动速度 */
 export function StartSpeed() {
-  return 50;
+  return 80;
 }
 
 export function GetTotalMapHeight() {
@@ -120,3 +127,6 @@ export function GetTotalMapHeight() {
       0.5 * MapSpeedUpScale() * GetTotalTime() * GetTotalTime())
   );
 }
+
+/** 随机时每轮至少多少个解 */
+export const CountPerLevelFloor = 8;

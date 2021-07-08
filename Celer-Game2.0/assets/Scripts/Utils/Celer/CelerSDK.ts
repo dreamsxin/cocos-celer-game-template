@@ -101,9 +101,6 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
       this.match.difficultyLevel = 1;
     }
 
-    /** 多语言 */
-    this.defineLan();
-
     Random.setRandomSeed(this.match.sharedRandomSeed);
 
     PlayModelProxy.inst.setTotalTime(GetTotalTime());
@@ -113,6 +110,115 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
     } else {
       this.isNewPlayer = false;
     }
+
+    // 暂不支持广告
+    HideWildAdButtonSignal.inst.dispatch();
+    RemoveFlyCnicornSignal.inst.dispatch();
+
+    if (this.celerStartCallback) {
+      this.celerStartCallback();
+      this.celerStartCallback = null;
+    }
+  }
+
+  public defineLan() {
+    this.match.locale = this.match.locale || "en_US";
+
+    if (CC_DEBUG) {
+      this.match.locale = "ef_US";
+    }
+
+    lan.set(this.match.locale);
+    let textMap: {
+      [key: number]: {
+        [key: number]: string;
+      };
+    } = {};
+
+    let styleMap: {
+      [key: number]: {
+        [key: number]: RichTextStyle;
+      };
+    } = {};
+
+    let textData: { [key: number]: En } = null;
+
+    textData = TableManager.inst.getAll_En_Data();
+    let locale =
+      this.match.locale.split("_")[0].charAt(0).toUpperCase() +
+      this.match.locale.split("_")[0].substring(1);
+
+    if (
+      TableManager.inst["getAll_" + locale + "_Data"] &&
+      TableManager.inst["getAll_" + locale + "_Data"]()
+    ) {
+      textData = TableManager.inst["getAll_" + locale + "_Data"]();
+    }
+
+    if (textData) {
+      for (let key in textData) {
+        let data = textData[key];
+        if (!textMap[data.View]) {
+          textMap[data.View] = {};
+        }
+        textMap[data.View][data.ID] = data.Text;
+
+        if (!styleMap[data.View]) {
+          styleMap[data.View] = {};
+        }
+        styleMap[data.View][data.ID] = {
+          FontSize: data.FontSize,
+          MaxWidth: data.MaxWidth,
+          HorizontalAlign: data.Horizontal,
+          VerticalAlign: data.Vertical,
+          LineHeight: data.LineHeight,
+        };
+      }
+      lan.define(this.match.locale, textMap);
+      /** define style */
+      lan.defineStyle(this.match.locale, styleMap);
+    }
+
+    /** 配置名词翻译 */
+
+    let wordMap: { [key: number]: { [key: number]: string } } = {};
+    let allTypes = TableManager.inst.getRandom(Random_ID.SuiJiChi).Pool;
+    for (let type of allTypes) {
+      let tableName = TableManager.inst.getClass(type).Table;
+      let typeData: { [key: number]: Animals_en } = null;
+
+      typeData = TableManager.inst["getAll_" + tableName + "_en_Data"]
+        ? TableManager.inst["getAll_" + tableName + "_en_Data"]()
+        : null;
+      if (
+        TableManager.inst[
+          "getAll_" + tableName + "_" + locale.toLocaleLowerCase() + "_Data"
+        ] &&
+        TableManager.inst[
+          "getAll_" + tableName + "_" + locale.toLocaleLowerCase() + "_Data"
+        ]()
+      ) {
+        typeData =
+          TableManager.inst[
+            "getAll_" + tableName + "_" + locale.toLocaleLowerCase() + "_Data"
+          ]();
+      }
+
+      if (typeData) {
+        for (let key in typeData) {
+          let data = typeData[key];
+          if (!wordMap[type]) {
+            wordMap[type] = {};
+          }
+          // wordMap[type][data.ID] = !CELER_X
+          //   ? "<color=#66463e>" + data.Name_CN + "</c>"
+          //   : data.Name;
+
+          wordMap[type][data.ID] = data.Name;
+        }
+      }
+    }
+    lan.define(this.match.locale, wordMap);
 
     if (CELER_X) {
       if (celerSDK.hasMethod("showAd") != true || this.isNewPlayer) {
@@ -150,81 +256,6 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
         // HidePauseLayerSignal.inst.dispatch();
       });
     }
-
-    if (this.celerStartCallback) {
-      this.celerStartCallback();
-      this.celerStartCallback = null;
-    }
-  }
-
-  private defineLan() {
-    this.match.locale = this.match.locale || "en_US";
-
-    if (CC_DEBUG) {
-      this.match.locale = "ef_US";
-    }
-
-    lan.set(this.match.locale);
-    let textMap: { [key: number]: { [key: number]: string } } = {};
-    let textData: { [key: number]: En } = null;
-    textData = TableManager.inst.getAll_En_Data();
-    let locale =
-      this.match.locale.split("_")[0].charAt(0).toUpperCase() +
-      this.match.locale.split("_")[0].substring(1);
-    if (
-      TableManager.inst["getAll_" + locale + "_Data"] &&
-      TableManager.inst["getAll_" + locale + "_Data"]()
-    ) {
-      textData = TableManager.inst["getAll_" + locale + "_Data"]();
-    }
-
-    if (textData) {
-      for (let key in textData) {
-        let data = textData[key];
-        if (!textMap[data.View]) {
-          textMap[data.View] = {};
-        }
-        textMap[data.View][data.ID] = data.Text;
-      }
-      lan.define(this.match.locale, textMap);
-    }
-
-    /** 配置名词翻译 */
-
-    let wordMap: { [key: number]: { [key: number]: string } } = {};
-    let allTypes = TableManager.inst.getRandom(Random_ID.SuiJiChi).Pool;
-    for (let type of allTypes) {
-      let tableName = TableManager.inst.getClass(type).Table;
-      let typeData: { [key: number]: Animals_en } = null;
-
-      typeData = TableManager.inst["getAll_" + tableName + "_en_Data"]
-        ? TableManager.inst["getAll_" + tableName + "_en_Data"]()
-        : null;
-      if (
-        TableManager.inst[
-          "getAll_" + tableName + "_" + locale.toLocaleLowerCase() + "_Data"
-        ] &&
-        TableManager.inst[
-          "getAll_" + tableName + "_" + locale.toLocaleLowerCase() + "_Data"
-        ]()
-      ) {
-        typeData =
-          TableManager.inst[
-            "getAll_" + tableName + "_" + locale.toLocaleLowerCase() + "_Data"
-          ]();
-      }
-
-      if (typeData) {
-        for (let key in typeData) {
-          let data = typeData[key];
-          if (!wordMap[type]) {
-            wordMap[type] = {};
-          }
-          wordMap[type][data.ID] = data.Name;
-        }
-      }
-    }
-    lan.define(this.match.locale, wordMap);
   }
 
   submitScore(score: number) {

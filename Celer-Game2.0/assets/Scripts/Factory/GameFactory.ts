@@ -117,12 +117,14 @@ class GameFactory {
   private constructor() {}
 
   private doneCallback: Function;
+  private progressCallback: Function;
   private count: number = 0;
   private totalCount: number = 0;
   private objPool: HashMap<string, ObjPool> = new HashMap();
   private startTime: number = 0;
-  init(callback: Function) {
+  init(callback: Function, progress?: Function) {
     this.doneCallback = callback;
+    this.progressCallback = progress;
     this.startTime = Date.now();
 
     cc.loader.loadResDir(
@@ -146,7 +148,7 @@ class GameFactory {
                 this.addCount.bind(this)
               );
               this.objPool.add(name, objPool);
-            }, i * 10);
+            }, i * 5);
           }
         }
       }
@@ -172,6 +174,9 @@ class GameFactory {
 
   addCount() {
     this.count++;
+    if (this.progressCallback) {
+      this.progressCallback(this.count / this.totalCount);
+    }
     if (this.count >= this.totalCount) {
       console.log(
         " factory cost time:",

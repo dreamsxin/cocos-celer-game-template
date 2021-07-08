@@ -51,16 +51,16 @@ export default class CompleteView extends cc.Component {
   onGameOver(type: RoundEndType) {
     this.Font.node.active = true;
 
-    let delay = 2000;
+    let delay = 1500;
     switch (type) {
       case RoundEndType.Complete:
         this.FireWork.node.active = true;
         this.Con && (this.Con.active = true);
         this.Font.spriteFrame = ResourceController.inst.getAnimationAtlas(
           AnimationType.UI,
-          Title.Complete
+          Title.CompleteAni
         );
-        delay = 2500;
+        delay = 3000;
         break;
       case RoundEndType.Over:
         this.Font.spriteFrame = ResourceController.inst.getAnimationAtlas(
@@ -82,17 +82,20 @@ export default class CompleteView extends cc.Component {
         break;
     }
 
+    if (this.FireWork && this.FireWork.node.active) {
+      this.FireWork.play();
+    }
     if (this.Font.node.active) {
       this.Font.node.scaleX = 0;
 
       this.Font.node.runAction(cc.scaleTo(0.1, 1.2));
     } else {
-      this.FireWork && this.FireWork.play();
       if (this.Con) {
         this.Con.scale = 0;
         this.Con.runAction(
           cc.sequence(
             cc.scaleTo(0.1, 1.2),
+            cc.scaleTo(0.05, 1),
             cc.delayTime(0.15),
             cc.scaleTo(0.1, 1)
           )

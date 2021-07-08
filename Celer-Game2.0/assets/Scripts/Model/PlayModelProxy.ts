@@ -91,7 +91,7 @@ export class PlayModelProxy extends SingleTon<PlayModelProxy>() {
 
   setTotalTime(time: number) {
     this.Model.Time = time;
-    UpdateTimeNumber.inst.dispatchOne(this.Model.Time);
+    UpdateTimeNumber.inst.dispatchTwo(this.Model.Time, 0);
   }
 
   private hasStartCount: boolean = false;
@@ -124,7 +124,7 @@ export class PlayModelProxy extends SingleTon<PlayModelProxy>() {
       }
     }
 
-    UpdateTimeNumber.inst.dispatchOne(this.Model.Time);
+    UpdateTimeNumber.inst.dispatchTwo(this.Model.Time, Math.abs(dt));
     TimeAnimationStateChanged.inst.dispatchOne(this.Model.Time <= 30);
 
     if (this.Model.Time <= 0) {
@@ -147,7 +147,7 @@ export class PlayModelProxy extends SingleTon<PlayModelProxy>() {
 
   gameReadyToStart() {
     GameStartSignal.inst.dispatch();
-    GameStateController.inst.isReady = true;
+    //GameStateController.inst.isReady = true;
     console.log("gameReadyToStart");
     WildButtonReadySignal.inst.dispatch();
   }

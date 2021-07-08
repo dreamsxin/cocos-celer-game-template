@@ -117,8 +117,16 @@ export default class HelpLayerView extends BaseView {
     this.node.active = true;
     this.node.stopAllActions();
 
+    let count = 0;
     for (let child of this.Background.children) {
       child.active = child.name == Theme[PlayModelProxy.inst.Theme];
+      if (child.active) {
+        count++;
+      }
+    }
+
+    if (count <= 0) {
+      this.Background.children[0].active = true;
     }
 
     this.node.scale = 0;

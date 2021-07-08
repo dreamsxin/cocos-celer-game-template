@@ -38,7 +38,7 @@ export default class ScoreLabelView extends NumberChangedView {
   }
 
   onScoreChanged(score: number, changed: number, times: number, node: cc.Node) {
-    if (this.ScoreFloatRoot == null) {
+    if (this.ScoreFloatRoot == null || changed < 0) {
       this.onNumberChanged(PlayModelProxy.inst.PlayerScore);
       return;
     }
@@ -64,6 +64,7 @@ export default class ScoreLabelView extends NumberChangedView {
 
     scoreLableNode.setPosition(startPos);
     let floatTime = Distance(startPos, targetPos) / 2500;
+    scoreLableNode.scale = 0;
     scoreLableNode.runAction(
       cc.sequence(
         cc.scaleTo(0, 0),

@@ -62,7 +62,7 @@ export default class Test extends cc.Component {
       this.node.opacity = 255;
     }
 
-    if (!CC_DEBUG) {
+    if (CELER_X) {
       this.node.removeFromParent(true);
       this.node.destroy();
       return;

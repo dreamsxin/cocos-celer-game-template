@@ -30,6 +30,7 @@ export default class TimeLabelView extends BaseView {
 
   onTimeChanged(time: number) {
     let timeStr = Time.timeFormat(time);
+
     if (this.node.name == "MinuteLabel") {
       this.Label.string = timeStr.split("/")[0];
     } else if (this.node.name == "SecondLabel") {
@@ -39,9 +40,7 @@ export default class TimeLabelView extends BaseView {
     }
 
     if (time > 30) {
-      this.Label.font = ResourceController.inst.getTimeWhiteFont();
     } else {
-      this.Label.font = ResourceController.inst.getTimeRedFont();
     }
 
     let secNew = Math.floor(time);

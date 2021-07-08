@@ -1,4 +1,5 @@
 import { RoundEndType } from "../../Controller/GameStateController";
+import { Random_ID, Random_Pool } from "../../table";
 import { RotatePoint } from "../../Utils/Cocos";
 
 /** 计算多边形的面积 */
@@ -90,7 +91,7 @@ export function intersectPolygon(
   polygon0: GeometryPolygon,
   polygon1: GeometryPolygon
 ): GeometryPolygon {
-  let interPolygon = new GeometryPolygon([]);
+  let interPolygon = new GeometryPolygon([], "", null, null);
 
   for (let point of polygon0.ExpendPoints) {
     if (cc.Intersection.pointInPolygon(point, polygon1.Points)) {
@@ -156,6 +157,9 @@ export class GeometryPolygon {
   private id: string = "";
   private expendSize: number = null;
 
+  private type: Random_ID;
+  private subType: Random_Pool;
+
   private inertia: number = 0;
   /** 变换后的边界*/
   private border: {
@@ -196,14 +200,26 @@ export class GeometryPolygon {
     right: cc.v2(cc.macro.MIN_ZINDEX, 0),
   };
 
+  get SubType() {
+    return this.subType;
+  }
+
+  get Type() {
+    return this.type;
+  }
+
   constructor(
     points: Array<{
       x: number;
       y: number;
     }>,
     id: string = "",
+    type: Random_ID,
+    subType: Random_Pool,
     isClearConcavePoint: boolean = true
   ) {
+    this.type = type;
+    this.subType = subType;
     this.id = id;
     for (let point of points) {
       this.originPoints.push(cc.v2(point.x, point.y));

@@ -15,6 +15,7 @@ import {
   GetTypeCount,
 } from "../../../Global/GameRule";
 import { En_ID, En_View } from "../../../table";
+import { ShowTutorialSignal } from "../../../Tutorial/TutorialView";
 
 const { ccclass, property } = cc._decorator;
 
@@ -26,6 +27,7 @@ export default class HelpLabelView extends cc.Component {
 
   onLoad() {
     ShowHelpLayerSignal.inst.addListener(this.renderText, this);
+    ShowTutorialSignal.inst.addListener(this.renderText, this);
   }
 
   renderText() {

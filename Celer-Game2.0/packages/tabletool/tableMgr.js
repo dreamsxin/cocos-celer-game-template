@@ -61,6 +61,9 @@ export class TableManager {
     }
     private completeLoad() {
         this.complete++;
+        if (this.progressCallback) {
+      this.progressCallback(this.complete / this.total);
+    }
         if (this.complete >= this.total) {
             if (this.completeCallback) this.completeCallback();
         }

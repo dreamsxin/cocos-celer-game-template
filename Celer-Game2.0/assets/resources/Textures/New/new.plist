@@ -34,6 +34,21 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
+            <key>bg_newok.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{47,39}</string>
+                <key>spriteSourceSize</key>
+                <string>{47,39}</string>
+                <key>textureRect</key>
+                <string>{{1289,650},{47,39}}</string>
+                <key>textureRotated</key>
+                <false/>
+            </dict>
             <key>btn_new_end.png</key>
             <dict>
                 <key>aliases</key>
@@ -75,7 +90,7 @@
                 <key>spriteSourceSize</key>
                 <string>{12,12}</string>
                 <key>textureRect</key>
-                <string>{{1289,650},{12,12}}</string>
+                <string>{{1338,650},{12,12}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -93,7 +108,7 @@
             <key>size</key>
             <string>{1433,1026}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:7fa009d55760810e0be3dff00f3ac6fa:18c0d494ec7cafa054264eff3ed1c448:4c7305d7025eb429c325946902683c29$</string>
+            <string>$TexturePacker:SmartUpdate:6766eb30b6bbccb6e1c190201f129512:ab13d5bdfc59fc2fd8915e559346422b:4c7305d7025eb429c325946902683c29$</string>
             <key>textureFileName</key>
             <string>new.png</string>
         </dict>

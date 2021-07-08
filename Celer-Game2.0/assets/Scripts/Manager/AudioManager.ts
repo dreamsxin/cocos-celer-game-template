@@ -12,6 +12,9 @@ import {
 import { RoundEndType } from "../Controller/GameStateController";
 import { SingleTon } from "../Utils/ToSingleton";
 import { NextLevelSignal, StartCountSignal } from "../Model/PlayModelProxy";
+import { OnWrongClickSignal } from "../GamePlay/View/Game/Item";
+import { SubjectOkSignal } from "../GamePlay/View/UI/Subject";
+import { UpdateTypeScore } from "../GamePlay/View/UI/SubjectLabel";
 interface AudioItem {
   loop: boolean;
   volume: number;
@@ -50,28 +53,37 @@ class AudioController extends SingleTon<AudioController>() {
   }
 
   private clips: HashMap<string, cc.AudioClip> = new HashMap();
-  init(callback: Function) {
+  init(callback: Function, progress?: Function) {
     console.log(" start load AudioClip ");
 
     let self = this;
-    cc.loader.loadRes(PATH + "bgm", cc.AudioClip, function (err, clip) {
-      if (err) {
-        console.error(err);
-      } else {
-        if (
-          typeof clip["_audio"] == "string" &&
-          cc.loader["_cache"] &&
-          cc.loader["_cache"][clip["_audio"]] &&
-          cc.loader["_cache"][clip["_audio"]]["buffer"]
-        ) {
-          clip["_audio"] = cc.loader["_cache"][clip["_audio"]]["buffer"];
+    cc.loader.loadRes(
+      PATH + "bgm",
+      cc.AudioClip,
+      (completed: number, total: number) => {
+        if (progress) {
+          progress(completed / total);
         }
-        self.clips.add(clip.name, clip);
-        callback && callback();
+      },
+      function (err, clip) {
+        if (err) {
+          console.error(err);
+        } else {
+          if (
+            typeof clip["_audio"] == "string" &&
+            cc.loader["_cache"] &&
+            cc.loader["_cache"][clip["_audio"]] &&
+            cc.loader["_cache"][clip["_audio"]]["buffer"]
+          ) {
+            clip["_audio"] = cc.loader["_cache"][clip["_audio"]]["buffer"];
+          }
+          self.clips.add(clip.name, clip);
+          callback && callback();
 
-        self.playMusic("bgm", true);
+          self.playMusic("bgm", true);
+        }
       }
-    });
+    );
 
     // cc.loader.loadRes(PATH + "bgm_30", function (err, clip) {
     //     if (err) {
@@ -128,6 +140,25 @@ class AudioController extends SingleTon<AudioController>() {
   bindSignal() {
     this.setEffectVolume(1);
     this.setMusicVolume(1);
+
+    OnWrongClickSignal.inst.addListener(() => {
+      this.playEffect("Wrong");
+    }, this);
+
+    SubjectOkSignal.inst.addListenerTwo((index: number, isPlay: boolean) => {
+      if (isPlay) {
+        this.playEffect("Finish");
+      }
+    }, this);
+
+    let index = 1;
+    UpdateTypeScore.inst.addListener(() => {
+      this.playEffect("Match" + index);
+      index++;
+      if (index > 2) {
+        index = 1;
+      }
+    }, this);
 
     // bgm
     UpdateTimeNumber.inst.addListenerOne((time: number) => {

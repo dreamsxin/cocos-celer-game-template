@@ -1,11 +1,13 @@
 import { Theme } from "../../Global/Theme";
 import {
   FreePauseLimit,
+  GetCollectCount,
   GetScoreByType,
   GetTotalLevel,
   GetTotalTime,
   GetTypeCount,
   ScoreBonusCountdown,
+  ScoreModel,
 } from "../../Global/GameRule";
 import {
   GameThemeInit,
@@ -28,31 +30,8 @@ import { Clamp } from "../../Utils/Cocos";
 import { HashMap } from "../../Utils/HashMap";
 import { ItemModel } from "./ItemModel";
 export enum ScoreType {
-  /** 消除 */
-  Clear,
-  /** 合成横竖 */
-  MergeLine,
-  /** 合成交叉 */
-  MergeCross,
-  /** 合成九宫 */
-  MergeSquare,
-  /** 合成孔雀 */
-  MergePeacok,
-  /** 合成彩虹石 */
-  MergeRainbow,
-  /** 消除普通障碍物 */
-  BlockAttack,
-
-  /** 石头和草皮消除 */
-  StoneAttack,
-  /** 打碎带金块的障碍物 */
-  GoldAttack,
-  /** 获得金块 */
-  GoldGain,
-  /** 时间加成 */
+  Match,
   TimeBonus,
-  /** 步数加成 */
-  StepBonus,
   PauseCost,
 }
 
@@ -83,8 +62,6 @@ export class GamePlayModel {
   private totalStreak: number = 0;
   private maxSteak: number = 0;
 
-  private typeMatchs: number[] = [];
-
   private items: HashMap<string, ItemModel> = new HashMap();
 
   /** 分数加成倒计时 */
@@ -101,10 +78,6 @@ export class GamePlayModel {
 
     GameOverSignal.inst.addListenerOne((type: RoundEndType) => {}, this);
     this.resetScaleCountDown();
-
-    while (this.typeMatchs.length < GetTotalLevel() * GetTypeCount()) {
-      this.typeMatchs.push(0);
-    }
   }
 
   get Time() {
@@ -116,6 +89,10 @@ export class GamePlayModel {
     this.gameTime = Math.max(0, this.gameTime);
   }
 
+  get BonusProgress() {
+    return this.scaleCountDown / ScoreBonusCountdown();
+  }
+
   addScaleCountDown(dt: number) {
     if (this.scaleCountDown > 0) {
       this.scaleCountDown += dt;
@@ -124,9 +101,7 @@ export class GamePlayModel {
         ScoreBonusCountdown(),
         0
       );
-      ScoreCountDownUpdateSignal.inst.dispatchOne(
-        this.scaleCountDown / ScoreBonusCountdown()
-      );
+      ScoreCountDownUpdateSignal.inst.dispatchOne(this.BonusProgress);
     }
   }
 
@@ -156,12 +131,13 @@ export class GamePlayModel {
     this.level = val;
 
     let startIndex = this.level * GetTypeCount();
-    UpdateTypeLabelSignal.inst.dispatchOne(startIndex);
     NextLevelSignal.inst.dispatchOne(this.level);
+    ScoreModel.NextLevel();
+    UpdateTypeLabelSignal.inst.dispatchOne(startIndex);
   }
 
   nextLevel() {
-    if (this.Level + 1 > GetTotalLevel()) {
+    if (this.Level + 1 >= GetTotalLevel()) {
       GameStateController.inst.roundEnd(RoundEndType.Complete);
       return;
     }
@@ -174,7 +150,15 @@ export class GamePlayModel {
   }
 
   get Timebonus() {
-    return 0;
+    let totalMatchCount = 0;
+    for (let typeModel of GameLogic.inst.Types) {
+      totalMatchCount += typeModel.MatchTimes;
+    }
+    if (totalMatchCount <= 0) return 0;
+    return Math.floor(
+      ((totalMatchCount / (GetCollectCount() * GetTypeCount())) * 7.5 + 0.5) *
+        this.gameTime
+    );
   }
 
   get ScoreSpread() {
@@ -227,15 +211,16 @@ export class GamePlayModel {
   /** 初始化游戏数据 */
   initGameData() {
     console.log("init game data.");
-    this.Level = 0;
     this.items.clear();
+
+    this.Level = 0;
   }
 
   addPlayerScore(
     score: number,
     type: ScoreType,
     times: number = 1,
-    fromIndex: number = -1
+    fromNode: cc.Node = null
   ): number {
     if (score == 0) return;
     if (this.playerScoreMap[type] == null) this.playerScoreMap[type] = 0;
@@ -255,7 +240,7 @@ export class GamePlayModel {
       this.playerScore,
       score,
       times,
-      fromIndex
+      fromNode
     );
 
     return this.playerScore - oldScore;

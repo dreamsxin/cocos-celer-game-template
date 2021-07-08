@@ -19,7 +19,7 @@ const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class LoadingPageMediator extends BaseMediator<LoadingView> {
-  private time = 3000;
+  private time = 1500;
   private startTime = 0;
   onRegister() {
     this.startTime = Date.now();

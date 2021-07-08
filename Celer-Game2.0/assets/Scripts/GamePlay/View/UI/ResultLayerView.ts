@@ -63,6 +63,10 @@ export default class ResultLayerView extends BaseView {
     return this.Root.getChildByName("Content").getComponent(cc.RichText);
   }
 
+  get Ani() {
+    return this.Root.getChildByName("Ani").getComponent(ResultAnimation);
+  }
+
   private CountTotal = 3;
 
   onLoad() {
@@ -74,6 +78,7 @@ export default class ResultLayerView extends BaseView {
   onGameOver(type: RoundEndType) {
     console.log("Open result:", RoundEndType[type]);
     this.Submit.scale = 0;
+
     this.Content.string = lan.t(En_View.JieSuanJieMian, En_ID.DeFen);
     if (type == RoundEndType.TimeUp) {
       this.Title.spriteFrame = ResourceController.inst.getResultSprite(
@@ -150,7 +155,7 @@ export default class ResultLayerView extends BaseView {
     this.TotalScore.STEP = 150;
     this.TimeBonus.STEP = 150;
     this.Score.STEP = 150;
-
+    this.Ani.play();
     let step = () => {
       ScoreCountingSignal.inst.dispatch();
     };

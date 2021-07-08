@@ -4,6 +4,7 @@ import { Random_ID } from "../table";
 
 export const Title = {
   Complete: "bg_font_complete",
+  CompleteAni: "ae_complete",
   TimeUp: "bg_font_time'sup",
   Over: "bg_font_gameover",
   OutOfMove: "bg_font_gameover",

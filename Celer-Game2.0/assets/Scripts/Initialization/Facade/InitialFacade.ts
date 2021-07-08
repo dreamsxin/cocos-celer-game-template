@@ -5,7 +5,9 @@ import { LoadPrefabCommand } from "../Command/LoadPrefabCommand";
 import { CelerSDK } from "../../Utils/Celer/CelerSDK";
 import { StepManager } from "../../Manager/StepManager";
 import { LoadJsonCommand } from "../Command/LoadJsonCommand";
+import { BaseSignal } from "../../Utils/Signal";
 
+export class UpdateInitLoadingSignal extends BaseSignal {}
 export class InitialFacade {
   public static MULTITON_KEY: string = "INITIAL_FCADE";
 
@@ -33,17 +35,24 @@ export class InitialFacade {
     return this.facade;
   }
 
+  startStep(step: string) {
+    this.stepMgr.start(step);
+  }
+
   private register() {
     this.facade.registerCommand(InitialFacade.INITIALIZATION, InitialCommand);
     this.facade.registerCommand(InitialFacade.START_UP, StartGameCommand);
 
-    CelerSDK.inst.init(() => {
-      this.facade.sendNotification(InitialFacade.START_UP, this);
-    });
-
     this.stepMgr.register(() => {
-      CelerSDK.inst.celerXReady();
+      this.facade.sendNotification(InitialFacade.START_UP, this);
     }, InitialFacade.TOTAL_STEPS);
+
+    CelerSDK.inst.init(() => {
+      // UpdateInitLoadingSignal.inst.dispatchOne(
+      //   1 / InitialFacade.TOTAL_STEPS.length
+      // );
+      this.facade.sendNotification(InitialFacade.INITIALIZATION, this);
+    });
   }
 
   private unregister() {
@@ -53,14 +62,15 @@ export class InitialFacade {
 
   start() {
     this.register();
-
-    this.facade.sendNotification(InitialFacade.INITIALIZATION, this);
+    CelerSDK.inst.celerXReady();
   }
 
-  private static TOTAL_STEPS: string[] = [
+  public static TOTAL_STEPS: string[] = [
     LoadAudioCommand.STEP,
     LoadPrefabCommand.STEP,
     LoadJsonCommand.STEP,
+    "POLYGON",
+    "ITEMS",
   ];
 
   step(commandName: string) {

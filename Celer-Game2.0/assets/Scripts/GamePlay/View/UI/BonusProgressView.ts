@@ -21,10 +21,16 @@ const Times1_5 = 408; // 40%
  */
 @ccclass
 export default class BonusProgressView extends cc.Component {
+  @property(cc.Node)
+  Add: cc.Node = null;
+
   onLoad() {
     this.node.width = Total;
+    this.Add.active = false;
     ScoreCountDownUpdateSignal.inst.addListenerOne((percent: number) => {
       this.node.width = Total * percent;
+      this.Add.x = this.node.width - 20;
+      this.Add.active = this.node.width > 0 && this.node.width < Total;
     }, this);
   }
 }

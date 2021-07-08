@@ -335,6 +335,26 @@
         GuangGaoJieMian = 700,
     };
 
+    /** en的水平*/
+    export enum En_Horizontal{
+        /** 左 */
+        Zuo = 0,
+        /** 居中 */
+        JuZhong = 1,
+        /** 右 */
+        You = 2,
+    };
+
+    /** en的垂直*/
+    export enum En_Vertical{
+        /** 上 */
+        Shang = 0,
+        /** 居中 */
+        JuZhong = 1,
+        /** 下 */
+        Xia = 2,
+    };
+
     /** food的子类*/
     export enum Food_ID{
         /** 披萨 */
@@ -1400,6 +1420,8 @@
         ID:number;
         /** 翻译 */
         Name:string;
+        /** 中文 */
+        Name_CN:string;
     };
 
     /** 表 Ball数据结构 */
@@ -1418,6 +1440,8 @@
         ID:number;
         /** 翻译 */
         Name:string;
+        /** 中文 */
+        Name_CN:string;
     };
 
     /** 表 Books数据结构 */
@@ -1436,6 +1460,8 @@
         ID:number;
         /** 翻译 */
         Name:string;
+        /** 中文 */
+        Name_CN:string;
     };
 
     /** 表 Buildings数据结构 */
@@ -1454,6 +1480,8 @@
         ID:number;
         /** 翻译 */
         Name:string;
+        /** 中文 */
+        Name_CN:string;
     };
 
     /** 表 Class数据结构 */
@@ -1462,6 +1490,8 @@
         ID:number;
         /** 表名 */
         Table:string;
+        /** 分组 */
+        Group:number;
     };
 
     /** 表 En数据结构 */
@@ -1472,6 +1502,16 @@
         View:number;
         /** 内容 */
         Text:string;
+        /** 字号 */
+        FontSize:number;
+        /** 行距 */
+        LineHeight:number;
+        /** 最大宽度 */
+        MaxWidth:number;
+        /** 水平 */
+        Horizontal:number;
+        /** 垂直 */
+        Vertical:number;
     };
 
     /** 表 Food数据结构 */
@@ -1490,6 +1530,8 @@
         ID:number;
         /** 翻译 */
         Name:string;
+        /** 中文 */
+        Name_CN:string;
     };
 
     /** 表 Fruits数据结构 */
@@ -1508,6 +1550,8 @@
         ID:number;
         /** 翻译 */
         Name:string;
+        /** 中文 */
+        Name_CN:string;
     };
 
     /** 表 Makeup数据结构 */
@@ -1526,6 +1570,8 @@
         ID:number;
         /** 翻译 */
         Name:string;
+        /** 中文 */
+        Name_CN:string;
     };
 
     /** 表 Ornament数据结构 */
@@ -1544,6 +1590,8 @@
         ID:number;
         /** 翻译 */
         Name:string;
+        /** 中文 */
+        Name_CN:string;
     };
 
     /** 表 Other数据结构 */
@@ -1562,6 +1610,8 @@
         ID:number;
         /** 翻译 */
         Name:string;
+        /** 中文 */
+        Name_CN:string;
     };
 
     /** 表 Outlet数据结构 */
@@ -1580,6 +1630,8 @@
         ID:number;
         /** 翻译 */
         Name:string;
+        /** 中文 */
+        Name_CN:string;
     };
 
     /** 表 Plants数据结构 */
@@ -1598,6 +1650,8 @@
         ID:number;
         /** 翻译 */
         Name:string;
+        /** 中文 */
+        Name_CN:string;
     };
 
     /** 表 Random数据结构 */
@@ -1624,6 +1678,8 @@
         ID:number;
         /** 翻译 */
         Name:string;
+        /** 中文 */
+        Name_CN:string;
     };
 
     /** 表 Tool数据结构 */
@@ -1642,6 +1698,8 @@
         ID:number;
         /** 翻译 */
         Name:string;
+        /** 中文 */
+        Name_CN:string;
     };
 
     /** 表 Vegetable数据结构 */
@@ -1660,5 +1718,7 @@
         ID:number;
         /** 翻译 */
         Name:string;
+        /** 中文 */
+        Name_CN:string;
     };
 
