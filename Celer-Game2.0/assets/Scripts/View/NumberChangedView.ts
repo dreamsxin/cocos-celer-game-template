@@ -61,13 +61,13 @@ export default class NumberChangedView extends BaseView {
         step > 0 ? Math.ceil(step / this.STEP) : Math.floor(step / this.STEP);
       //console.log("this.step:", this.step);
       if (this.action) {
-        // this.node.runAction(
-        //   cc.sequence(
-        //     cc.scaleTo(0.1, 1.4),
-        //     cc.delayTime(0.05),
-        //     cc.scaleTo(0.1, 1)
-        //   )
-        // );
+        this.node.runAction(
+          cc.sequence(
+            cc.scaleTo(0.1, 1.4),
+            cc.delayTime(0.05),
+            cc.scaleTo(0.1, 1)
+          )
+        );
       }
     } else {
       this.step = 0;
