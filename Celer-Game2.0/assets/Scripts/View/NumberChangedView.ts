@@ -14,14 +14,6 @@ const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class NumberChangedView extends BaseView {
-  setNumber(val: number) {
-    this.showNum = val;
-    this.num = val;
-    this.Label.string = val.toString();
-  }
-
-  // LIFE-CYCLE CALLBACKS:
-
   private num: number = 0;
   private showNum: number = 0;
   private step: number = 0;
@@ -30,12 +22,26 @@ export default class NumberChangedView extends BaseView {
 
   protected action: boolean = true;
 
-  public STEP = 120;
+  public STEP = 60;
+
+  /** 数字缩放 */
+  protected scale: number = 1;
+  protected preFix: string = "";
 
   get Label() {
     return this.label
       ? this.label
       : (this.label = this.node.getComponent(cc.Label));
+  }
+
+  setNumber(val: number) {
+    this.showNum = val;
+    this.num = val;
+    if (this.scale == 1) {
+      this.Label.string = this.preFix + val.toString();
+    } else {
+      this.Label.string = this.preFix + (val / this.scale).toFixed();
+    }
   }
 
   onLoad() {}
@@ -55,13 +61,13 @@ export default class NumberChangedView extends BaseView {
         step > 0 ? Math.ceil(step / this.STEP) : Math.floor(step / this.STEP);
       //console.log("this.step:", this.step);
       if (this.action) {
-        this.node.runAction(
-          cc.sequence(
-            cc.scaleTo(0.1, 1.4),
-            cc.delayTime(0.2),
-            cc.scaleTo(0.1, 1)
-          )
-        );
+        // this.node.runAction(
+        //   cc.sequence(
+        //     cc.scaleTo(0.1, 1.4),
+        //     cc.delayTime(0.05),
+        //     cc.scaleTo(0.1, 1)
+        //   )
+        // );
       }
     } else {
       this.step = 0;
@@ -88,9 +94,16 @@ export default class NumberChangedView extends BaseView {
       }
     }
 
-    this.Label.string =
-      this.showNum >= 0
-        ? this.showNum.toString()
-        : "/" + Math.abs(this.showNum).toString();
+    if (this.scale == 1) {
+      this.Label.string =
+        this.showNum >= 0
+          ? this.preFix + this.showNum.toString()
+          : this.preFix + "/" + Math.abs(this.showNum).toString();
+    } else {
+      this.Label.string =
+        this.showNum >= 0
+          ? (this.showNum / this.scale).toFixed(2)
+          : this.preFix + "/" + Math.abs(this.showNum / this.scale).toFixed(2);
+    }
   }
 }
