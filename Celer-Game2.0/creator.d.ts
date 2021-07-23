@@ -3,21 +3,6 @@ The main namespace of Cocos2d-JS, all engine core classes, functions, properties
 !#zh
 Cocos 引擎的主要命名空间，引擎代码中所有的类，函数，属性和常量都在这个命名空间中定义。 */
 declare namespace cc {
-  declare namespace PhysicsTypes {
-    declare var PTM_RATIO: number;
-    declare var PHYSICS_ANGLE_TO_ANGLE: number;
-  }
-
-  export class PhysicsDebugDraw {
-    constructor(drawer: cc.Component);
-    SetFlags(flag: number);
-  }
-
-  declare namespace PolygonSeparator {
-    export function ConvexPartition(vertices: cc.Vec2[]): cc.Vec2[][];
-    export function ForceCounterClockWise(vertices: cc.Vec2[]);
-    export function IsCounterClockWise(vertices: cc.Vec2[]);
-  }
   /** The current version of Cocos2d being used.<br/>
 	Please DO NOT remove this String, it is an important flag for bug tracking.<br/>
 	If you post a bug to forum, please attach this flag. */
@@ -9284,6 +9269,20 @@ declare namespace cc {
 		``` 
 		*/
     static addDownloadHandlers(extMap: any): void;
+
+    /** xml http get 请求 */
+    static XMLHttpGet(
+      url: string,
+      completeCallback: (
+        errMsg: { status: number; errorMessage: string },
+        res: string
+      ) => void,
+      progressCallback?: (
+        progress: number,
+        loaded: number,
+        total: number
+      ) => void
+    ): void;
     /**
 		Add custom supported types handler or modify existing type handler for load process.
 		@param extMap Custom supported types with corresponded handler
@@ -26217,3 +26216,12 @@ declare const CC_JSB: boolean;
 declare const CC_TEST: boolean;
 /** Running in the WeChat Mini Game. */
 declare const CC_WECHATGAME: boolean;
+
+declare namespace cc {
+  export function OnStart(
+    callback: (match: MatchInfo) => void,
+    defaultMatch: MatchInfo
+  ): void;
+
+  export function StartGame(match: any): void;
+}

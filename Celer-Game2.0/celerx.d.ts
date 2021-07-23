@@ -16,6 +16,8 @@ declare interface MatchInfo {
   shouldLaunchTutorial: boolean;
   /** 语种 en_US|zh_CN|pt_BR */
   locale: string;
+  /** 兑换比例 */
+  ratio?: number;
 }
 
 declare class celerSDK {
@@ -96,13 +98,6 @@ declare class celerSDK {
   private static finalizeOnChainGame(callback: () => void);
 }
 
-declare interface RichTextStyle {
-  FontSize: number;
-  HorizontalAlign: number;
-  VerticalAlign: number;
-  MaxWidth: number;
-  LineHeight: number;
-}
 /**
  * 多语言转换
  */
@@ -127,21 +122,4 @@ declare class lan {
    * @param replace 替换文本
    */
   static t(key: number, contentKey: number, replace?: string[]): string;
-
-  /**
-   * 定义样式
-   * @param lan
-   * @param styleMap
-   */
-  static defineStyle(
-    lan: string,
-    styleMap: { [key: number]: { [key: number]: RichTextStyle } }
-  ): void;
-
-  /**
-   * 获取样式
-   * @param key
-   * @param contentKey
-   */
-  static style(key: number, contentKey: number): RichTextStyle;
 }
