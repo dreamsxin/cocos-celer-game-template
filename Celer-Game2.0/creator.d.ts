@@ -9269,20 +9269,6 @@ declare namespace cc {
 		``` 
 		*/
     static addDownloadHandlers(extMap: any): void;
-
-    /** xml http get 请求 */
-    static XMLHttpGet(
-      url: string,
-      completeCallback: (
-        errMsg: { status: number; errorMessage: string },
-        res: string
-      ) => void,
-      progressCallback?: (
-        progress: number,
-        loaded: number,
-        total: number
-      ) => void
-    ): void;
     /**
 		Add custom supported types handler or modify existing type handler for load process.
 		@param extMap Custom supported types with corresponded handler
@@ -26218,10 +26204,20 @@ declare const CC_TEST: boolean;
 declare const CC_WECHATGAME: boolean;
 
 declare namespace cc {
+  declare var TimeScale: number;
   export function OnStart(
     callback: (match: MatchInfo) => void,
     defaultMatch: MatchInfo
   ): void;
+
+  export function ScienceNumber(
+    fromNumber: number,
+    maxLenght: number,
+    fixCount: number,
+    isUpper = false,
+    isSingle = true,
+    smartFix = false
+  ): string;
 
   export function StartGame(match: any): void;
 }

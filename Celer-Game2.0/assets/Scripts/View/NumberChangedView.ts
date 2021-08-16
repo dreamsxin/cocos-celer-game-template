@@ -14,11 +14,22 @@ const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class NumberChangedView extends BaseView {
+  // LIFE-CYCLE CALLBACKS:
+
   private num: number = 0;
   private showNum: number = 0;
   private step: number = 0;
 
   private label: cc.Label = null;
+
+  /** 小数几位 */
+  protected fixCount = 0;
+  /** 单个单位 */
+  protected isSingle: boolean = true;
+  /** 是否大写 */
+  protected isUpperCase: boolean = false;
+  /** 是否智能适配小数点，有就显示，没有不显示 */
+  protected isSmartFix: boolean = false;
 
   protected action: boolean = true;
 
@@ -26,6 +37,7 @@ export default class NumberChangedView extends BaseView {
 
   /** 数字缩放 */
   protected scale: number = 1;
+  protected maxNumber: number = 0;
   protected preFix: string = "";
 
   get Label() {
@@ -38,9 +50,29 @@ export default class NumberChangedView extends BaseView {
     this.showNum = val;
     this.num = val;
     if (this.scale == 1) {
-      this.Label.string = this.preFix + val.toString();
+      this.Label.string =
+        this.preFix +
+        cc
+          .ScienceNumber(
+            val,
+            this.maxNumber,
+            this.fixCount,
+            this.isUpperCase,
+            this.isSingle,
+            this.isSmartFix
+          )
+          .toString();
     } else {
-      this.Label.string = this.preFix + (val / this.scale).toFixed();
+      this.Label.string =
+        this.preFix +
+        cc.ScienceNumber(
+          val / this.scale,
+          this.maxNumber,
+          this.fixCount,
+          this.isUpperCase,
+          this.isSingle,
+          this.isSmartFix
+        );
     }
   }
 
@@ -97,13 +129,47 @@ export default class NumberChangedView extends BaseView {
     if (this.scale == 1) {
       this.Label.string =
         this.showNum >= 0
-          ? this.preFix + this.showNum.toString()
-          : this.preFix + "/" + Math.abs(this.showNum).toString();
+          ? this.preFix +
+            cc.ScienceNumber(
+              this.showNum,
+              this.maxNumber,
+              this.fixCount,
+              this.isUpperCase,
+              this.isSingle,
+              this.isSmartFix
+            )
+          : this.preFix +
+            "/" +
+            cc.ScienceNumber(
+              Math.abs(this.showNum),
+              this.maxNumber,
+              this.fixCount,
+              this.isUpperCase,
+              this.isSingle,
+              this.isSmartFix
+            );
     } else {
       this.Label.string =
         this.showNum >= 0
-          ? (this.showNum / this.scale).toFixed(2)
-          : this.preFix + "/" + Math.abs(this.showNum / this.scale).toFixed(2);
+          ? this.preFix +
+            cc.ScienceNumber(
+              this.showNum / this.scale,
+              this.maxNumber,
+              this.fixCount,
+              this.isUpperCase,
+              this.isSingle,
+              this.isSmartFix
+            )
+          : this.preFix +
+            "/" +
+            cc.ScienceNumber(
+              Math.abs(this.showNum / this.scale),
+              this.maxNumber,
+              this.fixCount,
+              this.isUpperCase,
+              this.isSingle,
+              this.isSmartFix
+            );
     }
   }
 }

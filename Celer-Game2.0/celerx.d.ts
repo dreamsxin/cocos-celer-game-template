@@ -18,6 +18,8 @@ declare interface MatchInfo {
   locale: string;
   /** 兑换比例 */
   ratio?: number;
+  /** 放大比例 */
+  gameRate?: number;
 }
 
 declare class celerSDK {
@@ -103,6 +105,8 @@ declare interface RichTextStyle {
   VerticalAlign: number;
   MaxWidth: number;
   LineHeight: number;
+  x: number;
+  y: number;
 }
 /**
  * 多语言转换
