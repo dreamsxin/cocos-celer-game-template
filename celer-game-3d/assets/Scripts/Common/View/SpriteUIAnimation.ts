@@ -1,4 +1,12 @@
-import { _decorator, Component, Node, Sprite, SpriteAtlas } from "cc";
+import {
+  _decorator,
+  Component,
+  Node,
+  Sprite,
+  SpriteAtlas,
+  color,
+  tween,
+} from "cc";
 const { ccclass, property, requireComponent } = _decorator;
 
 @ccclass("SpriteUIAnimation")
@@ -57,7 +65,7 @@ export class SpriteUIAnimation extends Component {
   play() {
     this.isPlay = true;
     this.currentIndex = 0;
-    this.node.opacity = 255;
+    this.Sprite.color.a = 255;
     this.updateCurrentFrame();
     if (this.isPlaying == false) {
       this.callEventComplete();
@@ -126,7 +134,12 @@ export class SpriteUIAnimation extends Component {
   }
 
   onComplete() {
-    this.node.runAction(cc.fadeOut(0.2));
+    tween(this.Sprite.color)
+      .to(
+        0.2,
+        color(this.Sprite.color.r, this.Sprite.color.g, this.Sprite.color.b, 0)
+      )
+      .start();
   }
 
   callEventFrame() {
@@ -186,7 +199,7 @@ export class SpriteUIAnimation extends Component {
       this.Frames.getSpriteFrames &&
       this.Frames.getSpriteFrames().length > 0
     ) {
-      let Components = this.getComponents(FrameAniBase);
+      let Components = this.getComponents(SpriteUIAnimation);
       for (let comp of Components) {
         if (comp.Priority > this.Priority && comp.isPlaying) {
           return false;
