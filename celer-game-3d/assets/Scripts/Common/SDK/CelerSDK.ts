@@ -1,14 +1,18 @@
-import { SingleTon } from "../ToSingleton";
-import { LogHandler } from "../LogHandler";
-import { Random } from "../Random";
-import { ShowPauseLayerSignal } from "../../Command/CommonSignal";
-import { PlayModelProxy } from "../../Model/PlayModelProxy";
-import { GameStateController } from "../../Controller/GameStateController";
-import { HideWildAdButtonSignal } from "../../Ad/WildAdButton";
-import { RemoveFlyCnicornSignal } from "../../Ad/FlyCnicornAd";
-import { GetTotalTime } from "../../Global/GameRule";
+import { Game, game, sys } from "cc";
+import { GetTotalTime } from "../../GamePlay/GameRule";
+import { GameStateController } from "../../Manager/GameStateController";
+
+import { PlayModel } from "../../Model/PlayModel";
+import {
+  HideWildAdButtonSignal,
+  RemoveFlyCnicornSignal,
+  ShowPauseLayerSignal,
+} from "../../Signal/Signal";
+import { En } from "../../table";
 import { TableManager } from "../../TableManager";
-import { Animals_en, En, Random_ID } from "../../table";
+import { Random } from "../Random";
+import { SingleTon } from "../ToSingleTon";
+import { LogHandler } from "./LogHandler";
 
 export class CelerSDK extends SingleTon<CelerSDK>() {
   private alreadySubmit: boolean = false;
@@ -41,7 +45,7 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
 
     CELER_X &&
       celerSDK.provideScore(() => {
-        return PlayModelProxy.inst.getTotalScore();
+        return PlayModel.inst.getTotalScore();
       });
 
     this.celerStartCallback = callback;
@@ -103,7 +107,7 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
 
     Random.setRandomSeed(this.match.sharedRandomSeed);
 
-    PlayModelProxy.inst.setTotalTime(GetTotalTime());
+    PlayModel.inst.setTotalTime(GetTotalTime());
 
     if (this.match && this.match.shouldLaunchTutorial) {
       this.isNewPlayer = true;
@@ -181,47 +185,6 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
       lan.defineStyle(this.match.locale, styleMap);
     }
 
-    /** 配置名词翻译 */
-
-    let wordMap: { [key: number]: { [key: number]: string } } = {};
-    let allTypes = TableManager.inst.getRandom(Random_ID.SuiJiChi).Pool;
-    for (let type of allTypes) {
-      let tableName = TableManager.inst.getClass(type).Table;
-      let typeData: { [key: number]: Animals_en } = null;
-
-      typeData = TableManager.inst["getAll_" + tableName + "_en_Data"]
-        ? TableManager.inst["getAll_" + tableName + "_en_Data"]()
-        : null;
-      if (
-        TableManager.inst[
-          "getAll_" + tableName + "_" + locale.toLocaleLowerCase() + "_Data"
-        ] &&
-        TableManager.inst[
-          "getAll_" + tableName + "_" + locale.toLocaleLowerCase() + "_Data"
-        ]()
-      ) {
-        typeData =
-          TableManager.inst[
-            "getAll_" + tableName + "_" + locale.toLocaleLowerCase() + "_Data"
-          ]();
-      }
-
-      if (typeData) {
-        for (let key in typeData) {
-          let data = typeData[key];
-          if (!wordMap[type]) {
-            wordMap[type] = {};
-          }
-          // wordMap[type][data.ID] = !CELER_X
-          //   ? "<color=#66463e>" + data.Name_CN + "</c>"
-          //   : data.Name;
-
-          wordMap[type][data.ID] = data.Name;
-        }
-      }
-    }
-    lan.define(this.match.locale, wordMap);
-
     if (CELER_X) {
       if (celerSDK.hasMethod("showAd") != true || this.isNewPlayer) {
         HideWildAdButtonSignal.inst.dispatch();
@@ -243,7 +206,7 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
         // HidePauseLayerSignal.inst.dispatch();
       });
     } else {
-      cc.game.on(cc.game.EVENT_HIDE, () => {
+      game.on(Game.EVENT_HIDE, () => {
         console.log(" on pause ");
         if (
           GameStateController.inst.isGameOver() ||
@@ -253,7 +216,7 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
         ShowPauseLayerSignal.inst.dispatch();
       });
 
-      cc.game.on(cc.game.EVENT_SHOW, () => {
+      game.on(Game.EVENT_SHOW, () => {
         console.log(" on resume ");
         // HidePauseLayerSignal.inst.dispatch();
       });
@@ -272,13 +235,11 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
   }
 
   public get isAndroidWeb() {
-    return (
-      cc.sys.isMobile && cc.sys.isBrowser && cc.sys.os == cc.sys.OS_ANDROID
-    );
+    return sys.isMobile && sys.isBrowser && sys.os == sys.OS_ANDROID;
   }
 
   public get isIOSWeb() {
-    return cc.sys.isMobile && cc.sys.isBrowser && cc.sys.os == cc.sys.OS_IOS;
+    return sys.isMobile && sys.isBrowser && sys.os == sys.OS_IOS;
   }
 }
 

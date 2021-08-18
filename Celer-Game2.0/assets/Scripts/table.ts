@@ -1494,9 +1494,9 @@
         Group:number;
     };
 
-    /** 表 En数据结构 */
+     /** 表 En数据结构 */
     export interface En {
-        /** ID */
+        /** 文本内容类型 */
         ID:number;
         /** 界面 */
         View:number;
@@ -1512,7 +1512,12 @@
         Horizontal:number;
         /** 垂直 */
         Vertical:number;
+        /** 横坐标 */
+        X:number;
+        /** 纵坐标 */
+        Y:number;
     };
+
 
     /** 表 Food数据结构 */
     export interface Food {
