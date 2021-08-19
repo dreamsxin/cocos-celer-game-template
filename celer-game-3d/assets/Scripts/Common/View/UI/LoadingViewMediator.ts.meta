@@ -1,0 +1,16 @@
+{
+  "ver": "4.0.1",
+  "importer": "typescript",
+  "imported": true,
+  "uuid": "51648edb-c50f-4206-bd35-407ca8eb207d",
+  "files": [
+    ".js",
+    ".trans"
+  ],
+  "subMetas": {},
+  "userData": {
+    "importAsPlugin": false,
+    "moduleId": "project:///assets/Scripts/Common/View/UI/LoadingViewMediator.js",
+    "importerSettings": 0
+  }
+}

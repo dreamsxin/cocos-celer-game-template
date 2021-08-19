@@ -48,3 +48,12 @@ export class NextLevelSignal extends BaseSignal {}
 
 /** 倒计时 */
 export class CountDownSignal extends BaseSignal {}
+
+/** 游戏主题初始化 */
+export class GameThemeInit extends BaseSignal {}
+
+/** 更新加载进度 */
+export class UpdateInitLoadingSignal extends BaseSignal {}
+
+/** 游戏准备完毕 */
+export class GameReadySignal extends BaseSignal {}

@@ -22,4 +22,6 @@ export class PlayModel extends SingleTon<PlayModel>() {
   addPauseCount() {}
 
   addGameTime(dt: number) {}
+
+  gameReadyShow() {}
 }

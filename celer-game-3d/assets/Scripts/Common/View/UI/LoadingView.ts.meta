@@ -1,0 +1,16 @@
+{
+  "ver": "4.0.1",
+  "importer": "typescript",
+  "imported": true,
+  "uuid": "cfc306c7-4833-4467-9a17-2c1d0ec428f4",
+  "files": [
+    ".js",
+    ".trans"
+  ],
+  "subMetas": {},
+  "userData": {
+    "importAsPlugin": false,
+    "moduleId": "project:///assets/Scripts/Common/View/UI/LoadingView.js",
+    "importerSettings": 0
+  }
+}

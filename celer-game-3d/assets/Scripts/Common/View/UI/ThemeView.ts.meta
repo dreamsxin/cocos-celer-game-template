@@ -1,0 +1,16 @@
+{
+  "ver": "4.0.1",
+  "importer": "typescript",
+  "imported": true,
+  "uuid": "7ab7f1af-525c-4ce0-926f-e1d6d5b05f0f",
+  "files": [
+    ".js",
+    ".trans"
+  ],
+  "subMetas": {},
+  "userData": {
+    "importAsPlugin": false,
+    "moduleId": "project:///assets/Scripts/Common/View/UI/ThemeView.js",
+    "importerSettings": 0
+  }
+}
