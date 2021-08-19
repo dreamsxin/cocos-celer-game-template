@@ -24,3 +24,27 @@ export class ShowTutorialSignal extends BaseSignal {}
 
 /** 显示tip */
 export class ShowTipSignal extends BaseSignal {}
+
+/** 更新时间 */
+export class UpdateTimeNumber extends BaseSignal {}
+
+/** 开始计时 */
+export class StartCountSignal extends BaseSignal {}
+
+/** 分数跳动 */
+export class ScoreCountingSignal extends BaseSignal {}
+
+/** 显示提交按钮 */
+export class ShowSubmitSignal extends BaseSignal {}
+
+/** 打开结算界面 */
+export class OpenResultLayerSignal extends BaseSignal {}
+
+/** 玩家分数变化 */
+export class PlayerScoreChanged extends BaseSignal {}
+
+/** 下一关 */
+export class NextLevelSignal extends BaseSignal {}
+
+/** 倒计时 */
+export class CountDownSignal extends BaseSignal {}

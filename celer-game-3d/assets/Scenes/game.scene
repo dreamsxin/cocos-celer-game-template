@@ -647,7 +647,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "Node",
+    "_name": "GlobalSingeTouchMask",
     "_objFlags": 0,
     "_parent": {
       "__id__": 11
