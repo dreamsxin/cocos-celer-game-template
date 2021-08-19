@@ -1,0 +1,16 @@
+{
+  "ver": "4.0.1",
+  "importer": "typescript",
+  "imported": true,
+  "uuid": "9e22fb2a-7a23-40e9-bad4-d898c71a7826",
+  "files": [
+    ".js",
+    ".trans"
+  ],
+  "subMetas": {},
+  "userData": {
+    "importAsPlugin": false,
+    "moduleId": "project:///assets/Scripts/Common/View/GlobalSingleTouch/GlobalSingleTouchMediator.js",
+    "importerSettings": 0
+  }
+}

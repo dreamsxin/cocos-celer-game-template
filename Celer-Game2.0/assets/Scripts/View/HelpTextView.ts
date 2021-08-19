@@ -9,7 +9,7 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import { ShowHelpLayerSignal } from "../Command/CommonSignal";
-import { En_US_ID, En_US_View } from "../table";
+import { En_ID, En_View } from "../table";
 
 const { ccclass, property } = cc._decorator;
 
@@ -30,13 +30,13 @@ export default class HelpTextView extends cc.Component {
   renderText() {
     if (this.text) {
       this.text.string = lan.t(
-        En_US_View.BangZhuJieMian,
-        En_US_ID.BangZhuJieMian1 + parseInt(this.node.name)
+        En_View.BangZhuJieMian,
+        En_ID.BangZhuYeMian1 + parseInt(this.node.name)
       );
     } else if (this.richText) {
       this.richText.string = lan.t(
-        En_US_View.BangZhuJieMian,
-        En_US_ID.BangZhuJieMian1 + parseInt(this.node.name)
+        En_View.BangZhuJieMian,
+        En_ID.BangZhuYeMian1 + parseInt(this.node.name)
       );
     }
   }

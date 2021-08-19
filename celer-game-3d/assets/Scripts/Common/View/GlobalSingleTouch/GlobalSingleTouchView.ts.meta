@@ -1,0 +1,16 @@
+{
+  "ver": "4.0.1",
+  "importer": "typescript",
+  "imported": true,
+  "uuid": "4eb47b5e-4999-4b43-92bb-feb82997fcf7",
+  "files": [
+    ".js",
+    ".trans"
+  ],
+  "subMetas": {},
+  "userData": {
+    "importAsPlugin": false,
+    "moduleId": "project:///assets/Scripts/Common/View/GlobalSingleTouch/GlobalSingleTouchView.js",
+    "importerSettings": 0
+  }
+}

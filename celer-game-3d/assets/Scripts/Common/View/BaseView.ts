@@ -9,8 +9,8 @@ export class BaseView extends Component {
 
   Show(callback?: () => void) {
     this.node.active = true;
-    tween(this.node.scale)
-      .to(0.1, v3(1, 1, 1))
+    tween(this.node)
+      .to(0.1, { scale: v3(1, 1, 1) })
       .call(() => {
         callback && callback();
       })
@@ -18,8 +18,8 @@ export class BaseView extends Component {
   }
 
   Hide(callback?: () => void) {
-    tween(this.node.scale)
-      .to(0.1, Vec3.ZERO)
+    tween(this.node)
+      .to(0.1, { scale: Vec3.ZERO })
       .call(() => {
         this.node.active = false;
         callback && callback();

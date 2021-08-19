@@ -134,11 +134,15 @@ export class SpriteUIAnimation extends Component {
   }
 
   onComplete() {
-    tween(this.Sprite.color)
-      .to(
-        0.2,
-        color(this.Sprite.color.r, this.Sprite.color.g, this.Sprite.color.b, 0)
-      )
+    tween(this.Sprite)
+      .to(0.2, {
+        color: color(
+          this.Sprite.color.r,
+          this.Sprite.color.g,
+          this.Sprite.color.b,
+          0
+        ),
+      })
       .start();
   }
 
