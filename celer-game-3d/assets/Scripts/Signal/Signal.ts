@@ -4,6 +4,15 @@ import { BaseSignal } from "../Common/Signal";
 export class HideWildAdButtonSignal extends BaseSignal {}
 /** 隐藏小马广告 */
 export class RemoveFlyCnicornSignal extends BaseSignal {}
+/** 显示小马广告 */
+export class ShowFlyCnicornSignal extends BaseSignal {}
+/** 小马广告观看失败 */
+export class CnicornWatchFailSignal extends BaseSignal {}
+/** 小马广告消失 */
+export class FlyCnicornAdDispearSignal extends BaseSignal {}
+/** 小马广告点击 */
+export class FlyCnicornClickSignal extends BaseSignal {}
+
 /** 游戏结束 */
 export class GameOverSignal extends BaseSignal {}
 /** 游戏暂停 */

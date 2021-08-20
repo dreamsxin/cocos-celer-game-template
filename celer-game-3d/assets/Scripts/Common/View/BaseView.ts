@@ -10,20 +10,24 @@ export class BaseView extends Component {
   Show(callback?: () => void) {
     this.node.active = true;
     tween(this.node)
-      .to(0.1, { scale: v3(1, 1, 1) })
-      .call(() => {
-        callback && callback();
-      })
+      .sequence(
+        tween(this.node).to(0.1, { scale: v3(1, 1, 1) }),
+        tween(this.node).call(() => {
+          callback && callback();
+        })
+      )
       .start();
   }
 
   Hide(callback?: () => void) {
     tween(this.node)
-      .to(0.1, { scale: Vec3.ZERO })
-      .call(() => {
-        this.node.active = false;
-        callback && callback();
-      })
+      .sequence(
+        tween(this.node).to(0.1, { scale: Vec3.ZERO }),
+        tween(this.node).call(() => {
+          this.node.active = false;
+          callback && callback();
+        })
+      )
       .start();
   }
 

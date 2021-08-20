@@ -84,9 +84,11 @@ export default class NumberChangedView extends BaseView {
       //console.log("this.step:", this.step);
       if (this.action) {
         tween(this.node)
-          .to(0.1, { scale: v3(1.4, 1.4, 1.4) })
-          .delay(0.05)
-          .to(0.1, { scale: v3(1, 1, 1) })
+          .sequence(
+            tween(this.node).to(0.1, { scale: v3(1.4, 1.4, 1.4) }),
+            tween(this.node).delay(0.05),
+            tween(this.node).to(0.1, { scale: v3(1, 1, 1) })
+          )
           .start();
       }
     } else {

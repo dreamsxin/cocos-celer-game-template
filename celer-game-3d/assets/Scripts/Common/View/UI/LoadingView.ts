@@ -42,11 +42,12 @@ export class LoadingView extends BaseView {
 
   Hide(callback: () => void) {
     this.Loading.active = false;
-    tween(this.UIOpacity)
-      .to(0.5, { opacity: 0 })
-      .call(() => {
+    tween(this.UIOpacity).sequence(
+      tween(this.UIOpacity).to(0.5, { opacity: 0 }),
+      tween(this.UIOpacity).call(() => {
         this.node.active = false;
         callback();
-      });
+      })
+    );
   }
 }

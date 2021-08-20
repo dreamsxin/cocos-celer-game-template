@@ -7,6 +7,7 @@ import {
   v3,
   tween,
   Vec3,
+  Tween,
 } from "cc";
 import { Theme } from "../../../GamePlay/GameRule";
 import { PlayModel } from "../../../Model/PlayModel";
@@ -101,7 +102,7 @@ export class HelpLayerView extends BaseView {
     if (this.isShowed()) return;
     this.state = State.Show;
     this.node.active = true;
-    tween(this.node).stop();
+    Tween.stopAllByTarget(this.node);
 
     let count = 0;
     for (let child of this.Background.children) {
@@ -118,10 +119,12 @@ export class HelpLayerView extends BaseView {
     this.node.scale = Vec3.ZERO;
 
     tween(this.node)
-      .to(0.1, { scale: v3(1, 1, 1) })
-      .call(() => {
-        callback && callback();
-      })
+      .sequence(
+        tween(this.node).to(0.1, { scale: v3(1, 1, 1) }),
+        tween(this.node).call(() => {
+          callback && callback();
+        })
+      )
       .start();
 
     this.Next.active = true;
@@ -134,15 +137,18 @@ export class HelpLayerView extends BaseView {
     if (this.isShowed() == false) return;
 
     this.state = State.Hide;
-    tween(this.node).stop();
+    Tween.stopAllByTarget(this.node);
     tween(this.node)
-      .to(0.1, { scale: v3(0, 0, 0) })
-      .call(() => {
-        this.node.scale = v3(1, 1, 1);
-        callback && callback();
+      .sequence(
+        tween(this.node).to(0.1, { scale: v3(0, 0, 0) }),
+        tween(this.node).call(() => {
+          this.node.scale = v3(1, 1, 1);
+          callback && callback();
 
-        this.node.active = false;
-      });
+          this.node.active = false;
+        })
+      )
+      .start();
   }
 
   // update (dt) {}
