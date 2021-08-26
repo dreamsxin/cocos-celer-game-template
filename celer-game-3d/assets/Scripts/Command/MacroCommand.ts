@@ -1,6 +1,10 @@
 import { BaseCommand, SimpleCommand } from "./SimpleCommand";
 
 export class MacroCommand extends BaseCommand {
+  constructor() {
+    super();
+    this.initializeMacroCommand();
+  }
   private commands: SimpleCommand[] = [];
   protected initializeMacroCommand() {}
 

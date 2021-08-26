@@ -1,6 +1,7 @@
 import { FlyCnicornAd } from "../Ad/FlyCnicornAd";
 import { Random } from "../Common/Random";
 import { SingleTon } from "../Common/ToSingleTon";
+import { GameLogic } from "../GamePlay/GameLogic";
 import {
   GetFreePauseCount,
   GetScoreByType,
@@ -213,17 +214,22 @@ export class PlayModel extends SingleTon<PlayModel>() {
   }
 
   /** 初始化游戏数据 */
-  initGameData() {
+  private initGameData() {
     console.log("init game data.");
 
     this.Level = 0;
   }
 
   /**  初始化游戏主题 */
-  initGametheme() {
+  private initGametheme() {
     let pool = Level.GetThemeRandomPool(this.Level);
     this.Theme = pool[Math.floor(Random.getRandom() * pool.length)];
-    console.log(Theme[this.Theme], pool);
+  }
+
+  init() {
+    this.initGametheme();
+    this.initGameData();
+    GameLogic.inst.init();
   }
 }
 

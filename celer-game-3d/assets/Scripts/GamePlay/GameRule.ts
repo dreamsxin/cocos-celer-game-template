@@ -3,8 +3,6 @@ export enum Theme {
   bmx,
 }
 
-console.log(Theme);
-
 export enum ScoreType {
   PauseCost,
 }

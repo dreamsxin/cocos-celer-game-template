@@ -28,7 +28,7 @@ export class LoadingView extends BaseView {
   onLoad() {
     // this.ProgressLabel.node.active = CC_DEBUG;
     this.node.scale = v3(1, 1, 1);
-    this.uiopacity.opacity = 255;
+    this.UIOpacity.opacity = 255;
     this.BindMedaitor(LoadingViewMediator);
     UpdateInitLoadingSignal.inst.addListener((percentAdd: number) => {
       this.percent += percentAdd;
@@ -41,13 +41,15 @@ export class LoadingView extends BaseView {
   start() {}
 
   Hide(callback: () => void) {
-    this.Loading.active = false;
-    tween(this.UIOpacity).sequence(
-      tween(this.UIOpacity).to(0.5, { opacity: 0 }),
-      tween(this.UIOpacity).call(() => {
-        this.node.active = false;
-        callback();
-      })
-    );
+    this.Loading && (this.Loading.active = false);
+    tween(this.UIOpacity)
+      .sequence(
+        tween(this.UIOpacity).to(0.5, { opacity: 0 }),
+        tween(this.UIOpacity).call(() => {
+          this.node.active = false;
+          callback();
+        })
+      )
+      .start();
   }
 }

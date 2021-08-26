@@ -28,7 +28,10 @@ export class AdaptationWigetView extends Component {
   })
   alignType: AlignType = AlignType.Center;
 
-  onLoad() {
+  @property
+  offset: Vec3 = v3(0, 0, 0);
+
+  start() {
     if (sys.isMobile) {
       window.addEventListener("resize", this.onResize.bind(this));
     } else {
@@ -73,13 +76,19 @@ export class AdaptationWigetView extends Component {
   alignTop() {
     /** 实际尺寸 */
     let canvasSize = view.getCanvasSize();
-    this.node.getComponent(UITransform).anchorX = 0.5;
-    this.node.getComponent(UITransform).anchorY = 1;
+    // this.node.getComponent(UITransform).anchorX = 0.5;
+    // this.node.getComponent(UITransform).anchorY = 1;
     this.node.setPosition(
       this.LocalZero.add(
         v3(
           canvasSize.width / this.UseRatio / 2,
           canvasSize.height / this.UseRatio
+        )
+      ).add(
+        v3(
+          0,
+          -this.node.getComponent(UITransform).height *
+            (1 - this.node.getComponent(UITransform).anchorY)
         )
       )
     );
@@ -87,20 +96,37 @@ export class AdaptationWigetView extends Component {
 
   alignTopLeft() {
     let canvasSize = view.getCanvasSize();
-    this.node.getComponent(UITransform).anchorX = 0;
-    this.node.getComponent(UITransform).anchorY = 1;
+    // this.node.getComponent(UITransform).anchorX = 0;
+    // this.node.getComponent(UITransform).anchorY = 1;
     this.node.setPosition(
-      this.LocalZero.add(v3(0, canvasSize.height / this.UseRatio))
+      this.LocalZero.add(v3(0, canvasSize.height / this.UseRatio)).add(
+        v3(
+          this.node.getComponent(UITransform).width *
+            this.node.getComponent(UITransform).anchorX,
+          -this.node.getComponent(UITransform).height *
+            (1 - this.node.getComponent(UITransform).anchorY)
+        )
+      )
     );
   }
 
   alignTopRight() {
     let canvasSize = view.getCanvasSize();
-    this.node.getComponent(UITransform).anchorX = 1;
-    this.node.getComponent(UITransform).anchorY = 1;
+    // this.node.getComponent(UITransform).anchorX = 1;
+    // this.node.getComponent(UITransform).anchorY = 1;
     this.node.setPosition(
       this.LocalZero.add(
-        v3(canvasSize.width / this.UseRatio, canvasSize.height / this.UseRatio)
+        v3(
+          canvasSize.width / this.UseRatio,
+          canvasSize.height / this.UseRatio
+        ).add(
+          v3(
+            -this.node.getComponent(UITransform).width *
+              (1 - this.node.getComponent(UITransform).anchorX),
+            -this.node.getComponent(UITransform).height *
+              (1 - this.node.getComponent(UITransform).anchorY)
+          )
+        )
       )
     );
   }
@@ -108,26 +134,48 @@ export class AdaptationWigetView extends Component {
   alignBottom() {
     /** 实际尺寸 */
     let canvasSize = view.getCanvasSize();
-    this.node.getComponent(UITransform).anchorX = 0.5;
-    this.node.getComponent(UITransform).anchorY = 0;
+    // this.node.getComponent(UITransform).anchorX = 0.5;
+    // this.node.getComponent(UITransform).anchorY = 0;
     this.node.setPosition(
-      this.LocalZero.add(v3(canvasSize.width / this.UseRatio / 2, 0))
+      this.LocalZero.add(v3(canvasSize.width / this.UseRatio / 2, 0)).add(
+        v3(
+          0,
+          this.node.getComponent(UITransform).height *
+            this.node.getComponent(UITransform).anchorY
+        )
+      )
     );
   }
 
   alignBotLeft() {
-    this.node.getComponent(UITransform).anchorX = 0;
-    this.node.getComponent(UITransform).anchorY = 0;
-    this.node.setPosition(this.LocalZero);
+    // this.node.getComponent(UITransform).anchorX = 0;
+    // this.node.getComponent(UITransform).anchorY = 0;
+    this.node.setPosition(
+      this.LocalZero.add(
+        v3(
+          this.node.getComponent(UITransform).width *
+            this.node.getComponent(UITransform).anchorX,
+          this.node.getComponent(UITransform).height *
+            this.node.getComponent(UITransform).anchorY
+        )
+      )
+    );
   }
 
   alignBotRight() {
     /** 实际尺寸 */
     let canvasSize = view.getCanvasSize();
-    this.node.getComponent(UITransform).anchorX = 1;
-    this.node.getComponent(UITransform).anchorY = 0;
+    // this.node.getComponent(UITransform).anchorX = 1;
+    // this.node.getComponent(UITransform).anchorY = 0;
     this.node.setPosition(
-      this.LocalZero.add(v3(canvasSize.width / this.UseRatio, 0))
+      this.LocalZero.add(v3(canvasSize.width / this.UseRatio, 0)).add(
+        v3(
+          -this.node.getComponent(UITransform).width *
+            (1 - this.node.getComponent(UITransform).anchorX),
+          this.node.getComponent(UITransform).height *
+            this.node.getComponent(UITransform).anchorY
+        )
+      )
     );
   }
 
@@ -181,8 +229,11 @@ export class AdaptationWigetView extends Component {
       worldZero = v3(0, 0, 0);
     }
 
-    let localZero: Vec3 = v3(0, 0);
+    let localZero: Vec3 = v3(0, 0, 0);
     this.node.parent.inverseTransformPoint(localZero, worldZero);
+    localZero.x += this.offset.x;
+    localZero.y += this.offset.y;
+    localZero.z += this.offset.z;
     return localZero;
   }
 }

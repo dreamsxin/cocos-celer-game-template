@@ -1,0 +1,2 @@
+node  E:/Code/TkTableTool/src/jsLib/tinyPNG/index.js  --root E:/celer-game-template/celer-game-3d/assets/res/loading/primary_image.jpg --skip   E:/CelerGame/BingoCash/BingoCash/assets/resources/textures/result/am_result;E:/CelerGame/BingoCash/BingoCash/assets/resources/textures/ui/bg_black.jpg
+pause
