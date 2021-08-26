@@ -1,7 +1,28 @@
+import { FlyCnicornAd } from "../Ad/FlyCnicornAd";
+import { Random } from "../Common/Random";
 import { SingleTon } from "../Common/ToSingleTon";
-import { ScoreType, Theme } from "../GamePlay/GameRule";
-import { GameStateController } from "../Manager/GameStateController";
-import { ShowFlyCnicornSignal, StartCountSignal } from "../Signal/Signal";
+import {
+  GetFreePauseCount,
+  GetScoreByType,
+  ScoreType,
+  Theme,
+} from "../GamePlay/GameRule";
+import { Level } from "../GamePlay/Model/Level";
+import {
+  GameStateController,
+  RoundEndType,
+} from "../Manager/GameStateController";
+import {
+  EndNowSignal,
+  GameStartSignal,
+  GameThemeInit,
+  PlayerScoreChanged,
+  ShowFlyCnicornSignal,
+  StartCountSignal,
+  TimeAnimationStateChanged,
+  UpdateTimeNumber,
+  WildButtonReadySignal,
+} from "../Signal/Signal";
 
 export class PlayModel extends SingleTon<PlayModel>() {
   private constructor() {
@@ -13,18 +34,32 @@ export class PlayModel extends SingleTon<PlayModel>() {
   get Theme() {
     return this.theme;
   }
+  set Theme(val: Theme) {
+    console.log("set game theme:", Theme[val]);
+    this.theme = val;
+    GameThemeInit.inst.dispatch(this.theme);
+  }
 
   private playerScore: number = 0;
   private noviceScore: number = 0;
   private gameTime: number = 0;
   private level: number = 0;
   private pauseCount: number = 0;
+  private pauseScore: number = 0;
   private playerScoreMap: { [key: number]: number } = {};
   private streak: number = 0;
   private totalStreak: number = 0;
   private maxStreak: number = 0;
   private isGameOver: boolean = false;
   private hasStartCount: boolean = false;
+
+  get Level() {
+    return this.level;
+  }
+
+  set Level(val: number) {
+    this.level = val;
+  }
 
   get Time() {
     return this.gameTime;
@@ -33,6 +68,42 @@ export class PlayModel extends SingleTon<PlayModel>() {
   private set Time(val: number) {
     this.gameTime = val;
     this.gameTime = Math.max(0, this.gameTime);
+  }
+
+  get TimeBonus() {
+    return 0;
+  }
+
+  get ScoreSpread() {
+    return 0;
+  }
+
+  get PauseScore() {
+    return this.pauseScore;
+  }
+
+  get NoviceScore() {
+    return this.noviceScore;
+  }
+
+  get TotalCombo() {
+    return this.totalStreak;
+  }
+
+  get PauseCount() {
+    return this.pauseCount;
+  }
+
+  get PlayerScore() {
+    return this.playerScore;
+  }
+
+  get TotalScore() {
+    return Math.max(this.TimeBonus + this.ScoreSpread + this.playerScore, 0);
+  }
+
+  get FreePauseCount() {
+    return Math.max(0, GetFreePauseCount() - this.pauseCount);
   }
 
   addGameTime(dt: number) {
@@ -50,15 +121,25 @@ export class PlayModel extends SingleTon<PlayModel>() {
     }
 
     this.Time += dt;
+    UpdateTimeNumber.inst.dispatch(this.Time, Math.abs(dt));
+    TimeAnimationStateChanged.inst.dispatch(this.Time <= 30);
+
     if (FlyCnicornAd.ShowTimeRest > 0) {
       FlyCnicornAd.ShowTimeRest += dt;
       if (FlyCnicornAd.ShowTimeRest <= 0) {
         ShowFlyCnicornSignal.inst.dispatch();
       }
     }
+
+    if (this.Time <= 0) {
+      this.checkCompleteScore();
+      GameStateController.inst.roundEnd(RoundEndType.TimeUp);
+    }
   }
 
-  private bindSignal() {}
+  private bindSignal() {
+    EndNowSignal.inst.addListener(this.onEndNow, this);
+  }
 
   getTotalScore() {
     return 0;
@@ -66,7 +147,84 @@ export class PlayModel extends SingleTon<PlayModel>() {
 
   setTotalTime(time: number) {}
 
-  addPauseCount() {}
+  addPauseCount() {
+    this.pauseCount++;
+    console.log("pause count:", this.pauseCount);
+    if (this.pauseCount > GetFreePauseCount()) {
+      this.addPlayerScore(
+        -GetScoreByType(ScoreType.PauseCost),
+        ScoreType.PauseCost
+      );
+    }
+  }
 
-  gameReadyShow() {}
+  resetCombo() {
+    this.streak = 0;
+  }
+
+  addPlayerScore(
+    score: number,
+    type: ScoreType,
+    times: number = 1,
+    fromNode: Node = null
+  ): number {
+    if (score == 0) return;
+    if (this.playerScoreMap[type] == null) this.playerScoreMap[type] = 0;
+
+    this.playerScoreMap[type] += score;
+    let oldScore = this.playerScore;
+
+    this.playerScore += score;
+    if (score > 0) {
+    } else {
+      this.resetCombo();
+    }
+
+    this.playerScore = Math.max(this.playerScore, 0);
+
+    PlayerScoreChanged.inst.dispatch(this.playerScore, score, times, fromNode);
+
+    return this.playerScore - oldScore;
+  }
+
+  addStreak() {
+    this.streak++;
+    this.totalStreak++;
+    this.maxStreak = Math.max(this.maxStreak, this.streak);
+  }
+
+  checkCompleteScore() {}
+
+  getScoreByType(type: ScoreType) {
+    if (typeof this.playerScoreMap[type] != "number") return 0;
+    return this.playerScoreMap[type];
+  }
+
+  gameReadyShow() {
+    GameStartSignal.inst.dispatch();
+    console.log("gameReadyToStart");
+    WildButtonReadySignal.inst.dispatch();
+  }
+
+  onEndNow() {
+    console.log(" player end now.");
+    this.checkCompleteScore();
+    GameStateController.inst.roundEnd(RoundEndType.Over);
+  }
+
+  /** 初始化游戏数据 */
+  initGameData() {
+    console.log("init game data.");
+
+    this.Level = 0;
+  }
+
+  /**  初始化游戏主题 */
+  initGametheme() {
+    let pool = Level.GetThemeRandomPool(this.Level);
+    this.Theme = pool[Math.floor(Random.getRandom() * pool.length)];
+    console.log(Theme[this.Theme], pool);
+  }
 }
+
+CC_DEBUG && (window["PlayModel"] = PlayModel.inst);

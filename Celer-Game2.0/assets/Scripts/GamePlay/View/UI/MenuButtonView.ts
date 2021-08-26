@@ -28,5 +28,6 @@ export default class MenuButtonView extends SingleTouchView {
     MenuButtonClickSignal.inst.dispatch();
     ButtonClickSignal.inst.dispatch();
   }
+
   start() {}
 }

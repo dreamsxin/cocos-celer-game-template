@@ -1,4 +1,5 @@
 import { _decorator, Component, Node } from "cc";
+import { InitialFacade } from "../GameLoad/InitialFacade";
 const { ccclass, property } = _decorator;
 
 @ccclass("App")
@@ -11,7 +12,7 @@ export class App extends Component {
   // serializableDummy = 0;
 
   start() {
-    // Your initialization goes here.
+    InitialFacade.inst.start();
   }
 
   // update (deltaTime: number) {

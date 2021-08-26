@@ -1,10 +1,5 @@
-import { Rect, renderer, v2, Vec2, Vec3 } from "cc";
+import { Rect, renderer, v2, Vec2, Vec3, Node, v3 } from "cc";
 import { Random } from "./Random";
-
-/** 获取世界坐标 */
-export function GetWorldPosition(node: Node) {
-  throw new Error("GetWorldPosition");
-}
 
 /**
  * 转换节点坐标系
@@ -12,7 +7,8 @@ export function GetWorldPosition(node: Node) {
  * @param spaceNode 目标坐标系节点
  */
 export function ConvertToNodeSpaceAR(node: Node, spaceNode: Node) {
-  throw new Error("ConvertToNodeSpaceAR");
+  let out: Vec3 = v3();
+  return spaceNode.inverseTransformPoint(out, node.getWorldPosition());
 }
 
 /**

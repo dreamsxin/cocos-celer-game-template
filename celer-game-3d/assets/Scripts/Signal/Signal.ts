@@ -66,3 +66,30 @@ export class UpdateInitLoadingSignal extends BaseSignal {}
 
 /** 游戏准备完毕 */
 export class GameReadySignal extends BaseSignal {}
+
+/** 游戏开始 */
+export class GameStartSignal extends BaseSignal {}
+
+/** 广告按钮准备 */
+export class WildButtonReadySignal extends BaseSignal {}
+
+/** 玩家手动结算 */
+export class EndNowSignal extends BaseSignal {}
+
+/** 音乐按钮 */
+export class SoundStateChangedSignal extends BaseSignal {}
+
+/** 分数初始化 */
+export class PLayerScoreInitSignal extends BaseSignal {}
+
+/** 菜单按钮点击 */
+export class MenuButtonClickSignal extends BaseSignal {}
+
+/** 广告按钮动画 */
+export class WildAdAnimationIsPlaySignal extends BaseSignal {}
+
+/** 固定位广告按钮点击 */
+export class WildAdButtonClick extends BaseSignal {}
+
+/** 看广告结束 */
+export class AdFinishSignal extends BaseSignal {}

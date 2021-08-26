@@ -1,0 +1,200 @@
+import { Component, instantiate, loader, Prefab, Node } from "cc";
+import { HashMap } from "../Common/HashMap";
+import { SingleTon } from "../Common/ToSingleTon";
+
+class ObjPool {
+  private _pool = [];
+  private completeHandler: Function;
+  private template: Prefab;
+  private totalSize: number = 0;
+  private initTime: number[] = [];
+
+  /** 对象的唯一标识 */
+  hashKey: string;
+  constructor(template: Prefab, initSize: number, completeHandle?: Function) {
+    this.completeHandler = completeHandle;
+    this.template = template;
+    this.totalSize = initSize;
+    this.hashKey = "ObjPool:" + this.template.name + " - " + this.totalSize;
+    this.initPool(initSize);
+  }
+
+  initPool(size: number, immediately: boolean = false) {
+    if (immediately) {
+      for (let i = 0; i < size; ++i) {
+        this.initTime.push(Date.now());
+        let newNode = instantiate(this.template);
+        this.put(newNode);
+      }
+    } else {
+      for (let i = 0; i < size; ++i) {
+        this.initTime.push(Date.now());
+        setTimeout(() => {
+          let newNode = instantiate(this.template);
+          this.put(newNode);
+        }, i);
+      }
+    }
+  }
+
+  size() {
+    return this._pool.length;
+  }
+
+  clear() {
+    var count = this._pool.length;
+    for (var i = 0; i < count; ++i) {
+      this._pool[i].destroy && this._pool[i].destroy();
+    }
+    this._pool.length = 0;
+  }
+
+  put(obj: any) {
+    if (obj && this._pool.indexOf(obj) === -1) {
+      // Remove from parent, but don't cleanup
+      obj.removeFromParent(false);
+      //obj.setParent(null);
+      // Invoke pool handler
+      let handlers = obj.getComponents(Component);
+      for (let handler of handlers) {
+        if (handler && handler.unuse) {
+          handler.unuse.apply(handler);
+        }
+      }
+
+      this._pool.push(obj);
+
+      if (this.completeHandler) {
+        // if (!CELER_X) {
+        //   console.log(
+        //     " pool:",
+        //     this.template.name,
+        //     ", now:",
+        //     this._pool.length,
+        //     ", total:",
+        //     this.totalSize,
+        //     ", cost:",
+        //     (Date.now() - this.initTime[this._pool.length - 1]).toFixed(2) +
+        //       "ms"
+        //   );
+        // }
+        if (this.totalSize <= this._pool.length) {
+          this.completeHandler();
+          this.completeHandler = null;
+        }
+      }
+    }
+  }
+
+  get(..._) {
+    var last = this._pool.length - 1;
+    if (last < 0) {
+      this.initPool(1, true);
+    }
+    last = this._pool.length - 1;
+    // Pop the last object in pool
+    var obj = this._pool[last];
+    this._pool.length = last;
+
+    // Invoke pool handler
+    let handlers = obj.getComponents(Component);
+    for (let handler of handlers) {
+      if (handler && handler.reuse) {
+        handler.reuse.apply(handler, arguments);
+      }
+    }
+    return obj;
+  }
+}
+
+export class PrefabFactory extends SingleTon<PrefabFactory>() {
+  private doneCallback: Function;
+  private progressCallback: Function;
+  private count: number = 0;
+  private totalCount: number = 0;
+  private objPool: HashMap<string, ObjPool> = new HashMap();
+  private startTime: number = 0;
+  init(callback: Function, progress?: Function) {
+    this.doneCallback = callback;
+    this.progressCallback = progress;
+    this.startTime = Date.now();
+
+    loader.loadResDir(
+      "prefabs/",
+      Prefab,
+      (err, res: Prefab[], urls: string[]) => {
+        if (err) {
+          console.error(" Game Factory init failed:", err);
+        } else {
+          this.totalCount = res.length;
+          for (let i = 0; i < res.length; i++) {
+            let prefab = res[i];
+            let nameSplit = prefab.name.split(".");
+            let name = nameSplit[0];
+            let count = nameSplit[1] ? parseInt(nameSplit[1]) : 30;
+            console.log(" init pool:", name, ", count:", count);
+            setTimeout(() => {
+              let objPool = new ObjPool(
+                prefab,
+                count,
+                this.addCount.bind(this)
+              );
+              this.objPool.add(name, objPool);
+            }, i * 5);
+          }
+        }
+      }
+    );
+  }
+
+  addObject(name: string, url: string, count: number) {
+    return new Promise(
+      (solve: (name: string) => void, reject: (err: Error) => void) => {
+        loader.loadRes(url, Prefab, (err: Error, prefab: Prefab) => {
+          if (err) {
+            reject(err);
+          } else {
+            let objPool = new ObjPool(prefab, count, () => {
+              solve(name);
+            });
+            this.objPool.add(name, objPool);
+          }
+        });
+      }
+    );
+  }
+
+  addCount() {
+    this.count++;
+    if (this.progressCallback) {
+      this.progressCallback(this.count / this.totalCount);
+    }
+    if (this.count >= this.totalCount) {
+      console.log(
+        " factory cost time:",
+        (Date.now() - this.startTime).toFixed(2) + "ms"
+      );
+      if (this.doneCallback) {
+        this.doneCallback();
+        this.doneCallback = null;
+      }
+    }
+  }
+
+  getObj(name: string, ...args): Node {
+    if (this.objPool.has(name)) {
+      return this.objPool.get(name).get(...args);
+    } else {
+      console.error(" objPool dosen't exists this obj:", name);
+      return null;
+    }
+  }
+
+  putObj(name: string, node: Node) {
+    if (this.objPool.has(name)) {
+      return this.objPool.get(name).put(node);
+    } else {
+      console.error(" objPool dosen't exists this obj:", name);
+    }
+  }
+}

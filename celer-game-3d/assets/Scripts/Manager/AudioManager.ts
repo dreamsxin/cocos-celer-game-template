@@ -36,7 +36,7 @@ const PATH = "sounds/";
 const EffectLimitTime = 100;
 const EffectCountLimit = 15;
 
-class AudioController extends SingleTon<AudioController>() {
+export class AudioController extends SingleTon<AudioController>() {
   private static PlayedList: AudioItem[] = [];
   public static canPlay: boolean = CC_DEBUG || sys.WIN32 == sys.platform;
   private static hasBindTouch: boolean = false;

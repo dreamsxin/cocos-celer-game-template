@@ -1,4 +1,9 @@
-export enum Theme {}
+export enum Theme {
+  a,
+  bmx,
+}
+
+console.log(Theme);
 
 export enum ScoreType {
   PauseCost,
@@ -12,6 +17,7 @@ export function GetTotalTime() {
   return 0;
 }
 
+/** 免费暂停次数 */
 export function GetFreePauseCount() {
   return 3;
 }
