@@ -101,6 +101,15 @@ export class GameStateController extends SingleTon<GameStateController>() {
   isGameOver() {
     return this.isOver;
   }
+
+  /** 是否可以交互 */
+  canInteractive() {
+    return !(
+      GameStateController.inst.isPause() ||
+      GameStateController.inst.isGameOver() ||
+      !GameStateController.inst.isRoundStart()
+    );
+  }
 }
 
 !CELER_X && (window["GameState"] = GameStateController.inst);

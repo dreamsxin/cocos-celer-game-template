@@ -1,5 +1,6 @@
 import { _decorator, Component, Node } from "cc";
 import { InitialFacade } from "../GameLoad/InitialFacade";
+import { PlayModel } from "../Model/PlayModel";
 const { ccclass, property } = _decorator;
 
 @ccclass("App")
@@ -15,7 +16,7 @@ export class App extends Component {
     InitialFacade.inst.start();
   }
 
-  // update (deltaTime: number) {
-  //     // Your update function goes here.
-  // }
+  update(deltaTime: number) {
+    PlayModel.inst.addGameTime(-deltaTime);
+  }
 }

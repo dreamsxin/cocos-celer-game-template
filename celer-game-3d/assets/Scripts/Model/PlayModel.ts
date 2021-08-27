@@ -146,7 +146,10 @@ export class PlayModel extends SingleTon<PlayModel>() {
     return 0;
   }
 
-  setTotalTime(time: number) {}
+  setTotalTime(time: number) {
+    this.Time = time;
+    UpdateTimeNumber.inst.dispatch(this.Time);
+  }
 
   addPauseCount() {
     this.pauseCount++;
@@ -202,6 +205,7 @@ export class PlayModel extends SingleTon<PlayModel>() {
   }
 
   gameReadyShow() {
+    GameStateController.inst.isReady = true;
     GameStartSignal.inst.dispatch();
     console.log("gameReadyToStart");
     WildButtonReadySignal.inst.dispatch();

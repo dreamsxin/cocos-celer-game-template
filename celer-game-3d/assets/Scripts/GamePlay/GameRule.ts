@@ -1,6 +1,8 @@
 export enum Theme {
-  a,
-  bmx,
+  Green,
+  Blue,
+  Red,
+  Purple,
 }
 
 export enum ScoreType {
@@ -12,7 +14,7 @@ export function RandomTheme() {
 }
 
 export function GetTotalTime() {
-  return 0;
+  return 60 * 2.5;
 }
 
 /** 免费暂停次数 */

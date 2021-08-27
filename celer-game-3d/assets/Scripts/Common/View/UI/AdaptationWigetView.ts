@@ -179,7 +179,22 @@ export class AdaptationWigetView extends Component {
     );
   }
 
-  alignLeft() {}
+  alignLeft() {
+    // this.node.getComponent(UITransform).anchorX = 0;
+    // this.node.getComponent(UITransform).anchorY = 0; /** 实际尺寸 */
+    let canvasSize = view.getCanvasSize();
+    this.node.setPosition(
+      this.LocalZero.add(
+        v3(
+          this.node.getComponent(UITransform).width *
+            this.node.getComponent(UITransform).anchorX,
+          this.node.getComponent(UITransform).height *
+            this.node.getComponent(UITransform).anchorY +
+            0.5 * canvasSize.height
+        )
+      )
+    );
+  }
 
   alignRight() {}
 

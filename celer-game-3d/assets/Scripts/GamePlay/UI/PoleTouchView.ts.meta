@@ -1,0 +1,16 @@
+{
+  "ver": "4.0.1",
+  "importer": "typescript",
+  "imported": true,
+  "uuid": "c2757943-21ec-48eb-aa7b-ca1b1d4af7a5",
+  "files": [
+    ".js",
+    ".trans"
+  ],
+  "subMetas": {},
+  "userData": {
+    "importAsPlugin": false,
+    "moduleId": "project:///assets/Scripts/GamePlay/UI/PoleTouchView.js",
+    "importerSettings": 0
+  }
+}
