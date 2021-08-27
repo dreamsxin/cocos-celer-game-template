@@ -1,5 +1,6 @@
 import { _decorator, Component, Node } from "cc";
 import { BaseSignal } from "../../Common/Signal";
+import { GameStateController } from "../../Manager/GameStateController";
 import { ButtonClickSignal } from "../../Signal/Signal";
 const { ccclass, property } = _decorator;
 /** 打开击球点界面 */
@@ -19,6 +20,7 @@ export class PointTouchView extends Component {
       Node.EventType.TOUCH_END,
       () => {
         ButtonClickSignal.inst.dispatch();
+        if (!GameStateController.inst.canInteractive()) return;
         PointTouchSignal.inst.dispatch();
       },
       this

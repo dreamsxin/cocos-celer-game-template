@@ -176,6 +176,7 @@ export class AudioController extends SingleTon<AudioController>() {
         ) {
           return;
         }
+        this.bgm.stop();
         this.playMusic("bgm_30", true);
       }
     }, this);

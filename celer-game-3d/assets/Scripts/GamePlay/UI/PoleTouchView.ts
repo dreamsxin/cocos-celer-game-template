@@ -9,6 +9,7 @@ import {
   v3,
 } from "cc";
 import { BaseSignal } from "../../Common/Signal";
+import { GameStateController } from "../../Manager/GameStateController";
 const { ccclass, property } = _decorator;
 
 /** 击球 */
@@ -30,7 +31,7 @@ export class PoleTouchView extends Component {
 
   private startY: number = 0;
   private endY: number = -602.359;
-  private scale: number = 1;
+  private scale: number = 1.5;
 
   start() {
     // Your initialization goes here.
@@ -44,6 +45,7 @@ export class PoleTouchView extends Component {
   }
 
   onMove(ev: EventTouch) {
+    if (!GameStateController.inst.canInteractive()) return;
     let offset = ev.getDeltaY() * this.scale;
     if (this.Pole.position.y + offset <= this.endY) {
       offset = this.endY - this.Pole.position.y;
@@ -63,6 +65,7 @@ export class PoleTouchView extends Component {
   }
 
   onEnd(ev: EventTouch) {
+    if (!GameStateController.inst.canInteractive()) return;
     ShotSignal.inst.dispatch(this.PowerBar.progress);
     tween(this.Pole)
       .to(
