@@ -18,6 +18,7 @@ export default class VersionLabel extends cc.Component {
     if (CC_DEBUG) {
       window["DEBUG_VERSION"] = "test 6.0.0";
     }
+    this.node.opacity = 100;
     GameStartSignal.inst.addListener(() => {
       this.getComponent(cc.Label).string =
         window["GAME_VERSION"] &&

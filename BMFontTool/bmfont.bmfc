@@ -54,6 +54,16 @@ invB=0
 outlineThickness=0
 
 # selected chars
-chars=32-126,160-174,176-188,192-198,202,208-218,224-225,229-237,242-253
+chars=48-57
 
 # imported icon images
+icon="../../GameAssets/TennisBall/切图/common/font_score0.png",48,0,0,0
+icon="../../GameAssets/TennisBall/切图/common/font_score1.png",49,0,0,0
+icon="../../GameAssets/TennisBall/切图/common/font_score2.png",50,0,0,0
+icon="../../GameAssets/TennisBall/切图/common/font_score3.png",51,0,0,0
+icon="../../GameAssets/TennisBall/切图/common/font_score4.png",52,0,0,0
+icon="../../GameAssets/TennisBall/切图/common/font_score5.png",53,0,0,0
+icon="../../GameAssets/TennisBall/切图/common/font_score6.png",54,0,0,0
+icon="../../GameAssets/TennisBall/切图/common/font_score7.png",55,0,0,0
+icon="../../GameAssets/TennisBall/切图/common/font_score8.png",56,0,0,0
+icon="../../GameAssets/TennisBall/切图/common/font_score9.png",57,0,0,0
