@@ -63,90 +63,6 @@ export default class App extends cc.Component {
   @property(cc.Font)
   Result: cc.Font = null;
 
-  @property({
-    type: cc.SpriteAtlas,
-    displayName: "动物类",
-  })
-  Animals: cc.SpriteAtlas = null;
-
-  @property({
-    type: cc.SpriteAtlas,
-    displayName: "植物类",
-  })
-  Plants: cc.SpriteAtlas = null;
-
-  @property({
-    type: cc.SpriteAtlas,
-    displayName: "建筑",
-  })
-  Buildings: cc.SpriteAtlas = null;
-
-  @property({
-    type: cc.SpriteAtlas,
-    displayName: "书籍",
-  })
-  Books: cc.SpriteAtlas = null;
-
-  @property({
-    type: cc.SpriteAtlas,
-    displayName: "球",
-  })
-  Ball: cc.SpriteAtlas = null;
-
-  @property({
-    type: cc.SpriteAtlas,
-    displayName: "食物类",
-  })
-  Food: cc.SpriteAtlas = null;
-
-  @property({
-    type: cc.SpriteAtlas,
-    displayName: "形状",
-  })
-  Shape: cc.SpriteAtlas = null;
-
-  @property({
-    type: cc.SpriteAtlas,
-    displayName: "服装类",
-  })
-  Outlet: cc.SpriteAtlas = null;
-
-  @property({
-    type: cc.SpriteAtlas,
-    displayName: "配饰",
-  })
-  Ornament: cc.SpriteAtlas = null;
-
-  @property({
-    type: cc.SpriteAtlas,
-    displayName: "文具工具",
-  })
-  Tool: cc.SpriteAtlas = null;
-
-  @property({
-    type: cc.SpriteAtlas,
-    displayName: "化妆品",
-  })
-  Makeup: cc.SpriteAtlas = null;
-
-  @property({
-    type: cc.SpriteAtlas,
-    displayName: "水果",
-  })
-  Fruits: cc.SpriteAtlas = null;
-
-  @property({
-    type: cc.SpriteAtlas,
-    displayName: "蔬菜",
-  })
-  Vegetable: cc.SpriteAtlas = null;
-
-  @property({
-    type: cc.SpriteAtlas,
-    displayName: "干扰",
-  })
-  Other: cc.SpriteAtlas = null;
-
   public static ItemRoot: cc.Node = null;
   onLoad() {
     console.log(" app onload ");
@@ -180,18 +96,6 @@ export default class App extends cc.Component {
     cc.game.setFrameRate(60);
 
     cc.debug.setDisplayStats(!CELER_X);
-    StartBindAtlasSignal.inst.addListener(this.bindItemAtals, this);
-  }
-
-  bindItemAtals() {
-    let types = TableManager.inst.getRandom(Random_ID.SuiJiChi).Pool;
-    for (let type of types) {
-      let tableName = TableManager.inst.getClass(type).Table;
-      if (this[tableName] && this[tableName] instanceof cc.SpriteAtlas) {
-        //  console.log("bind :", tableName);
-        ResourceController.inst.pushItemAtlas(type, this[tableName]);
-      }
-    }
   }
 
   start() {
