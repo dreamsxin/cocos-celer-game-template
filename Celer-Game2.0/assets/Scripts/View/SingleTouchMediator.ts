@@ -8,7 +8,6 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import { MinPotentialPacker } from "../AlgorithmUtils/MinimumPotentialLayout/MinPotentialPacker";
 import App from "../App/App";
 import { GameLogic } from "../GamePlay/Model/GameLogic";
 
@@ -77,16 +76,6 @@ export default class SingleTouchMediator<
     }
     this.touchid = event.getID();
     this.onTouchMove(event);
-
-    if (CC_DEBUG) {
-      if (App.ItemRoot) {
-        App.ItemRoot.y += event.getDeltaY();
-        GameLogic.inst.move(event.getDelta());
-      }
-      if (MinPotentialPacker.inst.DebugNode) {
-        MinPotentialPacker.inst.DebugNode.y = App.ItemRoot.y + 1920 * 0.5;
-      }
-    }
   }
 
   private touchEnd(event: cc.Event.EventTouch) {

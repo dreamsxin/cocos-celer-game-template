@@ -12,9 +12,6 @@ import {
 import { RoundEndType } from "../Controller/GameStateController";
 import { SingleTon } from "../Utils/ToSingleton";
 import { NextLevelSignal, StartCountSignal } from "../Model/PlayModelProxy";
-import { OnWrongClickSignal } from "../GamePlay/View/Game/Item";
-import { SubjectOkSignal } from "../GamePlay/View/UI/Subject";
-import { UpdateTypeScore } from "../GamePlay/View/UI/SubjectLabel";
 interface AudioItem {
   loop: boolean;
   volume: number;
@@ -37,7 +34,7 @@ const EffectCountLimit = 15;
 
 class AudioController extends SingleTon<AudioController>() {
   private static PlayedList: AudioItem[] = [];
-  public static canPlay: boolean = CC_DEBUG || cc.sys.WIN32 == cc.sys.platform;
+  public static canPlay: boolean = false;
   private static hasBindTouch: boolean = false;
 
   private audioID = {};
@@ -140,25 +137,6 @@ class AudioController extends SingleTon<AudioController>() {
   bindSignal() {
     this.setEffectVolume(1);
     this.setMusicVolume(1);
-
-    OnWrongClickSignal.inst.addListener(() => {
-      this.playEffect("Wrong");
-    }, this);
-
-    SubjectOkSignal.inst.addListenerTwo((index: number, isPlay: boolean) => {
-      if (isPlay) {
-        this.playEffect("Finish");
-      }
-    }, this);
-
-    let index = 1;
-    UpdateTypeScore.inst.addListener(() => {
-      this.playEffect("Match" + index);
-      index++;
-      if (index > 2) {
-        index = 1;
-      }
-    }, this);
 
     // bgm
     UpdateTimeNumber.inst.addListenerOne((time: number) => {

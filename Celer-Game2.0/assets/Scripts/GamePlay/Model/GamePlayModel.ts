@@ -28,7 +28,6 @@ import { NextLevelSignal } from "../../Model/PlayModelProxy";
 import { GameLogic } from "./GameLogic";
 import { Clamp } from "../../Utils/Cocos";
 import { HashMap } from "../../Utils/HashMap";
-import { ItemModel } from "./ItemModel";
 export enum ScoreType {
   Match,
   TimeBonus,
@@ -61,8 +60,6 @@ export class GamePlayModel {
   private streak: number = 0;
   private totalStreak: number = 0;
   private maxSteak: number = 0;
-
-  private items: HashMap<string, ItemModel> = new HashMap();
 
   /** 分数加成倒计时 */
   private scaleCountDown: number = ScoreBonusCountdown();
@@ -150,15 +147,7 @@ export class GamePlayModel {
   }
 
   get Timebonus() {
-    let totalMatchCount = 0;
-    for (let typeModel of GameLogic.inst.Types) {
-      totalMatchCount += typeModel.MatchTimes;
-    }
-    if (totalMatchCount <= 0) return 0;
-    return Math.floor(
-      ((totalMatchCount / (GetCollectCount() * GetTypeCount())) * 7.5 + 0.5) *
-        this.gameTime
-    );
+    return 0;
   }
 
   get ScoreSpread() {
@@ -211,9 +200,6 @@ export class GamePlayModel {
   /** 初始化游戏数据 */
   initGameData() {
     console.log("init game data.");
-    this.items.clear();
-
-    this.Level = 0;
   }
 
   addPlayerScore(

@@ -69,8 +69,6 @@ export class InitialFacade {
     LoadAudioCommand.STEP,
     LoadPrefabCommand.STEP,
     LoadJsonCommand.STEP,
-    "POLYGON",
-    "ITEMS",
   ];
 
   step(commandName: string) {
