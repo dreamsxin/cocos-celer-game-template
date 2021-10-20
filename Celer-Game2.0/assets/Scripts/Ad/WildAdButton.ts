@@ -31,7 +31,7 @@ export default class WildAdButton extends cc.Component {
     this.node.parent.active = this.node.active;
     this.node.scale = 0;
 
-    WildButtonReadySignal.inst.addOnceOne((type: AdButtonType) => {
+    WildButtonReadySignal.inst.addOnce((type: AdButtonType) => {
       if (this.adType != type && type != null) return;
 
       console.log(" Wild button :", this.node.active);
@@ -58,7 +58,7 @@ export default class WildAdButton extends cc.Component {
       }
     }, this);
 
-    HideWildAdButtonSignal.inst.addListenerOne((type: AdButtonType) => {
+    HideWildAdButtonSignal.inst.addListener((type: AdButtonType) => {
       if (this.adType != type && type != null) return;
       this.node.active = false;
       this.node.parent.active = false;

@@ -89,7 +89,7 @@ export default class AdLayer extends cc.Component {
   }
 
   onAdFinish(adUnitId: string) {
-    AdFinishSignal.inst.dispatchOne(adUnitId);
+    AdFinishSignal.inst.dispatch(adUnitId);
 
     if (adUnitId == AdType[AdType.Sun]) {
       CELER_X && HideWildAdButtonSignal.inst.dispatch();
@@ -127,24 +127,20 @@ export default class AdLayer extends cc.Component {
     if (type == AdType.Sun) {
       this.Title.spriteFrame = this.AdAtlas.getSpriteFrame("font_free");
       this.Content.spriteFrame = this.AdAtlas.getSpriteFrame("font_get prop1");
-      this.SubContent.spriteFrame = this.AdAtlas.getSpriteFrame(
-        "font_get prop2"
-      );
-      this.WatchAd.getComponent(
-        cc.Sprite
-      ).spriteFrame = this.AdAtlas.getSpriteFrame("btn_getprop");
+      this.SubContent.spriteFrame =
+        this.AdAtlas.getSpriteFrame("font_get prop2");
+      this.WatchAd.getComponent(cc.Sprite).spriteFrame =
+        this.AdAtlas.getSpriteFrame("btn_getprop");
       this.MoveBonus.active = false;
     } else {
       this.Title.spriteFrame = this.AdAtlas.getSpriteFrame("font_add");
       this.Content.spriteFrame = this.AdAtlas.getSpriteFrame("font_addmoves1");
-      this.SubContent.spriteFrame = this.AdAtlas.getSpriteFrame(
-        "font_addmoves2"
-      );
+      this.SubContent.spriteFrame =
+        this.AdAtlas.getSpriteFrame("font_addmoves2");
       this.MoveBonus.active = true;
       this.MoveBonus.getComponent(cc.Label).string = "3";
-      this.WatchAd.getComponent(
-        cc.Sprite
-      ).spriteFrame = this.AdAtlas.getSpriteFrame("btn_addmoves");
+      this.WatchAd.getComponent(cc.Sprite).spriteFrame =
+        this.AdAtlas.getSpriteFrame("btn_addmoves");
     }
 
     this.WatchAd.targetOff(this);

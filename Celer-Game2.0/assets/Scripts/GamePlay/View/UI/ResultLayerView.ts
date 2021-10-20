@@ -12,7 +12,6 @@ import {
 } from "../../../Controller/ResourceController";
 import { PlayModelProxy } from "../../../Model/PlayModelProxy";
 import { CelerSDK } from "../../../Utils/Celer/CelerSDK";
-import { ScoreType } from "../../Model/GamePlayModel";
 import ResultAnimation from "../../../Animation/ResultAnimation";
 import { BaseSignal } from "../../../Utils/Signal";
 import { En_ID, En_View } from "../../../table";
@@ -72,7 +71,7 @@ export default class ResultLayerView extends BaseView {
   onLoad() {
     this.node.active = false;
     this.node.scale = 1;
-    OpenResultLayerSignal.inst.addListenerOne(this.onGameOver, this);
+    OpenResultLayerSignal.inst.addListener(this.onGameOver, this);
   }
 
   onGameOver(type: RoundEndType) {

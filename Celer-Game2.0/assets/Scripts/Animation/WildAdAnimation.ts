@@ -18,7 +18,7 @@ export class WildAdAnimationIsPlaySignal extends BaseSignal {}
 export default class WildAdAnimation extends FrameAniBase {
   private isStart = false;
   onStartPlay() {
-    WildAdAnimationIsPlaySignal.inst.dispatchOne(true);
+    WildAdAnimationIsPlaySignal.inst.dispatch(true);
     if (this.isStart == false) {
       this.isStart = true;
       setTimeout(() => {
@@ -36,6 +36,6 @@ export default class WildAdAnimation extends FrameAniBase {
   }
 
   onComplete() {
-    WildAdAnimationIsPlaySignal.inst.dispatchOne(false);
+    WildAdAnimationIsPlaySignal.inst.dispatch(false);
   }
 }

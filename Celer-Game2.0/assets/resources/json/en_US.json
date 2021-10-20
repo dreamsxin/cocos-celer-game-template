@@ -1,1 +1,0 @@
-[{"ID":1,"View":1,"Text":"The game has been paused,\ndo you want to end now ?"},{"ID":2,"View":1,"Text":"<outline color=black width=2>You only have <color=#00ff00>${##}</c> free pause,\nthen the pause will be <color=#00ff00>${##}</c>.</outline>"},{"ID":3,"View":1,"Text":"You have no free pause,\nthis pause will cost <color=#00ff00>${##}</c>."}]

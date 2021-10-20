@@ -30,7 +30,7 @@ export class GameLogic extends SingleTon<GameLogic>() {
   set Combo(val: number) {
     this.combo = val;
     this.combo = Math.min(this.combo, 7);
-    ComboUpdateSignal.inst.dispatchOne(this.combo);
+    ComboUpdateSignal.inst.dispatch(this.combo);
   }
 
   bindGamePlay(gamePlay: GamePlayModel) {
@@ -39,7 +39,7 @@ export class GameLogic extends SingleTon<GameLogic>() {
       TestReStartSignal.inst.addListener(this.restart, this);
     }
 
-    AdFinishSignal.inst.addListenerOne(this.onAdFinish, this);
+    AdFinishSignal.inst.addListener(this.onAdFinish, this);
   }
 
   initData() {
@@ -60,7 +60,7 @@ export class GameLogic extends SingleTon<GameLogic>() {
     console.log("restart:", isRestMap);
 
     this.restartCount++;
-    RestartCountSignal.inst.dispatchOne(this.restartCount);
+    RestartCountSignal.inst.dispatch(this.restartCount);
   }
 }
 

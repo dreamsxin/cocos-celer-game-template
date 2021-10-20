@@ -1,16 +1,7 @@
-import { StartBindAtlasSignal } from "../../App/App";
 import { GameLogic } from "../../GamePlay/Model/GameLogic";
-import {
-  CountPerLevelFloor,
-  GetCollectCount,
-  GetTotalLevel,
-  GetTypeCount,
-} from "../../Global/GameRule";
-import { PolygonDataModel } from "../../Model/PolygonDataModel";
-import { Animals, Class_ID, Random_ID, Random_Pool } from "../../table";
+
 import { TableManager } from "../../TableManager";
 import { CelerSDK } from "../../Utils/Celer/CelerSDK";
-import { disOrderArray } from "../../Utils/Cocos";
 import {
   InitialFacade,
   UpdateInitLoadingSignal,

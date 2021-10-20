@@ -1,4 +1,4 @@
-import { SingleTon } from "./ToSingleton";
+import { SingleTon } from "./ToSingleTon";
 
 interface Listener {
   callback: Function;
@@ -9,12 +9,12 @@ export abstract class BaseSignal extends SingleTon<BaseSignal>() {
   private listenerMap: Listener[] = [];
   private onceListenerMap: Listener[] = [];
 
-  private doDispatch(...args) {
+  private doDispatch(...args: any) {
     this.excuteListener(...args);
     this.excuteOnce(...args);
   }
 
-  private excuteListener(...args) {
+  private excuteListener(...args: any) {
     if (this.listenerMap && this.listenerMap.length > 0) {
       for (let listener of this.listenerMap) {
         listener.callback.apply(listener.target, args);
@@ -22,7 +22,7 @@ export abstract class BaseSignal extends SingleTon<BaseSignal>() {
     }
   }
 
-  private excuteOnce(...args) {
+  private excuteOnce(...args: any) {
     if (this.onceListenerMap && this.onceListenerMap.length > 0) {
       for (let listener of this.onceListenerMap) {
         listener.callback.apply(listener.target, args);
@@ -70,93 +70,74 @@ export abstract class BaseSignal extends SingleTon<BaseSignal>() {
     }
   }
 
-  dispatch() {
-    this.doDispatch(null);
-  }
-
-  dispatchOne<T>(val: T) {
-    this.doDispatch(val);
-  }
-
-  dispatchTwo<T, U>(val1: T, val2: U) {
-    this.doDispatch(val1, val2);
-  }
-
-  dispatchThree<T, U, O>(val1: T, val2: U, val3: O) {
-    this.doDispatch(val1, val2, val3);
-  }
-
-  dispatchFour<T, U, O, P>(val1: T, val2: U, val3: O, val4: P) {
-    this.doDispatch(val1, val2, val3, val4);
-  }
-
-  dispatchFive<T, U, O, P, L>(val1: T, val2: U, val3: O, val4: P, val5: L) {
+  dispatch(): void;
+  dispatch<T>(val: T): void;
+  dispatch<T, U>(val1: T, val2: U): void;
+  dispatch<T, U, O>(val1: T, val2: U, val3: O): void;
+  dispatch<T, U, O, P>(val1: T, val2: U, val3: O, val4: P): void;
+  dispatch<T, U, O, P, L>(
+    val1?: T,
+    val2?: U,
+    val3?: O,
+    val4?: P,
+    val5?: L
+  ): void;
+  dispatch<T, U, O, P, L>(
+    val1?: T,
+    val2?: U,
+    val3?: O,
+    val4?: P,
+    val5?: L
+  ): void {
     this.doDispatch(val1, val2, val3, val4, val5);
   }
 
-  addListener(callback: () => void, target: any) {
-    this.listen(callback, target);
-  }
-
-  addOnce(callback: () => void, target: any) {
-    this.listenOnce(callback, target);
-  }
-
-  addListenerOne<T>(callback: (val: T) => void, target: any) {
-    this.listen(callback, target);
-  }
-
-  addListenerTwo<T, U>(callback: (val1: T, val2: U) => void, target: any) {
-    this.listen(callback, target);
-  }
-
-  addListenerThree<T, U, O>(
+  addListener(callback: () => void, target: any): void;
+  addListener<T>(callback: (val: T) => void, target: any): void;
+  addListener<T, U>(callback: (val1: T, val2: U) => void, target: any): void;
+  addListener<T, U, O>(
     callback: (val1: T, val2: U, val3: O) => void,
     target: any
-  ) {
-    this.listen(callback, target);
-  }
-
-  addListenerFour<T, U, O, P>(
+  ): void;
+  addListener<T, U, O, P>(
     callback: (val1: T, val2: U, val3: O, val4: P) => void,
     target: any
-  ) {
-    this.listen(callback, target);
-  }
-
-  addListenerFive<T, U, O, P, L>(
+  ): void;
+  addListener<T, U, O, P, L>(
     callback: (val1: T, val2: U, val3: O, val4: P, val5: L) => void,
     target: any
-  ) {
+  ): void;
+  addListener<T, U, O, P, L>(
+    callback: (val1: T, val2: U, val3: O, val4: P, val5: L) => void,
+    target: any
+  ): void {
     this.listen(callback, target);
   }
 
-  addOnceOne<T>(callback: (val: T) => void, target: any) {
-    this.listenOnce(callback, target);
-  }
+  addOnce(callback: () => void, target: any): void;
 
-  addOnceTwo<T, U>(callback: (val1: T, val2: U) => void, target: any) {
-    this.listenOnce(callback, target);
-  }
+  addOnce<T>(callback: (val: T) => void, target: any): void;
 
-  addOnceThree<T, U, O>(
+  addOnce<T, U>(callback: (val1: T, val2: U) => void, target: any): void;
+
+  addOnce<T, U, O>(
     callback: (val1: T, val2: U, val3: O) => void,
     target: any
-  ) {
-    this.listenOnce(callback, target);
-  }
+  ): void;
 
-  addOnceFour<T, U, O, P>(
+  addOnce<T, U, O, P>(
     callback: (val1: T, val2: U, val3: O, val4: P) => void,
     target: any
-  ) {
-    this.listenOnce(callback, target);
-  }
+  ): void;
 
-  addOnceFive<T, U, O, P, L>(
+  addOnce<T, U, O, P, L>(
     callback: (val1: T, val2: U, val3: O, val4: P, val5: L) => void,
     target: any
-  ) {
+  ): void;
+  addOnce<T, U, O, P, L>(
+    callback: (val1: T, val2: U, val3: O, val4: P, val5: L) => void,
+    target: any
+  ): void {
     this.listenOnce(callback, target);
   }
 }

@@ -1,7 +1,6 @@
 import { Theme } from "../../Global/Theme";
 import {
   FreePauseLimit,
-  GetCollectCount,
   GetScoreByType,
   GetTotalLevel,
   GetTotalTime,
@@ -27,7 +26,6 @@ import { EndNowSignal } from "../View/UI/SubmitLayerView";
 import { NextLevelSignal } from "../../Model/PlayModelProxy";
 import { GameLogic } from "./GameLogic";
 import { Clamp } from "../../Utils/Cocos";
-import { HashMap } from "../../Utils/HashMap";
 export enum ScoreType {
   Match,
   TimeBonus,
@@ -73,7 +71,7 @@ export class GamePlayModel {
     RevertSignal.inst.addListener(this.revertAction, this);
     EndNowSignal.inst.addListener(this.onEndNow, this);
 
-    GameOverSignal.inst.addListenerOne((type: RoundEndType) => {}, this);
+    GameOverSignal.inst.addListener((type: RoundEndType) => {}, this);
     this.resetScaleCountDown();
   }
 
@@ -98,13 +96,13 @@ export class GamePlayModel {
         ScoreBonusCountdown(),
         0
       );
-      ScoreCountDownUpdateSignal.inst.dispatchOne(this.BonusProgress);
+      ScoreCountDownUpdateSignal.inst.dispatch(this.BonusProgress);
     }
   }
 
   resetScaleCountDown() {
     this.scaleCountDown = ScoreBonusCountdown();
-    ScoreCountDownUpdateSignal.inst.dispatchOne(
+    ScoreCountDownUpdateSignal.inst.dispatch(
       this.scaleCountDown / ScoreBonusCountdown()
     );
   }
@@ -116,7 +114,7 @@ export class GamePlayModel {
   set Theme(val: Theme) {
     console.log("set game theme:", Theme[val]);
     this.theme = val;
-    GameThemeInit.inst.dispatchOne(this.theme);
+    GameThemeInit.inst.dispatch(this.theme);
   }
 
   get Level() {
@@ -128,9 +126,9 @@ export class GamePlayModel {
     this.level = val;
 
     let startIndex = this.level * GetTypeCount();
-    NextLevelSignal.inst.dispatchOne(this.level);
+    NextLevelSignal.inst.dispatch(this.level);
     ScoreModel.NextLevel();
-    UpdateTypeLabelSignal.inst.dispatchOne(startIndex);
+    UpdateTypeLabelSignal.inst.dispatch(startIndex);
   }
 
   nextLevel() {
@@ -184,7 +182,7 @@ export class GamePlayModel {
       this.reverts.length = 0;
     }
     this.reverts.push(revert);
-    RevertButtonStateChangedSignal.inst.dispatchOne(true);
+    RevertButtonStateChangedSignal.inst.dispatch(true);
   }
 
   revertAction() {}
@@ -222,12 +220,7 @@ export class GamePlayModel {
 
     this.playerScore = Math.max(this.playerScore, 0);
 
-    PlayerScoreChanged.inst.dispatchFour(
-      this.playerScore,
-      score,
-      times,
-      fromNode
-    );
+    PlayerScoreChanged.inst.dispatch(this.playerScore, score, times, fromNode);
 
     return this.playerScore - oldScore;
   }
@@ -236,7 +229,7 @@ export class GamePlayModel {
     this.noviceScore += score;
     this.noviceScore = Math.max(this.noviceScore, 0);
 
-    NoviceScoreChanged.inst.dispatchThree(this.noviceScore, score, times);
+    NoviceScoreChanged.inst.dispatch(this.noviceScore, score, times);
   }
 
   getScoreByType(type: ScoreType) {

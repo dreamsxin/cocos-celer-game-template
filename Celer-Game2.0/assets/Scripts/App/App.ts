@@ -17,7 +17,6 @@ import { GameLogic } from "../GamePlay/Model/GameLogic";
 import { GameRecorder } from "../GameRecorder/GameRecorder";
 import { InitialFacade } from "../Initialization/Facade/InitialFacade";
 import { PlayModelProxy } from "../Model/PlayModelProxy";
-import { Random_ID } from "../table";
 import { TableManager } from "../TableManager";
 import { HashMap } from "../Utils/HashMap";
 import { BaseSignal } from "../Utils/Signal";
@@ -45,9 +44,6 @@ export default class App extends cc.Component {
   @property(cc.Font)
   Add: cc.Font = null;
 
-  @property(cc.Node)
-  ItemRootNode: cc.Node = null;
-
   @property(cc.Font)
   Sub: cc.Font = null;
 
@@ -63,11 +59,9 @@ export default class App extends cc.Component {
   @property(cc.Font)
   Result: cc.Font = null;
 
-  public static ItemRoot: cc.Node = null;
   onLoad() {
     console.log(" app onload ");
 
-    App.ItemRoot = this.ItemRootNode;
     this.UI && ResourceController.inst.setAtlas(this.UI);
     this.PauseUI && ResourceController.inst.setPauseAtlas(this.PauseUI);
     this.ResultUI && ResourceController.inst.setResultAtlas(this.ResultUI);
@@ -99,7 +93,6 @@ export default class App extends cc.Component {
   }
 
   start() {
-    GameRecorder.inst.init();
     InitialFacade.inst.start();
   }
 

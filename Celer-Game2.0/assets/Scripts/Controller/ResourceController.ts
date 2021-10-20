@@ -102,7 +102,7 @@ export class ResourceController extends SingleTon<ResourceController>() {
   }
 
   getSoundDisabled() {
-    return this.PauseAtlas.getSpriteFrame("btn_no sound");
+    return this.PauseAtlas.getSpriteFrame("btn_nosound");
   }
 
   getSoundEnable() {

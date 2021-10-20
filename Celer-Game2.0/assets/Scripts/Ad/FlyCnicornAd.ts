@@ -82,7 +82,7 @@ export default class FlyCnicornAd extends cc.Component {
     }, this);
 
     FlyCnicornAd.ShowTimeRest = 10;
-    ShowFlyCnicornSignal.inst.addListenerTwo(
+    ShowFlyCnicornSignal.inst.addListener(
       (origin: FlyOrigin, originY: number) => {
         console.log(" Show Cnicorn");
         if (this.Fly.getNumberOfRunningActions() > 0) return;
